@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "271686014606",
+    "project_id": "tracking-learning",
+    "storage_bucket": "tracking-learning.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271686014606:android:1ebd47d1d62b09c696dbdf",
+        "android_client_info": {
+          "package_name": "com.example.tlfsvf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "271686014606-pc2mn8uu3nspa8p3si6m8lpjuso7878h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tlfsvf",
+            "certificate_hash": "56bf8731c0216706b42f473fbacbe7776e2c07e8"
+          }
+        },
+        {
+          "client_id": "271686014606-qodlevrhumn397496obcas6uc9oqc55o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNjtHoWGmJ5THJm2rt-8VxU737emX-BuI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "271686014606-qodlevrhumn397496obcas6uc9oqc55o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

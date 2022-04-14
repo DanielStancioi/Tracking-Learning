@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Add a new task"
+        android:layout_gravity="center"
+        android:background="@drawable/background_design"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textAlignment="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:ignore="Suspicious0dp"
+            android:layout_weight="2">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Task"
+                android:textStyle="bold"
+                android:layout_margin="10dp"
+                />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:ignore="Suspicious0dp"
+            android:layout_weight="4">
+            <EditText
+                android:id="@+id/task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Task"
+                android:textStyle="bold"
+                android:layout_margin="10dp"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:ignore="Suspicious0dp"
+            android:layout_weight="2">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textStyle="bold"
+                android:layout_margin="10dp"
+                />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:ignore="Suspicious0dp"
+            android:layout_weight="4">
+            <EditText
+                android:id="@+id/taskDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Task description"
+                android:textStyle="bold"
+                android:layout_margin="10dp"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="0dp"
+            tools:ignore="Suspicious0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2">
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/saveButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_design"
+                android:text="Save"
+                android:textColor="@color/white"
+                android:layout_margin="10dp"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textAllCaps="false"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            tools:ignore="Suspicious0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2">
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/cancelButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_design"
+                android:text="Cancel"
+                android:textColor="@color/white"
+                android:layout_margin="10dp"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textAllCaps="false"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</LinearLayout>
