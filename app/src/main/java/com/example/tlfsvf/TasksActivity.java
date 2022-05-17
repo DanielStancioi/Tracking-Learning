@@ -1,10 +1,14 @@
 package com.example.tlfsvf;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -157,7 +161,7 @@ public class TasksActivity extends AppCompatActivity {
         FirebaseRecyclerOptions<Model> options = new FirebaseRecyclerOptions.Builder<Model>().setQuery(reference, Model.class).build();
         FirebaseRecyclerAdapter<Model, MyViewHolder> adapter = new FirebaseRecyclerAdapter<Model, MyViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull Model model) {
+            protected void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position, @NonNull Model model) {
                 holder.setDate(model.getDate());
                 holder.setTask(model.getTask());
                 holder.setDescription(model.getDescription());
@@ -165,16 +169,84 @@ public class TasksActivity extends AppCompatActivity {
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                       key = getRef(position).getKey();
-                       task = model.getTask();
-                       description = model.getDescription();
-                       updateTask();
+                        key = getRef(position).getKey();
+                        task = model.getTask();
+                        description = model.getDescription();
+
+                        updateTask();
                     }
                 });
+
 
             }
 
             private void updateTask() {
+                AlertDialog.Builder mDialog = new AlertDialog.Builder(TasksActivity.this);
+                LayoutInflater inflater =LayoutInflater.from(TasksActivity.this);
+                View view = inflater.inflate(R.layout.update_data, null);
+                mDialog.setView(view);
+
+                AlertDialog dialog = mDialog.create();
+
+                EditText mTask = view.findViewById(R.id.mEditTextTask);
+                EditText mDescription = view.findViewById(R.id.mEditTextDescription);
+
+                mTask.setText(task);
+                mTask.setSelection(task.length());
+
+                mDescription.setText(description);
+                mDescription.setSelection(description.length());
+
+                AppCompatButton delBtn = view.findViewById(R.id.deleteBtn);
+                AppCompatButton updateBtn = view.findViewById(R.id.UpdateBtn);
+
+                updateBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        task = mTask.getText().toString().trim();
+                        description = mDescription.getText().toString().trim();
+
+                        String date = DateFormat.getDateInstance().format(new Date());
+
+                        Model model = new Model(task, description, key, date);
+
+                        reference.child(key).setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(TasksActivity.this, "Task updated successfully", Toast.LENGTH_SHORT).show();
+                                }else {
+                                    String error = task.getException().toString();
+                                    Toast.makeText(TasksActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        dialog.dismiss();
+                    }
+                });
+
+
+                delBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        reference.child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(TasksActivity.this, "Task deleted successfully", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    String error = task.getException().toString();
+                                    Toast.makeText(TasksActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+
+
 
 
             }
@@ -215,4 +287,24 @@ public class TasksActivity extends AppCompatActivity {
             dateTV.setText(date);
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.logout:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 }
