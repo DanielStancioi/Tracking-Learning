@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -91,14 +95,18 @@
             android:layout_height="wrap_content"
             tools:ignore="Suspicious0dp"
             android:layout_weight="4">
+
             <EditText
                 android:id="@+id/mEditTextDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 android:hint="Task description"
-                android:textStyle="bold"
-                android:layout_margin="10dp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:textStyle="bold" />
 
 
         </RelativeLayout>
@@ -152,6 +160,35 @@
         </RelativeLayout>
 
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:ignore="Suspicious0dp"
+        android:layout_weight="2">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/setDoneBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/background_design"
+            android:text="Mark as done"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -164,17 +201,21 @@
             android:layout_height="wrap_content"
             tools:ignore="Suspicious0dp"
             android:layout_weight="2">
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/deleteBtn"
-                android:layout_width="match_parent"
+                android:layout_width="172dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/background_design"
                 android:text="Delete"
                 android:textAllCaps="false"
-                android:background="@drawable/background_design"
                 android:textColor="@color/white"
                 android:textSize="17sp"
-                android:textStyle="bold"
-                android:layout_margin="10dp"/>
+                android:textStyle="bold" />
 
         </RelativeLayout>
         <RelativeLayout
@@ -204,3 +245,4 @@
     </LinearLayout>
 
 </LinearLayout>
+</ScrollView>

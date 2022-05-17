@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -46,7 +51,7 @@
             android:layout_weight="4">
 
             <EditText
-                android:id="@+id/mEditTextTask"
+                android:id="@+id/mEditTextTaskUndone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -91,14 +96,18 @@
             android:layout_height="wrap_content"
             tools:ignore="Suspicious0dp"
             android:layout_weight="4">
+
             <EditText
-                android:id="@+id/mEditTextDescription"
+                android:id="@+id/mEditTextDescriptionUndone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 android:hint="Task description"
-                android:textStyle="bold"
-                android:layout_margin="10dp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:textStyle="bold" />
 
 
         </RelativeLayout>
@@ -136,7 +145,7 @@
             android:layout_weight="4">
 
             <EditText
-                android:id="@+id/mEditTextDueDate"
+                android:id="@+id/mEditTextDueDateUndone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -153,6 +162,43 @@
 
     </LinearLayout>
 
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:ignore="Suspicious0dp"
+            android:layout_weight="2">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/setUnDoneBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/background_design"
+                android:text="Start working again"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -164,17 +210,21 @@
             android:layout_height="wrap_content"
             tools:ignore="Suspicious0dp"
             android:layout_weight="2">
+
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/deleteBtn"
+                android:id="@+id/deleteBtnUndone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/background_design"
                 android:text="Delete"
                 android:textAllCaps="false"
-                android:background="@drawable/background_design"
                 android:textColor="@color/white"
                 android:textSize="17sp"
-                android:textStyle="bold"
-                android:layout_margin="10dp"/>
+                android:textStyle="bold" />
 
         </RelativeLayout>
         <RelativeLayout
@@ -184,7 +234,7 @@
             android:layout_weight="2">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/UpdateBtn"
+                android:id="@+id/UpdateBtnUndone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -203,4 +253,6 @@
 
     </LinearLayout>
 
+
 </LinearLayout>
+</ScrollView>

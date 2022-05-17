@@ -55,6 +55,8 @@ public class TasksActivity extends AppCompatActivity {
     private String key="";
     private String task;
     private String description;
+    private String dueDate;
+    private boolean done;
 
     private ProgressDialog loader;
 
@@ -108,6 +110,7 @@ public class TasksActivity extends AppCompatActivity {
 
         final EditText task = myView.findViewById(R.id.task);
         final EditText description = myView.findViewById(R.id.taskDescription);
+        final EditText dueDate = myView.findViewById(R.id.taskDueDate);
 
         AppCompatButton save = myView.findViewById(R.id.saveButton);
         AppCompatButton cancel = myView.findViewById(R.id.cancelButton);
@@ -116,11 +119,16 @@ public class TasksActivity extends AppCompatActivity {
         save.setOnClickListener((v)->{
             String mTask = task.getText().toString();
             String mDescription = description.getText().toString().trim();
+            String mDueDate = dueDate.getText().toString().trim();
             String id = reference.push().getKey();
             String date = DateFormat.getDateInstance().format(new Date());
 
             if(TextUtils.isEmpty(mTask)){
                 task.setError("Task name required");
+                return;
+            }
+            if(TextUtils.isEmpty(mDueDate)){
+                task.setError("Due date required");
                 return;
             }
 
@@ -132,7 +140,7 @@ public class TasksActivity extends AppCompatActivity {
                 loader.setCanceledOnTouchOutside(false);
                 loader.show();
 
-                Model model = new Model(mTask, mDescription, id, date);
+                Model model = new Model(mTask, mDescription, id, date, false, mDueDate);
                 reference.child(id).setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -164,7 +172,31 @@ public class TasksActivity extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position, @NonNull Model model) {
                 holder.setDate(model.getDate());
                 holder.setTask(model.getTask());
-                holder.setDescription(model.getDescription());
+
+                key = getRef(position).getKey();
+                DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("tasks").child(onlineUserID).child(key);
+
+                final ValueEventListener eventListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String text;
+                        boolean done = (boolean) snapshot.child("done").getValue();
+
+                        if (done) {
+                            text = "Your task is DONE ";
+                        } else {
+                            text = "Your task is UNDONE ";
+                        }
+                        holder.setStatus(text);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                };
+
+                reff.addValueEventListener(eventListener);
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -172,43 +204,77 @@ public class TasksActivity extends AppCompatActivity {
                         key = getRef(position).getKey();
                         task = model.getTask();
                         description = model.getDescription();
+                        dueDate = model.getDueDate();
+                        TasksActivity.this.done = model.isDone();
+                        reff.removeEventListener(eventListener);
+                        reff.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                boolean done = (boolean) snapshot.child("done").getValue();
 
-                        updateTask();
+                                if (done) {
+                                    updateTaskSetUndone();
+                                    reff.removeEventListener(this);
+                                } else {
+                                    updateTaskSetDone();
+                                    reff.removeEventListener(this);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+
+
                     }
                 });
 
 
             }
-
-            private void updateTask() {
+            private void updateTaskSetDone() {
                 AlertDialog.Builder mDialog = new AlertDialog.Builder(TasksActivity.this);
                 LayoutInflater inflater =LayoutInflater.from(TasksActivity.this);
                 View view = inflater.inflate(R.layout.update_data, null);
                 mDialog.setView(view);
 
+
                 AlertDialog dialog = mDialog.create();
 
                 EditText mTask = view.findViewById(R.id.mEditTextTask);
                 EditText mDescription = view.findViewById(R.id.mEditTextDescription);
+                EditText mDueDate = view.findViewById(R.id.mEditTextDueDate);
 
                 mTask.setText(task);
                 mTask.setSelection(task.length());
 
+
+
+
                 mDescription.setText(description);
                 mDescription.setSelection(description.length());
 
+                mDueDate.setText(dueDate);
+                mDueDate.setSelection(dueDate.length());
+
+
+
                 AppCompatButton delBtn = view.findViewById(R.id.deleteBtn);
                 AppCompatButton updateBtn = view.findViewById(R.id.UpdateBtn);
+                AppCompatButton doneBtn = view.findViewById(R.id.setDoneBtn);
 
                 updateBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         task = mTask.getText().toString().trim();
                         description = mDescription.getText().toString().trim();
+                        dueDate = mDueDate.getText().toString().trim();
 
                         String date = DateFormat.getDateInstance().format(new Date());
 
-                        Model model = new Model(task, description, key, date);
+                        Model model = new Model(task, description, key, date, done, dueDate);
 
                         reference.child(key).setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -247,9 +313,148 @@ public class TasksActivity extends AppCompatActivity {
                 dialog.show();
 
 
+                doneBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    task = mTask.getText().toString().trim();
+                    description = mDescription.getText().toString().trim();
+                    dueDate = mDueDate.getText().toString().trim();
+
+                    String date = DateFormat.getDateInstance().format(new Date());
+
+                    Model model = new Model(task, description, key, date, true, dueDate);
+
+                    reference.child(key).setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(TasksActivity.this, "Task marked as done", Toast.LENGTH_SHORT).show();
+                            }else {
+                                String error = task.getException().toString();
+                                Toast.makeText(TasksActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    dialog.dismiss();
+                }
+            });
+
+
+
 
 
             }
+
+            private void updateTaskSetUndone() {
+                AlertDialog.Builder mDialog = new AlertDialog.Builder(TasksActivity.this);
+                LayoutInflater inflater =LayoutInflater.from(TasksActivity.this);
+                View view = inflater.inflate(R.layout.update_data_undone, null);
+                mDialog.setView(view);
+
+
+                AlertDialog dialog = mDialog.create();
+
+                EditText mTask = view.findViewById(R.id.mEditTextTaskUndone);
+                EditText mDescription = view.findViewById(R.id.mEditTextDescriptionUndone);
+                EditText mDueDate = view.findViewById(R.id.mEditTextDueDateUndone);
+
+                mTask.setText(task);
+                mTask.setSelection(task.length());
+
+
+
+
+                mDescription.setText(description);
+                mDescription.setSelection(description.length());
+
+                mDueDate.setText(dueDate);
+                mDueDate.setSelection(dueDate.length());
+
+
+
+                AppCompatButton delBtn = view.findViewById(R.id.deleteBtnUndone);
+                AppCompatButton updateBtn = view.findViewById(R.id.UpdateBtnUndone);
+                AppCompatButton unDoneBtn = view.findViewById(R.id.setUnDoneBtn);
+
+                updateBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        task = mTask.getText().toString().trim();
+                        description = mDescription.getText().toString().trim();
+                        dueDate = mDueDate.getText().toString().trim();
+
+                        String date = DateFormat.getDateInstance().format(new Date());
+
+                        Model model = new Model(task, description, key, date, done, dueDate);
+
+                        reference.child(key).setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(TasksActivity.this, "Task updated successfully", Toast.LENGTH_SHORT).show();
+                                }else {
+                                    String error = task.getException().toString();
+                                    Toast.makeText(TasksActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        dialog.dismiss();
+                    }
+                });
+
+
+                delBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        reference.child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(TasksActivity.this, "Task deleted successfully", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    String error = task.getException().toString();
+                                    Toast.makeText(TasksActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+
+
+                unDoneBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        task = mTask.getText().toString().trim();
+                        description = mDescription.getText().toString().trim();
+                        dueDate = mDueDate.getText().toString().trim();
+
+                        String date = DateFormat.getDateInstance().format(new Date());
+
+                        Model model = new Model(task, description, key, date, false, dueDate);
+
+                        reference.child(key).setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(TasksActivity.this, "Task marked as undone", Toast.LENGTH_SHORT).show();
+                                }else {
+                                    String error = task.getException().toString();
+                                    Toast.makeText(TasksActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        dialog.dismiss();
+                    }
+                });
+
+
+
+            }
+
+
 
             @NonNull
             @Override
@@ -277,9 +482,9 @@ public class TasksActivity extends AppCompatActivity {
             taskTV.setText(task);
         }
 
-        public void setDescription (String description){
-            TextView descriptionTV = mView.findViewById(R.id.descriptionTv);
-            descriptionTV.setText(description);
+        public void setStatus (String status){
+            TextView statusTV = mView.findViewById(R.id.statusTv);
+            statusTV.setText(status);
         }
 
         public void setDate(String date){
