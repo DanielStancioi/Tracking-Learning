@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content">
-
-<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -14,14 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="Update"
+        android:text="Your progress so far"
         android:layout_gravity="center"
-        android:textAlignment="center"
         android:background="@drawable/background_design"
-        android:textColor="@color/white"
         android:padding="10dp"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textAlignment="center"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,15 +30,17 @@
             android:layout_height="wrap_content"
             tools:ignore="Suspicious0dp"
             android:layout_weight="2">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Task"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Finished tasks"
                 android:textStyle="bold"
-                android:layout_margin="10dp"
                 android:textColor="@color/black"/>
-
-
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dp"
@@ -49,21 +48,17 @@
             tools:ignore="Suspicious0dp"
             android:layout_weight="4">
 
-            <EditText
-                android:id="@+id/mEditTextTask"
+            <TextView
+                android:id="@+id/FinishedTasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:hint="Task"
-                android:textColor="@color/black"
+                android:hint="Number"
                 android:textStyle="bold" />
-
-
         </RelativeLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -82,13 +77,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="Description"
+                android:text="Still in progress tasks"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
-
-
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dp"
@@ -96,21 +90,17 @@
             tools:ignore="Suspicious0dp"
             android:layout_weight="4">
 
-            <EditText
-                android:id="@+id/mEditTextDescription"
+            <TextView
+                android:id="@+id/StillInProgressTasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:hint="Task description"
-                android:textColor="@color/black"
+                android:hint="Number"
                 android:textStyle="bold" />
-
-
         </RelativeLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -129,12 +119,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="Due date"
-                android:textColor="@color/black"
+                android:text="Late tasks"
                 android:textStyle="bold"
-                android:layout_marginTop="10dp"/>
+                android:textColor="@color/black" />
 
 
         </RelativeLayout>
@@ -145,15 +135,15 @@
             android:layout_weight="4">
 
             <TextView
-                android:id="@+id/mEditTextDueDate"
+                android:id="@+id/lateTasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:hint="Due date for the task"
-                android:inputType="date"
+
+                android:hint="Number"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
@@ -161,72 +151,20 @@
         </RelativeLayout>
 
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="horizontal">
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        tools:ignore="Suspicious0dp"
-        android:layout_weight="2">
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/setDoneBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/background_design"
-            android:text="Mark as done"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-
-    </RelativeLayout>
-    </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             tools:ignore="Suspicious0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="2">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/deleteBtn"
-                android:layout_width="172dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/background_design"
-                android:text="Delete"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="17sp"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            tools:ignore="Suspicious0dp"
-            android:layout_weight="2">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/UpdateBtn"
+                android:id="@+id/cancelButtonTaskProgress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -234,16 +172,13 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/background_design"
-                android:text="Update"
+                android:text="Cancel"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="17sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
-
         </RelativeLayout>
-
-
     </LinearLayout>
+
 
 </LinearLayout>
-</ScrollView>

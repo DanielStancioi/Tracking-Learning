@@ -30,13 +30,17 @@
             android:layout_height="wrap_content"
             tools:ignore="Suspicious0dp"
             android:layout_weight="2">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 android:text="Task"
                 android:textStyle="bold"
-                android:layout_margin="10dp"
-                />
+                android:textColor="@color/black"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dp"
@@ -65,13 +69,17 @@
             android:layout_height="wrap_content"
             tools:ignore="Suspicious0dp"
             android:layout_weight="2">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 android:text="Description"
                 android:textStyle="bold"
-                android:layout_margin="10dp"
-                />
+                android:textColor="@color/black"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dp"
@@ -108,11 +116,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="Due date"
                 android:textColor="@color/black"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
 
         </RelativeLayout>
@@ -122,7 +131,7 @@
             tools:ignore="Suspicious0dp"
             android:layout_weight="4">
 
-            <EditText
+            <TextView
                 android:id="@+id/taskDueDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -130,10 +139,10 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
+                android:editable="false"
                 android:hint="Due date for the task"
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:inputType="date"/>
+                android:textStyle="bold" />
 
 
         </RelativeLayout>

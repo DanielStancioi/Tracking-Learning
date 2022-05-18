@@ -134,7 +134,8 @@
                 android:layout_marginBottom="10dp"
                 android:text="Due date"
                 android:textColor="@color/black"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
 
 
         </RelativeLayout>
@@ -144,7 +145,7 @@
             tools:ignore="Suspicious0dp"
             android:layout_weight="4">
 
-            <EditText
+            <TextView
                 android:id="@+id/mEditTextDueDateUndone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

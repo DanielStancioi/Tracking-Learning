@@ -31,6 +31,15 @@
             android:layout_margin="16dp"
             android:src="@drawable/ic_baseline_add_24"
             android:backgroundTint="@color/purple_400"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/tasksProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_baseline_playlist_add_check_24"
+            android:backgroundTint="@color/purple_400"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

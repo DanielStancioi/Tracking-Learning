@@ -1,6 +1,7 @@
 package com.example.tlfsvf;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -39,13 +41,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class TasksActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
+    private FloatingActionButton floatingActionButtonProgress;
 
     private DatabaseReference reference;
     private FirebaseAuth mAuth;
@@ -87,6 +94,8 @@ public class TasksActivity extends AppCompatActivity {
 
 
         floatingActionButton = findViewById(R.id.fab);
+        floatingActionButtonProgress = findViewById(R.id.tasksProgress);
+
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,23 +103,111 @@ public class TasksActivity extends AppCompatActivity {
             }
         });
 
+        floatingActionButtonProgress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showProgress();
+            }
+        });
 
+
+    }
+
+    private void showProgress(){
+        AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        DatePickerDialog.OnDateSetListener setListener;
+        View myView = inflater.inflate(R.layout.tasks_progress, null);
+        myDialog.setView(myView);
+
+        AlertDialog dialog = myDialog.create();
+
+        dialog.show();
+
+        final TextView done = myView.findViewById(R.id.FinishedTasks);
+        final TextView undone = myView.findViewById(R.id.StillInProgressTasks);
+        final TextView late = myView.findViewById(R.id.lateTasks);
+        List<String> doneTasks = new ArrayList<>();
+        List<String> undoneTasks = new ArrayList<>();
+        List<String> lateTasks = new ArrayList<>();
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String getCurrentDateTime = sdf.format(c.getTime());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ss: snapshot.getChildren()){
+                    boolean done = (boolean) ss.child("done").getValue();
+                    String date = ss.child("dueDate").getValue().toString();
+
+                    if (done) {
+                        doneTasks.add(ss.child("task").getValue().toString());
+                    } else {
+                        if (getCurrentDateTime.compareTo(date) < 0)
+                        {
+                            undoneTasks.add(ss.child("task").getValue().toString());
+                        }
+                        else
+                        {
+                            lateTasks.add(ss.child("task").getValue().toString());
+                        }
+
+                    }
+                }
+                done.setText(""+doneTasks.size());
+                undone.setText(""+undoneTasks.size());
+                late.setText(""+lateTasks.size());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+
+        AppCompatButton cancel = myView.findViewById(R.id.cancelButtonTaskProgress);
+        cancel.setOnClickListener((v)->{dialog.dismiss();});
     }
 
     private void addTask() {
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
         LayoutInflater inflater = LayoutInflater.from(this);
-
+        DatePickerDialog.OnDateSetListener setListener;
         View myView = inflater.inflate(R.layout.input_file, null);
         myDialog.setView(myView);
 
         AlertDialog dialog = myDialog.create();
-        dialog.setCancelable(false);
+
         dialog.show();
 
         final EditText task = myView.findViewById(R.id.task);
         final EditText description = myView.findViewById(R.id.taskDescription);
-        final EditText dueDate = myView.findViewById(R.id.taskDueDate);
+        final TextView dueDate = myView.findViewById(R.id.taskDueDate);
+
+        Calendar calendar =  Calendar.getInstance();
+        final int year = calendar.get(Calendar.YEAR);
+        final int month = calendar.get(Calendar.MONTH);
+        final int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        dueDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(TasksActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                        month = month+1;
+                        String dueDateStr = day + "/"+month+"/"+year;
+                        dueDate.setText(dueDateStr);
+                    }
+                }, year, month, day);
+                datePickerDialog.show();
+            }
+        });
+
+
 
         AppCompatButton save = myView.findViewById(R.id.saveButton);
         AppCompatButton cancel = myView.findViewById(R.id.cancelButton);
@@ -128,7 +225,7 @@ public class TasksActivity extends AppCompatActivity {
                 return;
             }
             if(TextUtils.isEmpty(mDueDate)){
-                task.setError("Due date required");
+                dueDate.setError("Due date required");
                 return;
             }
 
@@ -170,22 +267,33 @@ public class TasksActivity extends AppCompatActivity {
         FirebaseRecyclerAdapter<Model, MyViewHolder> adapter = new FirebaseRecyclerAdapter<Model, MyViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position, @NonNull Model model) {
-                holder.setDate(model.getDate());
+                holder.setDate(model.getDueDate());
                 holder.setTask(model.getTask());
 
                 key = getRef(position).getKey();
+
                 DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("tasks").child(onlineUserID).child(key);
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                String getCurrentDateTime = sdf.format(c.getTime());
 
                 final ValueEventListener eventListener = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String text;
                         boolean done = (boolean) snapshot.child("done").getValue();
-
                         if (done) {
                             text = "Your task is DONE ";
                         } else {
-                            text = "Your task is UNDONE ";
+                            if (getCurrentDateTime.compareTo(model.getDueDate()) < 0)
+                            {
+                                text = "Your task is STILL IN PROGRESS ";
+                            }
+                            else
+                            {
+                                text = "Your task is LATE";
+                            }
+
                         }
                         holder.setStatus(text);
                     }
@@ -245,7 +353,7 @@ public class TasksActivity extends AppCompatActivity {
 
                 EditText mTask = view.findViewById(R.id.mEditTextTask);
                 EditText mDescription = view.findViewById(R.id.mEditTextDescription);
-                EditText mDueDate = view.findViewById(R.id.mEditTextDueDate);
+                TextView mDueDate = view.findViewById(R.id.mEditTextDueDate);
 
                 mTask.setText(task);
                 mTask.setSelection(task.length());
@@ -255,9 +363,31 @@ public class TasksActivity extends AppCompatActivity {
 
                 mDescription.setText(description);
                 mDescription.setSelection(description.length());
+                mDueDate.setText(dueDate);
+
+                Calendar calendar =  Calendar.getInstance();
+                final int year = calendar.get(Calendar.YEAR);
+                final int month = calendar.get(Calendar.MONTH);
+                final int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                mDueDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickerDialog datePickerDialog = new DatePickerDialog(TasksActivity.this, new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                month = month+1;
+                                String dueDateStr = day + "/"+month+"/"+year;
+                                mDueDate.setText(dueDateStr);
+                            }
+                        }, year, month, day);
+                        datePickerDialog.show();
+                    }
+                });
+
 
                 mDueDate.setText(dueDate);
-                mDueDate.setSelection(dueDate.length());
+                //mDueDate.setSelection(dueDate.length());
 
 
 
@@ -356,7 +486,7 @@ public class TasksActivity extends AppCompatActivity {
 
                 EditText mTask = view.findViewById(R.id.mEditTextTaskUndone);
                 EditText mDescription = view.findViewById(R.id.mEditTextDescriptionUndone);
-                EditText mDueDate = view.findViewById(R.id.mEditTextDueDateUndone);
+                TextView mDueDate = view.findViewById(R.id.mEditTextDueDateUndone);
 
                 mTask.setText(task);
                 mTask.setSelection(task.length());
@@ -368,7 +498,27 @@ public class TasksActivity extends AppCompatActivity {
                 mDescription.setSelection(description.length());
 
                 mDueDate.setText(dueDate);
-                mDueDate.setSelection(dueDate.length());
+                Calendar calendar =  Calendar.getInstance();
+                final int year = calendar.get(Calendar.YEAR);
+                final int month = calendar.get(Calendar.MONTH);
+                final int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                mDueDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickerDialog datePickerDialog = new DatePickerDialog(TasksActivity.this, new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                month = month+1;
+                                String dueDateStr = day + "/"+month+"/"+year;
+                                mDueDate.setText(dueDateStr);
+                            }
+                        }, year, month, day);
+                        datePickerDialog.show();
+                    }
+                });
+                //mDueDate.setText(dueDate);
+                //mDueDate.setSelection(dueDate.length());
 
 
 
@@ -385,19 +535,38 @@ public class TasksActivity extends AppCompatActivity {
 
                         String date = DateFormat.getDateInstance().format(new Date());
 
-                        Model model = new Model(task, description, key, date, done, dueDate);
+                        DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("tasks").child(onlineUserID).child(key);
 
-                        reference.child(key).setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        reff.addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(TasksActivity.this, "Task updated successfully", Toast.LENGTH_SHORT).show();
-                                }else {
-                                    String error = task.getException().toString();
-                                    Toast.makeText(TasksActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
-                                }
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                boolean done = (boolean) snapshot.child("done").getValue();
+                                Model model = new Model(task, description, key, date, done, dueDate);
+
+                                reference.child(key).setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Toast.makeText(TasksActivity.this, "Task updated successfully", Toast.LENGTH_SHORT).show();
+                                        }else {
+                                            String error = task.getException().toString();
+                                            Toast.makeText(TasksActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                                reff.removeEventListener(this);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
                             }
                         });
+
+
+
                         dialog.dismiss();
                     }
                 });
