@@ -386,7 +386,7 @@ public class TasksActivity extends AppCompatActivity {
                 });
 
 
-                mDueDate.setText(dueDate);
+                //mDueDate.setText(dueDate);
                 //mDueDate.setSelection(dueDate.length());
 
 
@@ -517,6 +517,7 @@ public class TasksActivity extends AppCompatActivity {
                         datePickerDialog.show();
                     }
                 });
+
                 //mDueDate.setText(dueDate);
                 //mDueDate.setSelection(dueDate.length());
 

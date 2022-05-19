@@ -188,6 +188,49 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
+                    android:text="Minimum grade"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="4">
+
+                <EditText
+                    android:id="@+id/courseMinGradeUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:hint="Minimum grade to pass"
+                    android:inputType="numberDecimal"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
                     android:text="Instructor's name"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
@@ -262,6 +305,110 @@
 
 
             </RelativeLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="End date"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="4">
+
+                <TextView
+                    android:id="@+id/courseDueDateUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+
+                    android:hint="End date for the course"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/deleteBtnCourse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/background_design"
+                    android:text="Delete"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/UpdateBtnCourse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/background_design"
+                    android:text="Update"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
 
         </LinearLayout>
 
@@ -417,6 +564,7 @@
             </RelativeLayout>
         </LinearLayout>
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -430,7 +578,7 @@
                 android:layout_weight="2">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/deleteBtnCourse"
+                    android:id="@+id/AddBtnCourse"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -438,29 +586,7 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/background_design"
-                    android:text="Delete"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="2">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/UpdateBtnCourse"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/background_design"
-                    android:text="Update"
+                    android:text="Add grade"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="17sp"
@@ -470,7 +596,6 @@
 
 
         </LinearLayout>
-
 
 
 

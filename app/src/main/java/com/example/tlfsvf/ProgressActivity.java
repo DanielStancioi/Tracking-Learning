@@ -358,7 +358,7 @@ public class ProgressActivity extends AppCompatActivity {
         }
 
         public void setDescription (String description){
-            TextView descriptionTV = mView.findViewById(R.id.descriptionTvCourse);
+            TextView descriptionTV = mView.findViewById(R.id.statusTvCourse);
             descriptionTV.setText(description);
         }
 
