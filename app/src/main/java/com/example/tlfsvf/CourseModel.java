@@ -5,14 +5,14 @@ import java.util.List;
 
 public class CourseModel {
     private String course, description, id, date, location, instructor, credits, endDate, minGrade;
-    private List<Double> marks ;
-    private List<Double> marksMax ;
-    List<Integer> mMarksPercent;
+    private List<String> marks ;
+    private List<String> marksMax ;
+    List<String> mMarksPercent;
     public CourseModel(){
 
     }
 
-    public CourseModel(String course, String description, String id, String date, List<Double> marks, String credits, String instructor, String location, List<Double> marksMax, List<Integer> mMarksPercent, String endDate, String minGrade) {
+    public CourseModel(String course, String description, String id, String date, List<String> marks, String credits, String instructor, String location, List<String> marksMax, List<String> mMarksPercent, String endDate, String minGrade) {
         this.course = course;
         this.description = description;
         this.id = id;
@@ -59,10 +59,10 @@ public class CourseModel {
         this.date = date;
     }
 
-    public void addMark(Double mark){
+    public void addMark(String mark){
         this.marks.add(mark);
     }
-    public List<Double> getMarks(){
+    public List<String> getMarks(){
         return this.marks;
     }
 
@@ -90,11 +90,11 @@ public class CourseModel {
         this.credits = credits;
     }
 
-    public List<Double> getMarksMax() {
+    public List<String> getMarksMax() {
         return marksMax;
     }
 
-    public List<Integer> getmMarksPercent() {
+    public List<String> getmMarksPercent() {
         return mMarksPercent;
     }
 

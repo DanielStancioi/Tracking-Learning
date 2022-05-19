@@ -61,9 +61,9 @@ public class ProgressActivity extends AppCompatActivity {
     private String location;
     private String instructor;
     private String credits;
-    List<Double> mMarks = new ArrayList<>();
-    List<Double> mMarksMax = new ArrayList<>();
-    List<Integer> mMarksPercent = new ArrayList<>();
+    List<String> mMarks = new ArrayList<>();
+    List<String> mMarksMax = new ArrayList<>();
+    List<String> mMarksPercent = new ArrayList<>();
 
     private ProgressDialog loader;
 

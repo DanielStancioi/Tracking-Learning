@@ -47,12 +47,13 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class CoursesActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private RecyclerView recyclerView;
-    private FloatingActionButton floatingActionButton;
+    private FloatingActionButton floatingActionButton, floatingActionButtonProgress;
 
     private DatabaseReference reference;
     private FirebaseAuth mAuth;
@@ -67,9 +68,9 @@ public class CoursesActivity extends AppCompatActivity {
     private String credits;
     private String minGrade;
     private String endDate;
-    List<Double> mMarks = new ArrayList<>();
-    List<Double> mMarksMax = new ArrayList<>();
-    List<Integer> mMarksPercent = new ArrayList<>();
+    List<String> mMarks = new ArrayList<>();
+    List<String> mMarksMax = new ArrayList<>();
+    List<String> mMarksPercent = new ArrayList<>();
 
     private ProgressDialog loader;
 
@@ -100,6 +101,7 @@ public class CoursesActivity extends AppCompatActivity {
 
 
         floatingActionButton = findViewById(R.id.fabCourses);
+        floatingActionButtonProgress = findViewById(R.id.coursesProgress);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,7 +109,96 @@ public class CoursesActivity extends AppCompatActivity {
             }
         });
 
+        floatingActionButtonProgress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showProgress();
+            }
+        });
 
+
+    }
+
+    private void showProgress(){
+        AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        DatePickerDialog.OnDateSetListener setListener;
+        View myView = inflater.inflate(R.layout.course_stat, null);
+        myDialog.setView(myView);
+
+        AlertDialog dialog = myDialog.create();
+
+        dialog.show();
+
+        final TextView passed = myView.findViewById(R.id.passedCourses);
+        final TextView undone = myView.findViewById(R.id.StillInProgressCourses);
+        final TextView failed = myView.findViewById(R.id.failedCourses);
+        List<String> undoneLst = new ArrayList<>();
+        List<String> passedLst = new ArrayList<>();
+        List<String> failedLst = new ArrayList<>();
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String getCurrentDateTime = sdf.format(c.getTime());
+
+
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ss: snapshot.getChildren()){
+                    CourseModel model = ss.getValue(CourseModel.class);
+
+
+                    List<String> marks = model.getMarks();
+                    List<String> marksPercent = model.getmMarksPercent();
+
+                    Double med = 0.0;
+
+                    for (int i=0; i<marks.size();i++){
+                        med = med + Double.parseDouble(marks.get(i))* (Double.parseDouble(marksPercent.get(i))/100.0);
+                    }
+
+
+                    Double minMark = Double.parseDouble(model.getMinGrade());
+                    String date = model.getEndDate();
+
+                    if (getCurrentDateTime.compareTo(date) < 0) {
+
+                        undoneLst.add("text");
+                    } else {
+                        if (med < minMark)
+                        {
+                            failedLst.add("text");
+                        }
+                        else
+                        {
+                            passedLst.add("text");
+                        }
+
+                    }
+
+
+                }
+
+
+
+                passed.setText(""+ passedLst.size());
+                undone.setText(""+undoneLst.size());
+                failed.setText(""+failedLst.size());
+                reference.removeEventListener(this);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+
+        AppCompatButton cancel = myView.findViewById(R.id.cancelButtonCourseStat);
+        cancel.setOnClickListener((v)->{dialog.dismiss();});
     }
 
     private void addCourse() {
@@ -165,12 +256,12 @@ public class CoursesActivity extends AppCompatActivity {
             String id = reference.push().getKey();
             String date = DateFormat.getDateInstance().format(new Date());
             String mEndDate = endDate.getText().toString();
-            List<Double> mMarks1 = new ArrayList<>();
-            List<Double> mMarks1Max = new ArrayList<>();
-            List<Integer> mMarks1Percent = new ArrayList<>();
-            mMarks1.add(0.0);
-            mMarks1Max.add(0.0);
-            mMarks1Percent.add(0);
+            List<String> mMarks1 = new ArrayList<>();
+            List<String> mMarks1Max = new ArrayList<>();
+            List<String> mMarks1Percent = new ArrayList<>();
+            mMarks1.add(""+0.0);
+            mMarks1Max.add(""+0.0);
+            mMarks1Percent.add(""+0);
 
             if(TextUtils.isEmpty(mCourse)){
                 course.setError("Course name required");
@@ -249,11 +340,12 @@ public class CoursesActivity extends AppCompatActivity {
                 final ValueEventListener eventListener = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                         String text;
                         //boolean done = (boolean) snapshot.child("done").getValue();
 
-                        List<Double> marks;
-                        List<Integer> marksPercent;
+                        List<String> marks;
+                        List<String> marksPercent;
 
                         marks = cmodel.getMarks();
                         marksPercent = cmodel.getmMarksPercent();
@@ -262,7 +354,7 @@ public class CoursesActivity extends AppCompatActivity {
                         Double med = 0.0;
 
                         for (int i=0; i<marks.size();i++){
-                            med = med + marks.get(i)*(marksPercent.get(i)/100.0);
+                            med = med + Double.parseDouble(marks.get(i))*(Double.parseDouble(marksPercent.get(i))/100.0);
                         }
 
 
@@ -419,8 +511,7 @@ public class CoursesActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         String markText, markTextMax, percentText;
-                        Double mark, markMax;
-                        Integer percent;
+
                         markText = mMark.getText().toString().trim();
                         markTextMax = mMarkMax.getText().toString().trim();
                         percentText= mMarkPercent.getText().toString().trim();
@@ -437,12 +528,9 @@ public class CoursesActivity extends AppCompatActivity {
                             mMarkPercent.setError("Percent is required");
                             return;
                         }else{
-                            mark = Double.parseDouble(markText);
-                            markMax = Double.parseDouble(markTextMax);
-                            percent= Integer.parseInt(percentText);
-                            mMarks.add(mark);
-                            mMarksMax.add(markMax);
-                            mMarksPercent.add(percent);
+                            mMarks.add(markText);
+                            mMarksMax.add(markTextMax);
+                            mMarksPercent.add(percentText);
                             String date = DateFormat.getDateInstance().format(new Date());
                             CourseModel cmodel = new CourseModel(course, description, key, date, mMarks, credits, instructor, location, mMarksMax, mMarksPercent, endDate, minGrade);
 
