@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -37,9 +38,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -47,6 +54,7 @@ import java.util.List;
 public class ProgressActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
+    private GraphView graphView;
     private RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
 
@@ -61,9 +69,13 @@ public class ProgressActivity extends AppCompatActivity {
     private String location;
     private String instructor;
     private String credits;
+    private String minGrade;
+    private String endDate;
     List<String> mMarks = new ArrayList<>();
     List<String> mMarksMax = new ArrayList<>();
     List<String> mMarksPercent = new ArrayList<>();
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
 
     private ProgressDialog loader;
 
@@ -72,10 +84,10 @@ public class ProgressActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_courses);
+        setContentView(R.layout.activity_progress);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        toolbar = findViewById(R.id.coursesToolbar);
+        toolbar = findViewById(R.id.progressToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("My Progress");
 
@@ -92,102 +104,10 @@ public class ProgressActivity extends AppCompatActivity {
         onlineUserID = mUser.getUid();
         reference = FirebaseDatabase.getInstance().getReference().child("courses").child(onlineUserID);
 
-        /*
-        floatingActionButton = findViewById(R.id.fabCourses);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addCourse();
-            }
-        });*/
+
 
 
     }
-
-    /*
-    private void addCourse() {
-        AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
-        LayoutInflater inflater = LayoutInflater.from(this);
-
-        View myView = inflater.inflate(R.layout.input_file_courses, null);
-        myDialog.setView(myView);
-
-        AlertDialog dialog = myDialog.create();
-        dialog.setCancelable(false);
-        dialog.show();
-
-        final EditText course = myView.findViewById(R.id.course);
-        final EditText description = myView.findViewById(R.id.courseDescription);
-        final EditText credits = myView.findViewById(R.id.courseCredits);
-        final EditText instructor = myView.findViewById(R.id.courseInstructor);
-        final EditText location = myView.findViewById(R.id.courseLocation);
-
-        AppCompatButton save = myView.findViewById(R.id.saveButtonCourse);
-        AppCompatButton cancel = myView.findViewById(R.id.cancelButtonCourse);
-        cancel.setOnClickListener((v)->{dialog.dismiss();});
-
-        save.setOnClickListener((v)->{
-            String mCourse = course.getText().toString();
-            String mDescription = description.getText().toString().trim();
-            String mLocation = location.getText().toString().trim();
-            String mInstructor = instructor.getText().toString().trim();
-            String mCredits = credits.getText().toString().trim();
-            String id = reference.push().getKey();
-            String date = DateFormat.getDateInstance().format(new Date());
-            List<Double> mMarks1 = new ArrayList<>();
-            List<Double> mMarks1Max = new ArrayList<>();
-            List<Integer> mMarks1Percent = new ArrayList<>();
-            mMarks1.add(0.0);
-            mMarks1Max.add(0.0);
-            mMarks1Percent.add(0);
-
-            if(TextUtils.isEmpty(mCourse)){
-                course.setError("Course name required");
-                return;
-            }
-            if(TextUtils.isEmpty(mDescription)){
-                description.setError("Course description required");
-                return;
-            }
-            if(TextUtils.isEmpty(mCredits)){
-                credits.setError("Course credits required");
-                return;
-            }
-            if(TextUtils.isEmpty(mInstructor)){
-                instructor.setError("Course instructor required");
-                return;
-            }
-
-            if(TextUtils.isEmpty(mLocation)){
-                location.setError("Course location required");
-                return;
-            }else{
-                loader.setMessage("Adding your new course");
-                loader.setCanceledOnTouchOutside(false);
-                loader.show();
-
-                CourseModel modelCourse = new CourseModel(mCourse, mDescription, id, date, mMarks1, mCredits, mInstructor, mLocation, mMarks1Max, mMarks1Percent);
-                reference.child(id).setValue(modelCourse).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(ProgressActivity.this, "The course was added successfully", Toast.LENGTH_SHORT).show();
-                            loader.dismiss();
-                        }else{
-                            String error = task.getException().toString();
-                            Toast.makeText(ProgressActivity.this, "Failed " + error, Toast.LENGTH_SHORT).show();
-                            loader.dismiss();
-                        }
-                    }
-                });
-            }
-            dialog.dismiss();
-        });
-
-
-
-
-    }*/
 
     @Override
     protected void onStart() {
@@ -196,8 +116,67 @@ public class ProgressActivity extends AppCompatActivity {
         FirebaseRecyclerAdapter<CourseModel, MyViewHolder> adapter = new FirebaseRecyclerAdapter<CourseModel, MyViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position, @NonNull CourseModel cmodel) {
-                holder.setDate(cmodel.getDate());
+
                 holder.setTask(cmodel.getCourse());
+
+                key = getRef(position).getKey();
+
+                DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("courses").child(onlineUserID).child(key);
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                String getCurrentDateTime = sdf.format(c.getTime());
+
+
+
+                reff.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        String text;
+                        //boolean done = (boolean) snapshot.child("done").getValue();
+
+                        List<String> marks;
+                        List<String> marksPercent;
+
+                        marks = cmodel.getMarks();
+                        marksPercent = cmodel.getmMarksPercent();
+
+
+                        Double med = 0.0;
+
+                        for (int i=0; i<marks.size();i++){
+                            med = med + Double.parseDouble(marks.get(i))*(Double.parseDouble(marksPercent.get(i))/100.0);
+                        }
+
+
+                        Double minMark = Double.parseDouble(snapshot.child("minGrade").getValue().toString());
+
+
+                        if (getCurrentDateTime.compareTo(cmodel.getEndDate()) < 0) {
+                            text = "STILL IN PROGRESS ";
+                        } else {
+                            if (med < minMark)
+                            {
+                                text = "FAILED";
+                            }
+                            else
+                            {
+                                text = "PASSED";
+                            }
+
+                        }
+
+
+                        holder.setDate(text);
+                        reff.removeEventListener(this);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
                 holder.setDescription(cmodel.getDescription());
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -209,9 +188,8 @@ public class ProgressActivity extends AppCompatActivity {
                         location = cmodel.getLocation();
                         instructor = cmodel.getInstructor();
                         credits = cmodel.getCredits();
-                        mMarks = cmodel.getMarks();
-                        mMarksMax = cmodel.getMarksMax();
-                        mMarksPercent = cmodel.getmMarksPercent();
+                        minGrade = cmodel.getMinGrade();
+                        endDate = cmodel.getEndDate();
 
 
                         viewProgress();
@@ -227,103 +205,143 @@ public class ProgressActivity extends AppCompatActivity {
             private void viewProgress() {
                 AlertDialog.Builder mDialog = new AlertDialog.Builder(ProgressActivity.this);
                 LayoutInflater inflater =LayoutInflater.from(ProgressActivity.this);
-                View view = inflater.inflate(R.layout.update_data_course, null);
+                View view = inflater.inflate(R.layout.course_progress, null);
                 mDialog.setView(view);
 
 
                 AlertDialog dialog = mDialog.create();
 
-                EditText mCourse = view.findViewById(R.id.mEditTextCourse);
-                EditText mDescription = view.findViewById(R.id.mEditTextDescriptionCourse);
-                EditText mCredits = view.findViewById(R.id.mEditTextCreditsCourse);
-                EditText mInstructor = view.findViewById(R.id.mEditTextInstructorCourse);
-                EditText mLocation = view.findViewById(R.id.mEditTextLocationCourse);
-                EditText mMark = view.findViewById(R.id.mEditTextGrade);
-                EditText mMarkMax = view.findViewById(R.id.mEditTextGradeMax);
-                EditText mMarkPercent = view.findViewById(R.id.mEditTextPercentageCourse);
+                TextView mCourse = view.findViewById(R.id.courseText);
+                TextView mDescription = view.findViewById(R.id.courseDescriptionText);
+                TextView mCredits = view.findViewById(R.id.courseCreditsText);
+                TextView mMinGrade = view.findViewById(R.id.courseMinGradeText);
+                TextView mInstructor = view.findViewById(R.id.courseInstructorText);
+                TextView mLocation = view.findViewById(R.id.courseLocationText);
+                TextView mMed = view.findViewById(R.id.currentGradeText);
+                TextView mMedMax = view.findViewById(R.id.currentMaxGradeText);
+                TextView mStatus = view.findViewById(R.id.courseStatText);
+
+
+                TextView mEndDate = view.findViewById(R.id.courseDueDateText);
 
                 mCourse.setText(course);
-                mCourse.setSelection(course.length());
 
                 mDescription.setText(description);
-                mDescription.setSelection(description.length());
 
                 mCredits.setText(credits);
-                mCredits.setSelection(credits.length());
+
+                mMinGrade.setText(minGrade);
 
                 mInstructor.setText(instructor);
-                mInstructor.setSelection(instructor.length());
 
                 mLocation.setText(location);
-                mLocation.setSelection(location.length());
+                mEndDate.setText(endDate);
 
-                AppCompatButton delBtn = view.findViewById(R.id.deleteBtnCourse);
-                AppCompatButton updateBtn = view.findViewById(R.id.UpdateBtnCourse);
+                androidx.appcompat.widget.AppCompatButton cancel = view.findViewById(R.id.cancelButtonCourseProgress);
+                cancel.setOnClickListener((v)->{dialog.dismiss();});
 
-                /*
-                updateBtn.setOnClickListener(new View.OnClickListener() {
+
+                DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("courses").child(onlineUserID).child(key);
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                String getCurrentDateTime = sdf.format(c.getTime());
+
+                reff.addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onClick(View view) {
-                        course = mCourse.getText().toString().trim();
-                        description = mDescription.getText().toString().trim();
-                        credits = mCredits.getText().toString().trim();
-                        instructor = mInstructor.getText().toString().trim();
-                        location = mLocation.getText().toString().trim();
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        CourseModel cModel = snapshot.getValue(CourseModel.class);
+                        String text;
+                        //boolean done = (boolean) snapshot.child("done").getValue();
 
-                        String markText, markTextMax, percentText;
-                        Double mark, markMax;
-                        Integer percent;
-                        markText = mMark.getText().toString().trim();
-                        mark = Double.parseDouble(markText);
-                        markTextMax = mMarkMax.getText().toString().trim();
-                        markMax = Double.parseDouble(markTextMax);
-                        percentText= mMarkPercent.getText().toString().trim();
-                        percent= Integer.parseInt(percentText);
-                        mMarks.add(mark);
-                        mMarksMax.add(markMax);
-                        mMarksPercent.add(percent);
+                        List<String> marks;
+                        List<String> marksMax;
+                        List<String> marksPercent;
+                        List<String> gradeDate;
 
-                        String date = DateFormat.getDateInstance().format(new Date());
-
-                        CourseModel cmodel = new CourseModel(course, description, key, date, mMarks, credits, instructor, location, mMarksMax, mMarksPercent);
+                        marks = cModel.getMarks();
+                        marksMax = cModel.getMarksMax();
+                        marksPercent = cModel.getmMarksPercent();
+                        gradeDate = cModel.getGradeDate();
 
 
-                        reference.child(key).setValue(cmodel).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(ProgressActivity.this, "Course updated successfully", Toast.LENGTH_SHORT).show();
-                                }else {
-                                    String error = task.getException().toString();
-                                    Toast.makeText(ProgressActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
-                                }
+                        Double med = 0.0;
+                        Double medMax = 0.0;
+
+                        for (int i=0; i<marks.size();i++){
+                            med = med + Double.parseDouble(marks.get(i))*(Double.parseDouble(marksPercent.get(i))/100.0);
+                            medMax = medMax + Double.parseDouble(marksMax.get(i))*(Double.parseDouble(marksPercent.get(i))/100.0);
+                        }
+
+
+                        Double minMark = Double.parseDouble(cModel.getMinGrade());
+
+
+                        if (getCurrentDateTime.compareTo(cModel.getEndDate()) < 0) {
+                            text = "STILL IN PROGRESS ";
+                        } else {
+                            if (med < minMark)
+                            {
+                                text = "FAILED";
                             }
-                        });
-                        dialog.dismiss();
+                            else
+                            {
+                                text = "PASSED";
+                            }
+
+                        }
+
+                        mMed.setText(""+med);
+                        mMedMax.setText(""+medMax);
+                        mStatus.setText(text);
+
+                        //graphView = view.findViewById(R.id.graphViewProgress);
+
+                        graphView = view.findViewById(R.id.graphViewProgress);
+
+
+
+                        int index = 0;
+                        DataPoint[] dp = new  DataPoint[gradeDate.size()-1];
+
+                        for (int i = 1; i<marks.size(); i++){
+                            //Date d = (Date) formatter.parse(gradeDate.get(i));
+                            //long milliseconds = d.getTime();
+                            DataPoint dp1 = new DataPoint(i, Double.parseDouble(marks.get(i)));
+                            dp[index] = dp1;
+                            index++;
+                        }
+                        LineGraphSeries series = new LineGraphSeries();
+                        series.resetData(dp);
+
+
+                        graphView.addSeries(series);
+
+
+                        series.setDrawDataPoints(true);
+                        series.setColor(Color.BLACK);
+                        series.setThickness(10);
+                        series.setDrawBackground(true);
+                        series.setBackgroundColor(Color.argb(60, 255, 102, 255));
+                        //graphView.getViewport().setXAxisBoundsManual(true);
+                        graphView.getViewport().setMinY(0);
+                        //graphView.getViewport().setMaxY(10);
+                        graphView.getViewport().setScrollable(true);
+                        graphView.getViewport().setScrollableY(true);
+                        graphView.getViewport().setScalable(true);
+                        graphView.getViewport().setScalableY(true);
+                        reff.removeEventListener(this);
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
                 });
 
 
-                delBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        reference.child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
-                                    Toast.makeText(ProgressActivity.this, "Course deleted successfully", Toast.LENGTH_SHORT).show();
-                                }else{
-                                    String error = task.getException().toString();
-                                    Toast.makeText(ProgressActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
 
-                        dialog.dismiss();
-                    }
-                });
-
-                 */
                 dialog.show();
 
 
@@ -334,7 +352,7 @@ public class ProgressActivity extends AppCompatActivity {
             @NonNull
             @Override
             public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.retrived_layout_course, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.retrived_layout_progress, parent, false);
                 return new MyViewHolder(view);
 
             }
@@ -353,17 +371,17 @@ public class ProgressActivity extends AppCompatActivity {
             mView = itemView;
         }
         public void setTask (String course){
-            TextView courseTV = mView.findViewById(R.id.courseTv);
+            TextView courseTV = mView.findViewById(R.id.progressTv);
             courseTV.setText (course);
         }
 
         public void setDescription (String description){
-            TextView descriptionTV = mView.findViewById(R.id.statusTvCourse);
+            TextView descriptionTV = mView.findViewById(R.id.statusTvProgress);
             descriptionTV.setText(description);
         }
 
         public void setDate(String date){
-            TextView dateTV = mView.findViewById(R.id.dateTvCourse);
+            TextView dateTV = mView.findViewById(R.id.dateTvProgress);
             dateTV.setText(date);
         }
     }

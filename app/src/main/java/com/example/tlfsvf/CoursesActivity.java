@@ -71,6 +71,7 @@ public class CoursesActivity extends AppCompatActivity {
     List<String> mMarks = new ArrayList<>();
     List<String> mMarksMax = new ArrayList<>();
     List<String> mMarksPercent = new ArrayList<>();
+    List<String> gradeDate = new ArrayList<>();
 
     private ProgressDialog loader;
 
@@ -220,6 +221,8 @@ public class CoursesActivity extends AppCompatActivity {
         final EditText location = myView.findViewById(R.id.courseLocation);
 
         final TextView endDate = myView.findViewById(R.id.courseDueDate);
+        //final TextView gradeDate = myView.findViewById(R.id.courseGradeDateUpdate);
+
 
         Calendar calendar =  Calendar.getInstance();
         final int year = calendar.get(Calendar.YEAR);
@@ -241,6 +244,8 @@ public class CoursesActivity extends AppCompatActivity {
             }
         });
 
+
+
         AppCompatButton save = myView.findViewById(R.id.saveButtonCourse);
         AppCompatButton cancel = myView.findViewById(R.id.cancelButtonCourse);
 
@@ -259,9 +264,11 @@ public class CoursesActivity extends AppCompatActivity {
             List<String> mMarks1 = new ArrayList<>();
             List<String> mMarks1Max = new ArrayList<>();
             List<String> mMarks1Percent = new ArrayList<>();
+            List<String> mGradeDate = new ArrayList<>();
             mMarks1.add(""+0.0);
             mMarks1Max.add(""+0.0);
             mMarks1Percent.add(""+0);
+            mGradeDate.add(""+0);
 
             if(TextUtils.isEmpty(mCourse)){
                 course.setError("Course name required");
@@ -297,7 +304,7 @@ public class CoursesActivity extends AppCompatActivity {
                 loader.setCanceledOnTouchOutside(false);
                 loader.show();
 
-                CourseModel modelCourse = new CourseModel(mCourse, mDescription, id, date, mMarks1, mCredits, mInstructor, mLocation, mMarks1Max, mMarks1Percent, mEndDate, mMinGrade);
+                CourseModel modelCourse = new CourseModel(mCourse, mDescription, id, date, mMarks1, mCredits, mInstructor, mLocation, mMarks1Max, mMarks1Percent, mEndDate, mMinGrade, mGradeDate);
                 reference.child(id).setValue(modelCourse).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -337,7 +344,8 @@ public class CoursesActivity extends AppCompatActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String getCurrentDateTime = sdf.format(c.getTime());
 
-                final ValueEventListener eventListener = new ValueEventListener() {
+
+                reff.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -376,6 +384,7 @@ public class CoursesActivity extends AppCompatActivity {
                         }
 
                         holder.setStatus(text);
+                        reff.removeEventListener(this);
 
                     }
 
@@ -383,9 +392,9 @@ public class CoursesActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                };
+                });
 
-                reff.addValueEventListener(eventListener);
+                //reff.addValueEventListener(eventListener);
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -401,7 +410,8 @@ public class CoursesActivity extends AppCompatActivity {
                         mMarks = cmodel.getMarks();
                         mMarksMax = cmodel.getMarksMax();
                         mMarksPercent = cmodel.getmMarksPercent();
-                        reff.removeEventListener(eventListener);
+                        gradeDate = cmodel.getGradeDate();
+                        //reff.removeEventListener(eventListener);
 
                         updateCourse();
                     }
@@ -428,6 +438,7 @@ public class CoursesActivity extends AppCompatActivity {
                 EditText mMarkMax = view.findViewById(R.id.mEditTextGradeMax);
                 EditText mMarkPercent = view.findViewById(R.id.mEditTextPercentageCourse);
                 TextView mEndDate = view.findViewById(R.id.courseDueDateUpdate);
+                TextView mGradeDate = view.findViewById(R.id.courseGradeDateUpdate);
 
                 mCourse.setText(course);
                 mCourse.setSelection(course.length());
@@ -469,6 +480,21 @@ public class CoursesActivity extends AppCompatActivity {
                     }
                 });
 
+                mGradeDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickerDialog datePickerDialog = new DatePickerDialog(CoursesActivity.this, new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                month = month+1;
+                                String endDateStr = day + "/"+month+"/"+year;
+                                mGradeDate.setText(endDateStr);
+                            }
+                        }, year, month, day);
+                        datePickerDialog.show();
+                    }
+                });
+
 
                 //mEndDate.setText(endDate);
 
@@ -487,9 +513,10 @@ public class CoursesActivity extends AppCompatActivity {
                         location = mLocation.getText().toString().trim();
                         endDate = mEndDate.getText().toString().trim();
 
+
                         String date = DateFormat.getDateInstance().format(new Date());
 
-                        CourseModel cmodel = new CourseModel(course, description, key, date, mMarks, credits, instructor, location, mMarksMax, mMarksPercent, endDate, minGrade);
+                        CourseModel cmodel = new CourseModel(course, description, key, date, mMarks, credits, instructor, location, mMarksMax, mMarksPercent, endDate, minGrade, gradeDate);
 
 
                         reference.child(key).setValue(cmodel).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -510,11 +537,12 @@ public class CoursesActivity extends AppCompatActivity {
                 addBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String markText, markTextMax, percentText;
+                        String markText, markTextMax, percentText, gradeDateText;
 
                         markText = mMark.getText().toString().trim();
                         markTextMax = mMarkMax.getText().toString().trim();
                         percentText= mMarkPercent.getText().toString().trim();
+                        gradeDateText= mGradeDate.getText().toString().trim();
 
                         if(TextUtils.isEmpty(markText)){
                             mMark.setError("Grade is required");
@@ -524,15 +552,27 @@ public class CoursesActivity extends AppCompatActivity {
                             mMarkMax.setError("Max grade is required");
                             return;
                         }
+                        if(TextUtils.isEmpty(gradeDateText)){
+                            mGradeDate.setError("Grade date is required");
+                            return;
+                        }
                         if(TextUtils.isEmpty(percentText)){
                             mMarkPercent.setError("Percent is required");
                             return;
                         }else{
+                            course = mCourse.getText().toString().trim();
+                            description = mDescription.getText().toString().trim();
+                            credits = mCredits.getText().toString().trim();
+                            minGrade = mMinGrade.getText().toString().trim();
+                            instructor = mInstructor.getText().toString().trim();
+                            location = mLocation.getText().toString().trim();
+                            endDate = mEndDate.getText().toString().trim();
                             mMarks.add(markText);
                             mMarksMax.add(markTextMax);
                             mMarksPercent.add(percentText);
+                            gradeDate.add(gradeDateText);
                             String date = DateFormat.getDateInstance().format(new Date());
-                            CourseModel cmodel = new CourseModel(course, description, key, date, mMarks, credits, instructor, location, mMarksMax, mMarksPercent, endDate, minGrade);
+                            CourseModel cmodel = new CourseModel(course, description, key, date, mMarks, credits, instructor, location, mMarksMax, mMarksPercent, endDate, minGrade, gradeDate);
 
 
                             reference.child(key).setValue(cmodel).addOnCompleteListener(new OnCompleteListener<Void>() {

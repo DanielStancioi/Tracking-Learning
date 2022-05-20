@@ -133,6 +133,7 @@ public class TasksActivity extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String getCurrentDateTime = sdf.format(c.getTime());
+
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

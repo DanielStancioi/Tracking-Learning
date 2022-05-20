@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content"
-    android:layout_width="wrap_content">
+    android:layout_width="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -17,14 +15,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Update"
+            android:text="Course details"
             android:layout_gravity="center"
-            android:textAlignment="center"
             android:background="@drawable/background_design"
-            android:textColor="@color/white"
             android:padding="10dp"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textAlignment="center"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,10 +44,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:text="Course"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="0dp"
@@ -56,8 +53,8 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_weight="4">
 
-                <EditText
-                    android:id="@+id/mEditTextCourse"
+                <TextView
+                    android:id="@+id/courseText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -65,12 +62,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:hint="Course name"
-                    android:textColor="@color/black"
                     android:textStyle="bold" />
-
-
             </RelativeLayout>
-
         </LinearLayout>
 
         <LinearLayout
@@ -93,10 +86,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:text="Description"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="0dp"
@@ -104,8 +95,8 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_weight="4">
 
-                <EditText
-                    android:id="@+id/mEditTextDescriptionCourse"
+                <TextView
+                    android:id="@+id/courseDescriptionText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -113,13 +104,10 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:hint="Course description"
-                    android:textColor="@color/black"
                     android:textStyle="bold" />
-
-
             </RelativeLayout>
-
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -141,10 +129,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:text="Credits"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="0dp"
@@ -152,8 +138,8 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_weight="4">
 
-                <EditText
-                    android:id="@+id/mEditTextCreditsCourse"
+                <TextView
+                    android:id="@+id/courseCreditsText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -161,12 +147,9 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:hint="Course credits"
-                    android:textColor="@color/black"
+                    android:inputType="number"
                     android:textStyle="bold" />
-
-
             </RelativeLayout>
-
         </LinearLayout>
 
         <LinearLayout
@@ -198,8 +181,8 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_weight="4">
 
-                <EditText
-                    android:id="@+id/courseMinGradeUpdate"
+                <TextView
+                    android:id="@+id/courseMinGradeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -232,10 +215,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:text="Instructor's name"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="0dp"
@@ -243,21 +224,17 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_weight="4">
 
-                <EditText
-                    android:id="@+id/mEditTextInstructorCourse"
+                <TextView
+                    android:id="@+id/courseInstructorText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Course instructor"
-                    android:textColor="@color/black"
+                    android:hint="Instructor's name"
                     android:textStyle="bold" />
-
-
             </RelativeLayout>
-
         </LinearLayout>
 
         <LinearLayout
@@ -282,8 +259,6 @@
                     android:text="Location"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
-
-
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="0dp"
@@ -291,23 +266,18 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_weight="4">
 
-                <EditText
-                    android:id="@+id/mEditTextLocationCourse"
+                <TextView
+                    android:id="@+id/courseLocationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Course location"
-                    android:textColor="@color/black"
+                    android:hint="Ex: Room 103"
                     android:textStyle="bold" />
-
-
             </RelativeLayout>
-
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -341,7 +311,7 @@
                 android:layout_weight="4">
 
                 <TextView
-                    android:id="@+id/courseDueDateUpdate"
+                    android:id="@+id/courseDueDateText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -349,6 +319,73 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
 
+                    android:hint="End date for the course"
+
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Course progress so far"
+            android:layout_gravity="center"
+            android:background="@drawable/background_design"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textAlignment="center"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="3">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Your current grade"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <TextView
+                    android:id="@+id/currentGradeText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:editable="false"
                     android:hint="End date for the course"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
@@ -368,10 +405,158 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 tools:ignore="Suspicious0dp"
+                android:layout_weight="3">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Max grade you can obtained so far"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <TextView
+                    android:id="@+id/currentMaxGradeText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:editable="false"
+                    android:hint="End date for the course"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="3">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Course status"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <TextView
+                    android:id="@+id/courseStatText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:editable="false"
+                    android:hint="End date for the course"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:ignore="Suspicious0dp"
+            android:layout_weight="3">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Your progress over time"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textAlignment="center"/>
+
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+            android:layout_width="0dp"
+            tools:ignore="Suspicious0dp"
+            android:layout_height="wrap_content">
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/graphViewProgress"
+                android:layout_width="match_parent"
+                android:layout_height="450dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                tools:ignore="MissingClass" />
+
+
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                tools:ignore="Suspicious0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="2">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/deleteBtnCourse"
+                    android:id="@+id/cancelButtonCourseProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -379,274 +564,13 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/background_design"
-                    android:text="Delete"
+                    android:text="Cancel"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
-                    android:textSize="17sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="2">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/UpdateBtnCourse"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/background_design"
-                    android:text="Update"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-            </RelativeLayout>
-
-
-        </LinearLayout>
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="Add new grade"
-            android:layout_gravity="center"
-            android:textAlignment="center"
-            android:background="@drawable/background_design"
-            android:textColor="@color/white"
-            android:padding="10dp"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="2">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="New grade"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="4">
-
-                <EditText
-                    android:id="@+id/mEditTextGrade"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:hint="Your grade"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:inputType="numberDecimal"/>
-
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="2">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Out of"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="4">
-
-                <EditText
-                    android:id="@+id/mEditTextGradeMax"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:hint="Max grade"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:inputType="numberDecimal"/>
-
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="2">
-
-                <EditText
-                    android:id="@+id/mEditTextPercentageCourse"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:inputType="number"/>
-
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="6
-">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="% from final grade"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
             </RelativeLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="2">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Grade date"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="4">
-
-                <TextView
-                    android:id="@+id/courseGradeDateUpdate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-
-                    android:hint="Date when you received the grade"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="2">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/AddBtnCourse"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/background_design"
-                    android:text="Add grade"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-            </RelativeLayout>
-
-
-        </LinearLayout>
-
-
 
     </LinearLayout>
 

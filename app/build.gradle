@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.tlfsvf"
-        minSdkVersion 25
+        minSdkVersion 26
         multiDexEnabled true
         targetSdkVersion 31
         versionCode 1
@@ -54,4 +54,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.firebaseui:firebase-ui-database:6.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.jjoe64:graphview:4.2.2'
 }

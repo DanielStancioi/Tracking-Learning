@@ -24,11 +24,12 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_home.xml" value="0.152" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_login.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_main.xml" value="0.15670289855072464" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_progress.xml" value="0.17300724637681159" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_progress.xml" value="0.16" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_register.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_tasks.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/content_drawer.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/content_layout.xml" value="0.17300724637681159" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/course_progress.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/course_stat.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/fragment_gallery.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/fragment_home.xml" value="0.17300724637681159" />
@@ -38,6 +39,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/nav_header_drawer.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/retrived_layout.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/retrived_layout_course.xml" value="0.17300724637681159" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/retrived_layout_progress.xml" value="0.17980072463768115" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/tasks_progress.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/update_data.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/update_data_course.xml" value="0.15670289855072464" />

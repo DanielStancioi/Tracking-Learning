@@ -7,12 +7,13 @@ public class CourseModel {
     private String course, description, id, date, location, instructor, credits, endDate, minGrade;
     private List<String> marks ;
     private List<String> marksMax ;
-    List<String> mMarksPercent;
+    private List<String> mMarksPercent;
+    private List<String> gradeDate;
     public CourseModel(){
 
     }
 
-    public CourseModel(String course, String description, String id, String date, List<String> marks, String credits, String instructor, String location, List<String> marksMax, List<String> mMarksPercent, String endDate, String minGrade) {
+    public CourseModel(String course, String description, String id, String date, List<String> marks, String credits, String instructor, String location, List<String> marksMax, List<String> mMarksPercent, String endDate, String minGrade, List<String> gradeDate) {
         this.course = course;
         this.description = description;
         this.id = id;
@@ -25,6 +26,7 @@ public class CourseModel {
         this.mMarksPercent = mMarksPercent;
         this.endDate = endDate;
         this.minGrade =minGrade;
+        this.gradeDate = gradeDate;
     }
 
     public String getCourse() {
@@ -108,5 +110,9 @@ public class CourseModel {
 
     public String getMinGrade() {
         return minGrade;
+    }
+
+    public List<String> getGradeDate() {
+        return gradeDate;
     }
 }
