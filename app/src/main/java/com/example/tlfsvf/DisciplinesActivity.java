@@ -1,5 +1,4 @@
-
-/*package com.example.tlfsvf;
+package com.example.tlfsvf;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -50,7 +49,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class CoursesActivity extends AppCompatActivity {
+public class DisciplinesActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private RecyclerView recyclerView;
@@ -61,18 +60,37 @@ public class CoursesActivity extends AppCompatActivity {
     private FirebaseUser mUser;
     private String onlineUserID;
 
+    private String discipline;
+    private String descriptionDiscipline;
+    private String credits;
+
     private String key="";
     private String course;
-    private String description;
-    private String location;
-    private String instructor;
-    private String credits;
-    private String minGrade;
-    private String endDate;
-    List<String> mMarks = new ArrayList<>();
-    List<String> mMarksMax = new ArrayList<>();
-    List<String> mMarksPercent = new ArrayList<>();
-    List<String> gradeDate = new ArrayList<>();
+    private String descriptionCourse;
+    private String locationCourse;
+    private String instructorCourse;
+
+    private String minGradeCourse;
+    private String endDateCourse;
+    List<String> mMarksCourse = new ArrayList<>();
+    List<String> mMarksMaxCourse = new ArrayList<>();
+    List<String> mMarksPercentCourse = new ArrayList<>();
+    List<String> gradeDateCourse = new ArrayList<>();
+    CourseModel courseModel = new CourseModel();
+
+    private String lab;
+    private String descriptionLab;
+    private String locationLab;
+    private String instructorLab;
+
+    private String minGradeLab;
+    private String endDateLab;
+    List<String> mMarksLab = new ArrayList<>();
+    List<String> mMarksMaxLab = new ArrayList<>();
+    List<String> mMarksPercentLab = new ArrayList<>();
+    List<String> gradeDateLab = new ArrayList<>();
+    LabModel labModel = new LabModel();
+
 
     private ProgressDialog loader;
 
@@ -81,14 +99,14 @@ public class CoursesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_courses);
+        setContentView(R.layout.activity_disciplines);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        toolbar = findViewById(R.id.coursesToolbar);
+        toolbar = findViewById(R.id.disciplinesToolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("My courses");
+        getSupportActionBar().setTitle("My disciplines");
 
-        recyclerView = findViewById(R.id.recyclerViewCourses);
+        recyclerView = findViewById(R.id.recyclerViewDisciplines);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -99,24 +117,26 @@ public class CoursesActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         onlineUserID = mUser.getUid();
-        reference = FirebaseDatabase.getInstance().getReference().child("courses").child(onlineUserID);
+        reference = FirebaseDatabase.getInstance().getReference().child("disciplines").child(onlineUserID);
 
 
-        floatingActionButton = findViewById(R.id.fabCourses);
-        floatingActionButtonProgress = findViewById(R.id.coursesProgress);
+        floatingActionButton = findViewById(R.id.fabDisciplines);
+
+
+        //floatingActionButtonProgress = findViewById(R.id.disciplinesProgress);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addCourse();
+                addDiscipline();
             }
         });
 
-        floatingActionButtonProgress.setOnClickListener(new View.OnClickListener() {
+        /*floatingActionButtonProgress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showProgress();
             }
-        });
+        });*/
 
 
     }
@@ -193,118 +213,286 @@ public class CoursesActivity extends AppCompatActivity {
         cancel.setOnClickListener((v)->{dialog.dismiss();});
     }
 
-    private void addCourse() {
+    private void addDiscipline() {
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        View myView = inflater.inflate(R.layout.input_file_courses, null);
+        View myView = inflater.inflate(R.layout.input_file_discipline, null);
         myDialog.setView(myView);
 
         AlertDialog dialog = myDialog.create();
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         dialog.show();
 
-        final EditText course = myView.findViewById(R.id.course);
-        final EditText description = myView.findViewById(R.id.courseDescription);
-        final EditText credits = myView.findViewById(R.id.courseCredits);
-        final EditText minGrade = myView.findViewById(R.id.courseMinGrade);
-        final EditText instructor = myView.findViewById(R.id.courseInstructor);
-        final EditText location = myView.findViewById(R.id.courseLocation);
+        //discipline
+        final EditText discipline = myView.findViewById(R.id.discipline);
+        final EditText descriptionDiscipline = myView.findViewById(R.id.disciplineDescription);
+        final EditText credits = myView.findViewById(R.id.disciplineCredits);
+        AppCompatButton save = myView.findViewById(R.id.saveButtonDiscipline);
+        AppCompatButton cancel = myView.findViewById(R.id.cancelButtonDiscipline);
+        AppCompatButton courseBtn = myView.findViewById(R.id.courseButtonDiscipline);
+        AppCompatButton labBtn = myView.findViewById(R.id.labButtonDiscipline);
 
-        final TextView endDate = myView.findViewById(R.id.courseDueDate);
-        //final TextView gradeDate = myView.findViewById(R.id.courseGradeDateUpdate);
+        courseBtn.setOnClickListener((v)->{
+            AlertDialog.Builder myDialogCourse = new AlertDialog.Builder(this);
+            LayoutInflater inflaterCourse = LayoutInflater.from(this);
+
+            View myViewCourse = inflaterCourse.inflate(R.layout.input_file_courses, null);
+            myDialogCourse.setView(myViewCourse);
+
+            AlertDialog dialogCourse = myDialogCourse.create();
+            dialogCourse.setCancelable(true);
+            dialogCourse.show();
+
+            final EditText course = myViewCourse.findViewById(R.id.course);
+            final EditText descriptionCourse = myViewCourse.findViewById(R.id.courseDescription);
+
+            final EditText minGradeCourse = myViewCourse.findViewById(R.id.courseMinGrade);
+            final EditText instructorCourse = myViewCourse.findViewById(R.id.courseInstructor);
+            final EditText locationCourse = myViewCourse.findViewById(R.id.courseLocation);
+
+            final TextView endDateCourse = myViewCourse.findViewById(R.id.courseDueDate);
 
 
-        Calendar calendar =  Calendar.getInstance();
-        final int year = calendar.get(Calendar.YEAR);
-        final int month = calendar.get(Calendar.MONTH);
-        final int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        endDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(CoursesActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        month = month+1;
-                        String endDateStr = day + "/"+month+"/"+year;
-                        endDate.setText(endDateStr);
-                    }
-                }, year, month, day);
-                datePickerDialog.show();
-            }
+            Calendar calendar =  Calendar.getInstance();
+            final int year = calendar.get(Calendar.YEAR);
+            final int month = calendar.get(Calendar.MONTH);
+            final int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            endDateCourse.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                            month = month+1;
+                            String endDateStr = day + "/"+month+"/"+year;
+                            endDateCourse.setText(endDateStr);
+                        }
+                    }, year, month, day);
+                    datePickerDialog.show();
+                }
+            });
+
+            AppCompatButton saveCourse = myViewCourse.findViewById(R.id.saveButtonCourse);
+            AppCompatButton cancelCourse = myViewCourse.findViewById(R.id.cancelButtonCourse);
+
+
+
+            cancelCourse.setOnClickListener((v1)->{dialogCourse.dismiss();});
+
+            saveCourse.setOnClickListener((v1)->{
+                String mCourse = course.getText().toString();
+                String mDescription = descriptionCourse.getText().toString().trim();
+                String mLocation = locationCourse.getText().toString().trim();
+                String mInstructor = instructorCourse.getText().toString().trim();
+
+                String mMinGrade = minGradeCourse.getText().toString().trim();
+                String id = reference.push().getKey();
+                String date = DateFormat.getDateInstance().format(new Date());
+                String mEndDate = endDateCourse.getText().toString();
+                List<String> mMarks1 = new ArrayList<>();
+                List<String> mMarks1Max = new ArrayList<>();
+                List<String> mMarks1Percent = new ArrayList<>();
+                List<String> mGradeDate = new ArrayList<>();
+                mMarks1.add(""+0.0);
+                mMarks1Max.add(""+0.0);
+                mMarks1Percent.add(""+0);
+                mGradeDate.add(""+0);
+
+                if(TextUtils.isEmpty(mCourse)){
+                    course.setError("Course name required");
+                    return;
+                }
+                if(TextUtils.isEmpty(mDescription)){
+                    descriptionCourse.setError("Course description required");
+                    return;
+                }
+                if(TextUtils.isEmpty(mMinGrade)){
+                    minGradeCourse.setError("Minimum grade is required");
+                    return;
+                }
+                if(TextUtils.isEmpty(mInstructor)){
+                    instructorCourse.setError("Course instructor required");
+                    return;
+                }
+
+                if(TextUtils.isEmpty(mEndDate)){
+                    endDateCourse.setError("End date required");
+                    return;
+                }
+
+                if(TextUtils.isEmpty(mLocation)){
+                    locationCourse.setError("Course location required");
+                    return;
+                }else{
+                    loader.setMessage("Adding your new course");
+                    loader.setCanceledOnTouchOutside(false);
+                    loader.show();
+
+                    CourseModel modelCourse = new CourseModel(mCourse, mDescription, id, date, mMarks1, mInstructor, mLocation, mMarks1Max, mMarks1Percent, mEndDate, mMinGrade, mGradeDate);
+                    courseModel = modelCourse;
+                    loader.dismiss();
+                }
+                dialogCourse.dismiss();
+            });
+
+
+            //dialogCourse.dismiss();
+
+
+
         });
 
+        labBtn.setOnClickListener((v)->{
+            AlertDialog.Builder myDialogLab = new AlertDialog.Builder(this);
+            LayoutInflater inflaterLab = LayoutInflater.from(this);
+
+            View myViewLab = inflaterLab.inflate(R.layout.input_file_labs, null);
+            myDialogLab.setView(myViewLab);
+
+            AlertDialog dialogLab = myDialogLab.create();
+            dialogLab.setCancelable(true);
+            dialogLab.show();
+
+            final EditText lab = myViewLab.findViewById(R.id.lab);
+            final EditText descriptionLab = myViewLab.findViewById(R.id.LabDescription);
+
+            final EditText minGradeLab = myViewLab.findViewById(R.id.LabMinGrade);
+            final EditText instructorLab = myViewLab.findViewById(R.id.LabInstructor);
+            final EditText locationLab = myViewLab.findViewById(R.id.LabLocation);
+
+            final TextView endDateLab = myViewLab.findViewById(R.id.LabDueDate);
 
 
-        AppCompatButton save = myView.findViewById(R.id.saveButtonCourse);
-        AppCompatButton cancel = myView.findViewById(R.id.cancelButtonCourse);
+
+            Calendar calendar =  Calendar.getInstance();
+            final int year = calendar.get(Calendar.YEAR);
+            final int month = calendar.get(Calendar.MONTH);
+            final int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            endDateLab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                            month = month+1;
+                            String endDateStr = day + "/"+month+"/"+year;
+                            endDateLab.setText(endDateStr);
+                        }
+                    }, year, month, day);
+                    datePickerDialog.show();
+                }
+            });
+
+            AppCompatButton saveLab= myViewLab.findViewById(R.id.saveButtonLab);
+            AppCompatButton cancelLab = myViewLab.findViewById(R.id.cancelButtonLab);
+
+
+
+            cancelLab.setOnClickListener((v1)->{dialogLab.dismiss();});
+
+            saveLab.setOnClickListener((v1)->{
+                String mLab = lab.getText().toString();
+                String mDescription = descriptionLab.getText().toString().trim();
+                String mLocation = locationLab.getText().toString().trim();
+                String mInstructor = instructorLab.getText().toString().trim();
+
+                String mMinGrade = minGradeLab.getText().toString().trim();
+                String id = reference.push().getKey();
+                String date = DateFormat.getDateInstance().format(new Date());
+                String mEndDate = endDateLab.getText().toString();
+                List<String> mMarks1 = new ArrayList<>();
+                List<String> mMarks1Max = new ArrayList<>();
+                List<String> mMarks1Percent = new ArrayList<>();
+                List<String> mGradeDate = new ArrayList<>();
+                mMarks1.add(""+0.0);
+                mMarks1Max.add(""+0.0);
+                mMarks1Percent.add(""+0);
+                mGradeDate.add(""+0);
+
+                if(TextUtils.isEmpty(mLab)){
+                    lab.setError("Laboratory name required");
+                    return;
+                }
+                if(TextUtils.isEmpty(mDescription)){
+                    descriptionLab.setError("Laboratory description required");
+                    return;
+                }
+                if(TextUtils.isEmpty(mMinGrade)){
+                    minGradeLab.setError("Minimum grade is required");
+                    return;
+                }
+                if(TextUtils.isEmpty(mInstructor)){
+                    instructorLab.setError("Laboratory instructor required");
+                    return;
+                }
+
+                if(TextUtils.isEmpty(mEndDate)){
+                    endDateLab.setError("End date required");
+                    return;
+                }
+
+                if(TextUtils.isEmpty(mLocation)){
+                    locationLab.setError("Laboratory location required");
+                    return;
+                }else{
+                    loader.setMessage("Adding your new laboratory");
+                    loader.setCanceledOnTouchOutside(false);
+                    loader.show();
+
+                    LabModel modelLab = new LabModel(mLab, mDescription, id, date,mLocation, mInstructor,mEndDate,mMinGrade, mMarks1, mMarks1Max, mMarks1Percent, mGradeDate);
+                    labModel = modelLab;
+                    loader.dismiss();
+                }
+                dialogLab.dismiss();
+            });
+
+
+            //dialogCourse.dismiss();
+
+
+
+        });
 
         cancel.setOnClickListener((v)->{dialog.dismiss();});
 
         save.setOnClickListener((v)->{
-            String mCourse = course.getText().toString();
-            String mDescription = description.getText().toString().trim();
-            String mLocation = location.getText().toString().trim();
-            String mInstructor = instructor.getText().toString().trim();
+            String mDiscipline = discipline.getText().toString();
+            String mDescription = descriptionDiscipline.getText().toString().trim();
             String mCredits = credits.getText().toString().trim();
-            String mMinGrade = minGrade.getText().toString().trim();
             String id = reference.push().getKey();
             String date = DateFormat.getDateInstance().format(new Date());
-            String mEndDate = endDate.getText().toString();
-            List<String> mMarks1 = new ArrayList<>();
-            List<String> mMarks1Max = new ArrayList<>();
-            List<String> mMarks1Percent = new ArrayList<>();
-            List<String> mGradeDate = new ArrayList<>();
-            mMarks1.add(""+0.0);
-            mMarks1Max.add(""+0.0);
-            mMarks1Percent.add(""+0);
-            mGradeDate.add(""+0);
 
-            if(TextUtils.isEmpty(mCourse)){
-                course.setError("Course name required");
+
+            if(TextUtils.isEmpty(mDiscipline)){
+                discipline.setError("Discipline name required");
                 return;
             }
             if(TextUtils.isEmpty(mDescription)){
-                description.setError("Course description required");
+                descriptionDiscipline.setError("Discipline description required");
                 return;
             }
             if(TextUtils.isEmpty(mCredits)){
                 credits.setError("Course credits required");
                 return;
-            }
-            if(TextUtils.isEmpty(mMinGrade)){
-                minGrade.setError("Minimum grade is required");
-                return;
-            }
-            if(TextUtils.isEmpty(mInstructor)){
-                instructor.setError("Course instructor required");
-                return;
-            }
-
-            if(TextUtils.isEmpty(mEndDate)){
-                endDate.setError("End date required");
-                return;
-            }
-
-            if(TextUtils.isEmpty(mLocation)){
-                location.setError("Course location required");
-                return;
             }else{
-                loader.setMessage("Adding your new course");
+                loader.setMessage("Adding your new discipline");
                 loader.setCanceledOnTouchOutside(false);
                 loader.show();
 
-                CourseModel modelCourse = new CourseModel(mCourse, mDescription, id, date, mMarks1, mCredits, mInstructor, mLocation, mMarks1Max, mMarks1Percent, mEndDate, mMinGrade, mGradeDate);
-                reference.child(id).setValue(modelCourse).addOnCompleteListener(new OnCompleteListener<Void>() {
+                DisciplineModel disciplineModel = new DisciplineModel(mDiscipline, mDescription, id, date, mCredits, courseModel, labModel);
+                reference.child(id).setValue(disciplineModel).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(CoursesActivity.this, "The course was added successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DisciplinesActivity.this, "The discipline was added successfully", Toast.LENGTH_SHORT).show();
                             loader.dismiss();
                         }else{
                             String error = task.getException().toString();
-                            Toast.makeText(CoursesActivity.this, "Failed " + error, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DisciplinesActivity.this, "Failed " + error, Toast.LENGTH_SHORT).show();
                             loader.dismiss();
                         }
                     }
@@ -316,77 +504,27 @@ public class CoursesActivity extends AppCompatActivity {
 
 
 
+
+
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseRecyclerOptions<CourseModel> options = new FirebaseRecyclerOptions.Builder<CourseModel>().setQuery(reference, CourseModel.class).build();
-        FirebaseRecyclerAdapter<CourseModel, MyViewHolder> adapter = new FirebaseRecyclerAdapter<CourseModel, MyViewHolder>(options) {
+        FirebaseRecyclerOptions<DisciplineModel> options = new FirebaseRecyclerOptions.Builder<DisciplineModel>().setQuery(reference, DisciplineModel.class).build();
+        FirebaseRecyclerAdapter<DisciplineModel, MyViewHolder> adapter = new FirebaseRecyclerAdapter<DisciplineModel, MyViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position, @NonNull CourseModel cmodel) {
-                holder.setDate(cmodel.getEndDate());
-                holder.setTask(cmodel.getCourse());
-
-                key = getRef(position).getKey();
-
-                DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("courses").child(onlineUserID).child(key);
-                Calendar c = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                String getCurrentDateTime = sdf.format(c.getTime());
+            protected void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position, @NonNull DisciplineModel dmodel) {
+                holder.setDate(dmodel.getDate());
+                holder.setTask(dmodel.getName());
+                holder.setStatus(dmodel.getDescription());
 
 
-                reff.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                        String text;
-                        //boolean done = (boolean) snapshot.child("done").getValue();
-
-                        List<String> marks;
-                        List<String> marksPercent;
-
-                        marks = cmodel.getMarks();
-                        marksPercent = cmodel.getmMarksPercent();
 
 
-                        Double med = 0.0;
 
-                        for (int i=0; i<marks.size();i++){
-                            med = med + Double.parseDouble(marks.get(i))*(Double.parseDouble(marksPercent.get(i))/100.0);
-                        }
-
-
-                        Double minMark = Double.parseDouble(snapshot.child("minGrade").getValue().toString());
-
-
-                        if (getCurrentDateTime.compareTo(cmodel.getEndDate()) < 0) {
-                            text = "Your course is STILL IN PROGRESS ";
-                        } else {
-                            if (med < minMark)
-                            {
-                                text = "You FAILED the course";
-                            }
-                            else
-                            {
-                                text = "You PASSED the course";
-                            }
-
-                        }
-
-                        holder.setStatus(text);
-                        reff.removeEventListener(this);
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-                //reff.addValueEventListener(eventListener);
-
+                /*
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -406,11 +544,11 @@ public class CoursesActivity extends AppCompatActivity {
 
                         updateCourse();
                     }
-                });
+                });*/
 
 
             }
-
+/*
             private void updateCourse() {
                 AlertDialog.Builder mDialog = new AlertDialog.Builder(CoursesActivity.this);
                 LayoutInflater inflater =LayoutInflater.from(CoursesActivity.this);
@@ -610,12 +748,12 @@ public class CoursesActivity extends AppCompatActivity {
 
 
 
-            }
+            }*/
 
             @NonNull
             @Override
             public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.retrived_layout_course, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.retrived_layout_discipline, parent, false);
                 return new MyViewHolder(view);
 
             }
@@ -634,17 +772,17 @@ public class CoursesActivity extends AppCompatActivity {
             mView = itemView;
         }
         public void setTask (String course){
-            TextView courseTV = mView.findViewById(R.id.courseTv);
+            TextView courseTV = mView.findViewById(R.id.disciplineTv);
             courseTV.setText (course);
         }
 
         public void setStatus (String status){
-            TextView descriptionTV = mView.findViewById(R.id.statusTvCourse);
+            TextView descriptionTV = mView.findViewById(R.id.descriptionTvDiscipline);
             descriptionTV.setText(status);
         }
 
         public void setDate(String date){
-            TextView dateTV = mView.findViewById(R.id.dateTvCourse);
+            TextView dateTV = mView.findViewById(R.id.dateTvDiscipline);
             dateTV.setText(date);
         }
     }
@@ -669,5 +807,3 @@ public class CoursesActivity extends AppCompatActivity {
     }
 
 }
-
- */

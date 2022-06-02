@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@drawable/background_design">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/background_design"
+
     tools:context=".HomeActivity">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/homeToolbar"
@@ -36,23 +42,10 @@
         android:textColor="@color/white"
         android:background="@color/purple_500"/>
     <Button
-        android:id="@+id/homeCourseButton"
+        android:id="@+id/homeSchoolButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="My courses"
-        android:textAllCaps="false"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:textColor="@color/white"
-        android:background="@color/purple_500"/>
-
-    <Button
-        android:id="@+id/homeProgressButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="My Progress"
+        android:text="School"
         android:textAllCaps="false"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
@@ -66,3 +59,4 @@
 
 
 </LinearLayout>
+</ScrollView>

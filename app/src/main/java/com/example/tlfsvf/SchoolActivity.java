@@ -14,41 +14,40 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class HomeActivity extends AppCompatActivity{
+public class SchoolActivity extends AppCompatActivity{
     private Toolbar toolbar;
-    private Button taskBtn, schoolBtn;
+    private Button taskBtn, logoutBtn, courseBtn, progressBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_school);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        taskBtn = findViewById(R.id.homeTaskButton);
-        schoolBtn = findViewById(R.id.homeSchoolButton);
 
+        courseBtn = findViewById(R.id.schoolDisciplinesButton);
+        //logoutBtn = findViewById(R.id.homeLogoutButton);
+        progressBtn = findViewById(R.id.schoolProgressButton);
 
-
-        toolbar = findViewById(R.id.homeToolbar);
+        toolbar = findViewById(R.id.schoolToolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Home");
+        getSupportActionBar().setTitle("School");
 
-        taskBtn.setOnClickListener(new View.OnClickListener() {
+
+        courseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, TasksActivity.class);
+                Intent intent = new Intent(SchoolActivity.this, DisciplinesActivity.class);
                 startActivity(intent);
             }
         });
 
-        schoolBtn.setOnClickListener(new View.OnClickListener() {
+        progressBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, SchoolActivity.class);
+                Intent intent = new Intent(SchoolActivity.this, DisciplinesActivity.class);
                 startActivity(intent);
             }
         });
-
-
     }
 
 

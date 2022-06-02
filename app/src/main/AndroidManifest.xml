@@ -11,6 +11,12 @@
         android:theme="@style/Theme.TLFSvf"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".DisciplinesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SchoolActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProgressActivity"
             android:exported="false" />
         <activity

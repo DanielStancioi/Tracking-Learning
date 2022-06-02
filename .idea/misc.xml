@@ -20,12 +20,14 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1225" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/drawable/inputs.xml" value="0.196" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_courses.xml" value="0.17300724637681159" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_disciplines.xml" value="0.17527173913043478" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_drawer_base.xml" value="0.17300724637681159" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_home.xml" value="0.152" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_home.xml" value="0.176" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_login.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_main.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_progress.xml" value="0.16" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_register.xml" value="0.15670289855072464" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_school.xml" value="0.17527173913043478" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/activity_tasks.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/content_drawer.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/content_layout.xml" value="0.17300724637681159" />
@@ -35,14 +37,18 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/fragment_home.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/input_file.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/input_file_courses.xml" value="0.17300724637681159" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/input_file_discipline.xml" value="0.17527173913043478" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/input_file_labs.xml" value="0.17527173913043478" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/main_drawer_header.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/nav_header_drawer.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/retrived_layout.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/retrived_layout_course.xml" value="0.17300724637681159" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/retrived_layout_discipline.xml" value="0.17527173913043478" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/retrived_layout_progress.xml" value="0.17980072463768115" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/tasks_progress.xml" value="0.17300724637681159" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/update_data.xml" value="0.15670289855072464" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/update_data_course.xml" value="0.15670289855072464" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/update_data_discipline.xml" value="0.17527173913043478" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/layout/update_data_undone.xml" value="0.152" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/menu/activity_main_drawer.xml" value="0.25052083333333336" />
         <entry key="..\:/Users/User/AndroidStudioProjects/TLFSvf/app/src/main/res/menu/drawer.xml" value="0.25052083333333336" />

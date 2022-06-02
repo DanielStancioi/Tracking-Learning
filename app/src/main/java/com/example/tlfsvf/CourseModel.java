@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseModel {
-    private String course, description, id, date, location, instructor, credits, endDate, minGrade;
+    private String course, description, id, date, location, instructor, endDate, minGrade;
     private List<String> marks ;
     private List<String> marksMax ;
     private List<String> mMarksPercent;
@@ -13,7 +13,7 @@ public class CourseModel {
 
     }
 
-    public CourseModel(String course, String description, String id, String date, List<String> marks, String credits, String instructor, String location, List<String> marksMax, List<String> mMarksPercent, String endDate, String minGrade, List<String> gradeDate) {
+    public CourseModel(String course, String description, String id, String date, List<String> marks,  String instructor, String location, List<String> marksMax, List<String> mMarksPercent, String endDate, String minGrade, List<String> gradeDate) {
         this.course = course;
         this.description = description;
         this.id = id;
@@ -21,7 +21,7 @@ public class CourseModel {
         this.marks= marks;
         this.location= location;
         this.instructor= instructor;
-        this.credits= credits;
+
         this.marksMax = marksMax;
         this.mMarksPercent = mMarksPercent;
         this.endDate = endDate;
@@ -76,9 +76,7 @@ public class CourseModel {
         return instructor;
     }
 
-    public String getCredits() {
-        return credits;
-    }
+
 
     public void setLocation(String location) {
         this.location = location;
@@ -88,9 +86,7 @@ public class CourseModel {
         this.instructor = instructor;
     }
 
-    public void setCredits(String credits) {
-        this.credits = credits;
-    }
+
 
     public List<String> getMarksMax() {
         return marksMax;

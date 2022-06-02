@@ -1,3 +1,4 @@
+/*
 package com.example.tlfsvf;
 
 import android.annotation.SuppressLint;
@@ -43,6 +44,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -406,3 +408,5 @@ public class ProgressActivity extends AppCompatActivity {
     }
 
 }
+
+ */
