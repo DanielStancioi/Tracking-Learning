@@ -2,7 +2,6 @@ package com.example.tlfsvf;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,10 +42,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DisciplinesActivity extends AppCompatActivity {
 
@@ -233,6 +230,9 @@ public class DisciplinesActivity extends AppCompatActivity {
         AppCompatButton courseBtn = myView.findViewById(R.id.courseButtonDiscipline);
         AppCompatButton labBtn = myView.findViewById(R.id.labButtonDiscipline);
 
+        AtomicBoolean courseAdded = new AtomicBoolean(false);
+        AtomicBoolean labAdded = new AtomicBoolean(false);
+
         courseBtn.setOnClickListener((v)->{
             AlertDialog.Builder myDialogCourse = new AlertDialog.Builder(this);
             LayoutInflater inflaterCourse = LayoutInflater.from(this);
@@ -246,7 +246,7 @@ public class DisciplinesActivity extends AppCompatActivity {
 
             final EditText course = myViewCourse.findViewById(R.id.course);
             final EditText descriptionCourse = myViewCourse.findViewById(R.id.courseDescription);
-
+            final EditText percentCourse = myViewCourse.findViewById(R.id.coursePercentGrade);
             final EditText minGradeCourse = myViewCourse.findViewById(R.id.courseMinGrade);
             final EditText instructorCourse = myViewCourse.findViewById(R.id.courseInstructor);
             final EditText locationCourse = myViewCourse.findViewById(R.id.courseLocation);
@@ -287,7 +287,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                 String mDescription = descriptionCourse.getText().toString().trim();
                 String mLocation = locationCourse.getText().toString().trim();
                 String mInstructor = instructorCourse.getText().toString().trim();
-
+                String mPercent = percentCourse.getText().toString().trim();
                 String mMinGrade = minGradeCourse.getText().toString().trim();
                 String id = reference.push().getKey();
                 String date = DateFormat.getDateInstance().format(new Date());
@@ -313,6 +313,11 @@ public class DisciplinesActivity extends AppCompatActivity {
                     minGradeCourse.setError("Minimum grade is required");
                     return;
                 }
+                if(TextUtils.isEmpty(mPercent)){
+                    percentCourse.setError("Percent required");
+                    return;
+                }
+
                 if(TextUtils.isEmpty(mInstructor)){
                     instructorCourse.setError("Course instructor required");
                     return;
@@ -331,8 +336,9 @@ public class DisciplinesActivity extends AppCompatActivity {
                     loader.setCanceledOnTouchOutside(false);
                     loader.show();
 
-                    CourseModel modelCourse = new CourseModel(mCourse, mDescription, id, date, mMarks1, mInstructor, mLocation, mMarks1Max, mMarks1Percent, mEndDate, mMinGrade, mGradeDate);
+                    CourseModel modelCourse = new CourseModel(mCourse, mDescription, id, date, mMarks1, mInstructor, mLocation, mMarks1Max, mMarks1Percent, mEndDate, mMinGrade, mGradeDate, mPercent);
                     courseModel = modelCourse;
+                    courseAdded.set(true);
                     loader.dismiss();
                 }
                 dialogCourse.dismiss();
@@ -358,7 +364,7 @@ public class DisciplinesActivity extends AppCompatActivity {
 
             final EditText lab = myViewLab.findViewById(R.id.lab);
             final EditText descriptionLab = myViewLab.findViewById(R.id.LabDescription);
-
+            final EditText percentLab = myViewLab.findViewById(R.id.LabPercentGrade);
             final EditText minGradeLab = myViewLab.findViewById(R.id.LabMinGrade);
             final EditText instructorLab = myViewLab.findViewById(R.id.LabInstructor);
             final EditText locationLab = myViewLab.findViewById(R.id.LabLocation);
@@ -399,7 +405,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                 String mDescription = descriptionLab.getText().toString().trim();
                 String mLocation = locationLab.getText().toString().trim();
                 String mInstructor = instructorLab.getText().toString().trim();
-
+                String mPercent = percentLab.getText().toString().trim();
                 String mMinGrade = minGradeLab.getText().toString().trim();
                 String id = reference.push().getKey();
                 String date = DateFormat.getDateInstance().format(new Date());
@@ -443,8 +449,9 @@ public class DisciplinesActivity extends AppCompatActivity {
                     loader.setCanceledOnTouchOutside(false);
                     loader.show();
 
-                    LabModel modelLab = new LabModel(mLab, mDescription, id, date,mLocation, mInstructor,mEndDate,mMinGrade, mMarks1, mMarks1Max, mMarks1Percent, mGradeDate);
+                    LabModel modelLab = new LabModel(mLab, mDescription, id, date,mLocation, mInstructor,mEndDate,mMinGrade,mPercent, mMarks1, mMarks1Max, mMarks1Percent, mGradeDate);
                     labModel = modelLab;
+                    labAdded.set(true);
                     loader.dismiss();
                 }
                 dialogLab.dismiss();
@@ -475,8 +482,16 @@ public class DisciplinesActivity extends AppCompatActivity {
                 descriptionDiscipline.setError("Discipline description required");
                 return;
             }
+            if (!courseAdded.get()){
+                Toast.makeText(DisciplinesActivity.this, "You need to add course details ", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!labAdded.get()){
+                Toast.makeText(DisciplinesActivity.this, "You need to add laboratory details ", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if(TextUtils.isEmpty(mCredits)){
-                credits.setError("Course credits required");
+                credits.setError("Discipline credits required");
                 return;
             }else{
                 loader.setMessage("Adding your new discipline");
@@ -524,148 +539,448 @@ public class DisciplinesActivity extends AppCompatActivity {
 
 
 
-                /*
+
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         key = getRef(position).getKey();
-                        course = cmodel.getCourse();
-                        description = cmodel.getDescription();
-                        location = cmodel.getLocation();
-                        instructor = cmodel.getInstructor();
-                        credits = cmodel.getCredits();
-                        minGrade = cmodel.getMinGrade();
-                        endDate = cmodel.getEndDate();
-                        mMarks = cmodel.getMarks();
-                        mMarksMax = cmodel.getMarksMax();
-                        mMarksPercent = cmodel.getmMarksPercent();
-                        gradeDate = cmodel.getGradeDate();
+                        discipline = dmodel.getName();
+                        descriptionDiscipline = dmodel.getDescription();
+                        credits = dmodel.getCredits();
+                        courseModel = dmodel.getCmodel();
+                        labModel = dmodel.getLabModel();
                         //reff.removeEventListener(eventListener);
 
                         updateCourse();
                     }
-                });*/
+                });
 
 
             }
-/*
+
             private void updateCourse() {
-                AlertDialog.Builder mDialog = new AlertDialog.Builder(CoursesActivity.this);
-                LayoutInflater inflater =LayoutInflater.from(CoursesActivity.this);
-                View view = inflater.inflate(R.layout.update_data_course, null);
+                AlertDialog.Builder mDialog = new AlertDialog.Builder(DisciplinesActivity.this);
+                LayoutInflater inflater =LayoutInflater.from(DisciplinesActivity.this);
+                View view = inflater.inflate(R.layout.update_data_discipline, null);
                 mDialog.setView(view);
 
                 AlertDialog dialog = mDialog.create();
+                dialog.setCancelable(true);
+                dialog.show();
 
-                EditText mCourse = view.findViewById(R.id.mEditTextCourse);
-                EditText mDescription = view.findViewById(R.id.mEditTextDescriptionCourse);
-                EditText mCredits = view.findViewById(R.id.mEditTextCreditsCourse);
-                EditText mMinGrade = view.findViewById(R.id.courseMinGradeUpdate);
-                EditText mInstructor = view.findViewById(R.id.mEditTextInstructorCourse);
-                EditText mLocation = view.findViewById(R.id.mEditTextLocationCourse);
-                EditText mMark = view.findViewById(R.id.mEditTextGrade);
-                EditText mMarkMax = view.findViewById(R.id.mEditTextGradeMax);
-                EditText mMarkPercent = view.findViewById(R.id.mEditTextPercentageCourse);
-                TextView mEndDate = view.findViewById(R.id.courseDueDateUpdate);
-                TextView mGradeDate = view.findViewById(R.id.courseGradeDateUpdate);
+                EditText mDiscipline = view.findViewById(R.id.discipline);
+                EditText mDescription = view.findViewById(R.id.disciplineDescription);
+                EditText mCredits = view.findViewById(R.id.disciplineCredits);
+                AppCompatButton delBtn = view.findViewById(R.id.delButtonDiscipline);
+                AppCompatButton closeBtn = view.findViewById(R.id.cancelButtonDiscipline);
+                AppCompatButton updateBtn = view.findViewById(R.id.updateButtonDiscipline);
+                AppCompatButton courseBtn = view.findViewById(R.id.courseButtonDiscipline);
+                AppCompatButton labBtn = view.findViewById(R.id.labButtonDiscipline);
 
-                mCourse.setText(course);
-                mCourse.setSelection(course.length());
+                mDiscipline.setText(discipline);
+                mDiscipline.setSelection(discipline.length());
 
-                mDescription.setText(description);
-                mDescription.setSelection(description.length());
+                mDescription.setText(descriptionDiscipline);
+                mDescription.setSelection(descriptionDiscipline.length());
 
                 mCredits.setText(credits);
                 mCredits.setSelection(credits.length());
 
-                mMinGrade.setText(minGrade);
-                mMinGrade.setSelection(minGrade.length());
-
-                mInstructor.setText(instructor);
-                mInstructor.setSelection(instructor.length());
-
-                mLocation.setText(location);
-                mLocation.setSelection(location.length());
-
-                mEndDate.setText(endDate);
-
-                Calendar calendar =  Calendar.getInstance();
-                final int year = calendar.get(Calendar.YEAR);
-                final int month = calendar.get(Calendar.MONTH);
-                final int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-                mEndDate.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        DatePickerDialog datePickerDialog = new DatePickerDialog(CoursesActivity.this, new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                month = month+1;
-                                String dueDateStr = day + "/"+month+"/"+year;
-                                mEndDate.setText(dueDateStr);
-                            }
-                        }, year, month, day);
-                        datePickerDialog.show();
-                    }
-                });
-
-                mGradeDate.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        DatePickerDialog datePickerDialog = new DatePickerDialog(CoursesActivity.this, new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                month = month+1;
-                                String endDateStr = day + "/"+month+"/"+year;
-                                mGradeDate.setText(endDateStr);
-                            }
-                        }, year, month, day);
-                        datePickerDialog.show();
-                    }
-                });
 
 
-                //mEndDate.setText(endDate);
+                courseBtn.setOnClickListener((v)->{
+                    AlertDialog.Builder myDialogCourse = new AlertDialog.Builder(DisciplinesActivity.this);
+                    LayoutInflater inflaterCourse = LayoutInflater.from(DisciplinesActivity.this);
 
-                AppCompatButton delBtn = view.findViewById(R.id.deleteBtnCourse);
-                AppCompatButton updateBtn = view.findViewById(R.id.UpdateBtnCourse);
-                AppCompatButton addBtn = view.findViewById(R.id.AddBtnCourse);
+                    View myViewCourse = inflaterCourse.inflate(R.layout.update_data_course, null);
+                    myDialogCourse.setView(myViewCourse);
 
-                updateBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        course = mCourse.getText().toString().trim();
-                        description = mDescription.getText().toString().trim();
-                        credits = mCredits.getText().toString().trim();
-                        minGrade = mMinGrade.getText().toString().trim();
-                        instructor = mInstructor.getText().toString().trim();
-                        location = mLocation.getText().toString().trim();
-                        endDate = mEndDate.getText().toString().trim();
+                    AlertDialog dialogCourse = myDialogCourse.create();
+                    dialogCourse.setCancelable(true);
+                    dialogCourse.show();
+
+                    mMarksCourse = courseModel.getMarks();
+                    mMarksMaxCourse = courseModel.getMarksMax();
+                    mMarksPercentCourse = courseModel.getmMarksPercent();
+                    gradeDateCourse = courseModel.getGradeDate();
+
+                    final EditText course = myViewCourse.findViewById(R.id.mEditTextCourse);
+                    final EditText descriptionCourse = myViewCourse.findViewById(R.id.mEditTextDescriptionCourse);
+                    final EditText percentCourse = myViewCourse.findViewById(R.id.mEditTextPercentCourse);
+                    final EditText minGradeCourse = myViewCourse.findViewById(R.id.courseMinGradeUpdate);
+                    final EditText instructorCourse = myViewCourse.findViewById(R.id.mEditTextInstructorCourse);
+                    final EditText locationCourse = myViewCourse.findViewById(R.id.mEditTextLocationCourse);
+                    EditText mMark = myViewCourse.findViewById(R.id.mEditTextGrade);
+                    EditText mMarkMax = myViewCourse.findViewById(R.id.mEditTextGradeMax);
+                    EditText mMarkPercent = myViewCourse.findViewById(R.id.mEditTextPercentageGrade);
+                    TextView mGradeDate = myViewCourse.findViewById(R.id.courseGradeDateUpdate);
+
+                    final TextView endDateCourse = myViewCourse.findViewById(R.id.courseDueDateUpdate);
+
+                    course.setText(courseModel.getCourse());
+                    course.setSelection(courseModel.getCourse().length());
+
+                    descriptionCourse.setText(courseModel.getDescription());
+                    descriptionCourse.setSelection(courseModel.getDescription().length());
+
+                    percentCourse.setText(courseModel.getPercent());
+                    percentCourse.setSelection(courseModel.getPercent().length());
 
 
+                    minGradeCourse.setText(courseModel.getMinGrade());
+                    minGradeCourse.setSelection(courseModel.getMinGrade().length());
+
+                    instructorCourse.setText(courseModel.getInstructor());
+                    instructorCourse.setSelection(courseModel.getInstructor().length());
+
+                    locationCourse.setText(courseModel.getLocation());
+                    locationCourse.setSelection(courseModel.getLocation().length());
+
+                    endDateCourse.setText(courseModel.getEndDate());
+
+                    Calendar calendar =  Calendar.getInstance();
+                    final int year = calendar.get(Calendar.YEAR);
+                    final int month = calendar.get(Calendar.MONTH);
+                    final int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                    endDateCourse.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
+                                @Override
+                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                    month = month+1;
+                                    String dueDateStr = day + "/"+month+"/"+year;
+                                    endDateCourse.setText(dueDateStr);
+                                }
+                            }, year, month, day);
+                            datePickerDialog.show();
+                        }
+                    });
+
+                    mGradeDate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
+                                @Override
+                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                    month = month+1;
+                                    String endDateStr = day + "/"+month+"/"+year;
+                                    mGradeDate.setText(endDateStr);
+                                }
+                            }, year, month, day);
+                            datePickerDialog.show();
+                        }
+                    });
+
+                    AppCompatButton updateCourse = myViewCourse.findViewById(R.id.UpdateBtnCourse);
+                    //AppCompatButton deleteCourse = myViewCourse.findViewById(R.id.deleteBtnCourse);
+                    AppCompatButton addGrade = myViewCourse.findViewById(R.id.AddBtnCourse);
+
+
+
+
+
+                    updateCourse.setOnClickListener((v1)->{
+                        String mCourse = course.getText().toString();
+                        String mDescriptionCourse = descriptionCourse.getText().toString().trim();
+                        String mLocation = locationCourse.getText().toString().trim();
+                        String mInstructor = instructorCourse.getText().toString().trim();
+                        String mPercent = percentCourse.getText().toString().trim();
+                        String mMinGrade = minGradeCourse.getText().toString().trim();
+                        String id = reference.push().getKey();
                         String date = DateFormat.getDateInstance().format(new Date());
+                        String mEndDate = endDateCourse.getText().toString();
 
-                        CourseModel cmodel = new CourseModel(course, description, key, date, mMarks, credits, instructor, location, mMarksMax, mMarksPercent, endDate, minGrade, gradeDate);
+
+                        if(TextUtils.isEmpty(mCourse)){
+                            course.setError("Course name required");
+                            return;
+                        }
+                        if(TextUtils.isEmpty(mDescriptionCourse)){
+                            descriptionCourse.setError("Course description required");
+                            return;
+                        }
+                        if(TextUtils.isEmpty(mMinGrade)){
+                            minGradeCourse.setError("Minimum grade is required");
+                            return;
+                        }
+                        if(TextUtils.isEmpty(mPercent)){
+                            percentCourse.setError("Percent required");
+                            return;
+                        }
+
+                        if(TextUtils.isEmpty(mInstructor)){
+                            instructorCourse.setError("Course instructor required");
+                            return;
+                        }
+
+                        if(TextUtils.isEmpty(mEndDate)){
+                            endDateCourse.setError("End date required");
+                            return;
+                        }
+
+                        if(TextUtils.isEmpty(mLocation)){
+                            locationCourse.setError("Course location required");
+                            return;
+                        }else{
+                            loader.setMessage("Adding your new course");
+                            loader.setCanceledOnTouchOutside(false);
+                            loader.show();
+
+                            CourseModel modelCourse = new CourseModel(mCourse, mDescriptionCourse, id, date, mMarksCourse, mInstructor, mLocation, mMarksMaxCourse, mMarksPercentCourse, mEndDate, mMinGrade, gradeDateCourse, mPercent);
+                            courseModel = modelCourse;
+
+                            loader.dismiss();
+                        }
+                        dialogCourse.dismiss();
+                    });
+
+                    addGrade.setOnClickListener((v1)->{
+                            String markText, markTextMax, percentText, gradeDateText;
+
+                            markText = mMark.getText().toString().trim();
+                            markTextMax = mMarkMax.getText().toString().trim();
+                            percentText= mMarkPercent.getText().toString().trim();
+                            gradeDateText= mGradeDate.getText().toString().trim();
+
+                            if(TextUtils.isEmpty(markText)){
+                                mMark.setError("Grade is required");
+                                return;
+                            }
+                            if(TextUtils.isEmpty(markTextMax)){
+                                mMarkMax.setError("Max grade is required");
+                                return;
+                            }
+                            if(TextUtils.isEmpty(gradeDateText)){
+                                mGradeDate.setError("Grade date is required");
+                                return;
+                            }
+                            if(TextUtils.isEmpty(percentText)){
+                                mMarkPercent.setError("Percent is required");
+                                return;
+                            }else {
+                                String mCourse = course.getText().toString();
+                                String mDescriptionCourse = descriptionCourse.getText().toString().trim();
+                                String mLocation = locationCourse.getText().toString().trim();
+                                String mInstructor = instructorCourse.getText().toString().trim();
+                                String mPercent = percentCourse.getText().toString().trim();
+                                String mMinGrade = minGradeCourse.getText().toString().trim();
+                                String id = reference.push().getKey();
+
+                                String mEndDate = endDateCourse.getText().toString();
 
 
-                        reference.child(key).setValue(cmodel).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(CoursesActivity.this, "Course updated successfully", Toast.LENGTH_SHORT).show();
-                                }else {
-                                    String error = task.getException().toString();
-                                    Toast.makeText(CoursesActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                                if (TextUtils.isEmpty(mCourse)) {
+                                    course.setError("Course name required");
+                                    return;
+                                }
+                                if (TextUtils.isEmpty(mDescriptionCourse)) {
+                                    descriptionCourse.setError("Course description required");
+                                    return;
+                                }
+                                if (TextUtils.isEmpty(mMinGrade)) {
+                                    minGradeCourse.setError("Minimum grade is required");
+                                    return;
+                                }
+                                if (TextUtils.isEmpty(mPercent)) {
+                                    percentCourse.setError("Percent required");
+                                    return;
+                                }
+
+                                if (TextUtils.isEmpty(mInstructor)) {
+                                    instructorCourse.setError("Course instructor required");
+                                    return;
+                                }
+
+                                if (TextUtils.isEmpty(mEndDate)) {
+                                    endDateCourse.setError("End date required");
+                                    return;
+                                }
+
+                                if (TextUtils.isEmpty(mLocation)) {
+                                    locationCourse.setError("Course location required");
+                                    return;
+                                } else {
+                                    loader.setMessage("Adding your new course");
+                                    loader.setCanceledOnTouchOutside(false);
+                                    loader.show();
+                                    mMarksCourse.add(markText);
+                                    mMarksMaxCourse.add(markTextMax);
+                                    mMarksPercentCourse.add(percentText);
+                                    gradeDateCourse.add(gradeDateText);
+                                    String date = DateFormat.getDateInstance()
+                                            .format(new Date());
+                                    CourseModel modelCourse = new CourseModel(mCourse, mDescriptionCourse, id, date, mMarksCourse, mInstructor, mLocation, mMarksMaxCourse, mMarksPercentCourse, mEndDate, mMinGrade, gradeDateCourse, mPercent);
+                                    courseModel = modelCourse;
+                                    loader.dismiss();
+                                    dialogCourse.dismiss();
                                 }
                             }
-                        });
-                        dialog.dismiss();
-                    }
+                    });
+
+
+
+
+
                 });
 
-                addBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+
+                labBtn.setOnClickListener((v)->{
+                    AlertDialog.Builder myDialogLab = new AlertDialog.Builder(DisciplinesActivity.this);
+                    LayoutInflater inflaterLab = LayoutInflater.from(DisciplinesActivity.this);
+
+                    View myViewLab = inflaterLab.inflate(R.layout.update_data_lab, null);
+                    myDialogLab.setView(myViewLab);
+
+                    AlertDialog dialogLab = myDialogLab.create();
+                    dialogLab.setCancelable(true);
+                    dialogLab.show();
+
+                    mMarksCourse = courseModel.getMarks();
+                    mMarksMaxCourse = courseModel.getMarksMax();
+                    mMarksPercentCourse = courseModel.getmMarksPercent();
+                    gradeDateCourse = courseModel.getGradeDate();
+                    mMarksLab = labModel.getMarks();
+                    mMarksMaxLab = labModel.getMarksMax();
+                    mMarksPercentLab = labModel.getmMarksPercent();
+                    gradeDateLab = labModel.getGradeDate();
+
+
+                    final EditText lab = myViewLab.findViewById(R.id.mEditTextLab);
+                    final EditText descriptionLab = myViewLab.findViewById(R.id.mEditTextDescriptionLab);
+                    final EditText minGradeLab = myViewLab.findViewById(R.id.labMinGradeUpdate);
+                    final EditText percentLab = myViewLab.findViewById(R.id.mEditTextPercentLab);
+
+                    final EditText instructorLab = myViewLab.findViewById(R.id.mEditTextInstructorLab);
+                    final EditText locationLab = myViewLab.findViewById(R.id.mEditTextLocationLab);
+                    EditText mMark = myViewLab.findViewById(R.id.mEditTextGrade);
+                    EditText mMarkMax = myViewLab.findViewById(R.id.mEditTextGradeMax);
+                    EditText mMarkPercent = myViewLab.findViewById(R.id.mEditTextPercentageGrade);
+                    TextView mGradeDate = myViewLab.findViewById(R.id.labGradeDateUpdate);
+
+                    final TextView endDateLab = myViewLab.findViewById(R.id.labDueDateUpdate);
+
+                    lab.setText(labModel.getLab());
+                    lab.setSelection(labModel.getLab().length());
+
+                    descriptionLab.setText(labModel.getDescription());
+                    descriptionLab.setSelection(labModel.getDescription().length());
+
+                    percentLab.setText(labModel.getPercent());
+                    percentLab.setSelection(labModel.getPercent().length());
+
+
+                    minGradeLab.setText(labModel.getMinGrade());
+                    minGradeLab.setSelection(labModel.getMinGrade().length());
+
+                    instructorLab.setText(labModel.getInstructor());
+                    instructorLab.setSelection(labModel.getInstructor().length());
+
+                    locationLab.setText(labModel.getLocation());
+                    locationLab.setSelection(labModel.getLocation().length());
+
+                    endDateLab.setText(labModel.getEndDate());
+
+                    Calendar calendar =  Calendar.getInstance();
+                    final int year = calendar.get(Calendar.YEAR);
+                    final int month = calendar.get(Calendar.MONTH);
+                    final int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                    endDateLab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
+                                @Override
+                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                    month = month+1;
+                                    String dueDateStr = day + "/"+month+"/"+year;
+                                    endDateLab.setText(dueDateStr);
+                                }
+                            }, year, month, day);
+                            datePickerDialog.show();
+                        }
+                    });
+
+                    mGradeDate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
+                                @Override
+                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                    month = month+1;
+                                    String endDateStr = day + "/"+month+"/"+year;
+                                    mGradeDate.setText(endDateStr);
+                                }
+                            }, year, month, day);
+                            datePickerDialog.show();
+                        }
+                    });
+
+                    AppCompatButton updateCourse = myViewLab.findViewById(R.id.UpdateBtnLab);
+                    //AppCompatButton deleteCourse = myViewCourse.findViewById(R.id.deleteBtnCourse);
+                    AppCompatButton addGrade = myViewLab.findViewById(R.id.AddBtnLab);
+
+
+
+
+
+                    updateCourse.setOnClickListener((v1)->{
+                        String mLab = lab.getText().toString();
+                        String mDescriptionLab = descriptionLab.getText().toString().trim();
+                        String mLocation = locationLab.getText().toString().trim();
+                        String mInstructor = instructorLab.getText().toString().trim();
+                        String mPercent = percentLab.getText().toString().trim();
+                        String mMinGrade = minGradeLab.getText().toString().trim();
+                        String id = reference.push().getKey();
+                        String date = DateFormat.getDateInstance().format(new Date());
+                        String mEndDate = endDateLab.getText().toString();
+
+
+                        if(TextUtils.isEmpty(mLab)){
+                            lab.setError("Laboratory name required");
+                            return;
+                        }
+                        if(TextUtils.isEmpty(mDescriptionLab)){
+                            descriptionLab.setError("Laboratory description required");
+                            return;
+                        }
+                        if(TextUtils.isEmpty(mMinGrade)){
+                            minGradeLab.setError("Minimum grade is required");
+                            return;
+                        }
+                        if(TextUtils.isEmpty(mPercent)){
+                            percentLab.setError("Percent required");
+                            return;
+                        }
+
+                        if(TextUtils.isEmpty(mInstructor)){
+                            instructorLab.setError("Laboratory instructor required");
+                            return;
+                        }
+
+                        if(TextUtils.isEmpty(mEndDate)){
+                            endDateLab.setError("End date required");
+                            return;
+                        }
+
+                        if(TextUtils.isEmpty(mLocation)){
+                            locationLab.setError("Laboratory location required");
+                            return;
+                        }else{
+                            loader.setMessage("Adding your new Laboratory");
+                            loader.setCanceledOnTouchOutside(false);
+                            loader.show();
+
+                            LabModel modelLab = new LabModel(mLab, mDescriptionLab, id, date,mLocation, mInstructor,mEndDate,mMinGrade,mPercent, mMarksLab, mMarksMaxLab, mMarksPercentLab, gradeDateLab);
+                            labModel = modelLab;
+
+                            loader.dismiss();
+                        }
+                        dialogLab.dismiss();
+                    });
+
+                    addGrade.setOnClickListener((v1)->{
                         String markText, markTextMax, percentText, gradeDateText;
 
                         markText = mMark.getText().toString().trim();
@@ -688,42 +1003,113 @@ public class DisciplinesActivity extends AppCompatActivity {
                         if(TextUtils.isEmpty(percentText)){
                             mMarkPercent.setError("Percent is required");
                             return;
-                        }else{
-                            course = mCourse.getText().toString().trim();
-                            description = mDescription.getText().toString().trim();
-                            credits = mCredits.getText().toString().trim();
-                            minGrade = mMinGrade.getText().toString().trim();
-                            instructor = mInstructor.getText().toString().trim();
-                            location = mLocation.getText().toString().trim();
-                            endDate = mEndDate.getText().toString().trim();
-                            mMarks.add(markText);
-                            mMarksMax.add(markTextMax);
-                            mMarksPercent.add(percentText);
-                            gradeDate.add(gradeDateText);
-                            String date = DateFormat.getDateInstance()
-                                    .format(new Date());
-                            CourseModel cmodel = new CourseModel(course, description, key, date, mMarks, credits, instructor, location, mMarksMax, mMarksPercent, endDate, minGrade, gradeDate);
+                        }else {
+                            String mlab = lab.getText().toString();
+                            String mDescriptionLab = descriptionLab.getText().toString().trim();
+                            String mLocation = locationLab.getText().toString().trim();
+                            String mInstructor = instructorLab.getText().toString().trim();
+                            String mPercent = percentLab.getText().toString().trim();
+                            String mMinGrade = minGradeLab.getText().toString().trim();
+                            String id = reference.push().getKey();
+
+                            String mEndDate = endDateLab.getText().toString();
 
 
-                            reference.child(key).setValue(cmodel).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-                                        Toast.makeText(CoursesActivity.this, "Grade added successfully", Toast.LENGTH_SHORT).show();
-                                    }else {
-                                        String error = task.getException().toString();
-                                        Toast.makeText(CoursesActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                            dialog.dismiss();
+                            if (TextUtils.isEmpty(mlab)) {
+                                lab.setError("Laboratory name required");
+                                return;
+                            }
+                            if (TextUtils.isEmpty(mDescriptionLab)) {
+                                descriptionLab.setError("Laboratory description required");
+                                return;
+                            }
+                            if (TextUtils.isEmpty(mMinGrade)) {
+                                minGradeLab.setError("Minimum grade is required");
+                                return;
+                            }
+                            if (TextUtils.isEmpty(mPercent)) {
+                                percentLab.setError("Percent required");
+                                return;
+                            }
+
+                            if (TextUtils.isEmpty(mInstructor)) {
+                                instructorLab.setError("Laboratory instructor required");
+                                return;
+                            }
+
+                            if (TextUtils.isEmpty(mEndDate)) {
+                                endDateLab.setError("End date required");
+                                return;
+                            }
+
+                            if (TextUtils.isEmpty(mLocation)) {
+                                locationLab.setError("Laboratory location required");
+                                return;
+                            } else {
+                                loader.setMessage("Adding your new laboratory");
+                                loader.setCanceledOnTouchOutside(false);
+                                loader.show();
+                                mMarksLab.add(markText);
+                                mMarksMaxLab.add(markTextMax);
+                                mMarksPercentLab.add(percentText);
+                                gradeDateLab.add(gradeDateText);
+                                String date = DateFormat.getDateInstance()
+                                        .format(new Date());
+                                LabModel modelLab = new LabModel(mlab, mDescriptionLab, id, date,mLocation, mInstructor,mEndDate,mMinGrade,mPercent, mMarksLab, mMarksMaxLab, mMarksPercentLab, gradeDateLab);
+                                labModel = modelLab;
+                                loader.dismiss();
+                                dialogLab.dismiss();
+                            }
                         }
+                    });
 
 
 
-                    }
+
+
                 });
 
+                updateBtn.setOnClickListener((v)->{
+                    String mDisciplineTxt = mDiscipline.getText().toString();
+                    String mDescriptionTxt = mDescription.getText().toString().trim();
+                    String mCreditsTxt = mCredits.getText().toString().trim();
+                    String id = reference.push().getKey();
+                    String date = DateFormat.getDateInstance().format(new Date());
+
+
+                    if(TextUtils.isEmpty(mDisciplineTxt)){
+                        mDiscipline.setError("Discipline name required");
+                        return;
+                    }
+                    if(TextUtils.isEmpty(mDescriptionTxt)){
+                        mDescription.setError("Discipline description required");
+                        return;
+                    }
+                    if(TextUtils.isEmpty(mCreditsTxt)){
+                        mCredits.setError("Discipline credits required");
+                        return;
+                    }else{
+                        loader.setMessage("Adding your new discipline");
+                        loader.setCanceledOnTouchOutside(false);
+                        loader.show();
+
+                        DisciplineModel disciplineModel = new DisciplineModel(mDisciplineTxt, mDescriptionTxt, id, date, mCreditsTxt, courseModel, labModel);
+                        reference.child(key).setValue(disciplineModel).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(DisciplinesActivity.this, "The discipline was updated successfully", Toast.LENGTH_SHORT).show();
+                                    loader.dismiss();
+                                }else{
+                                    String error = task.getException().toString();
+                                    Toast.makeText(DisciplinesActivity.this, "Failed " + error, Toast.LENGTH_SHORT).show();
+                                    loader.dismiss();
+                                }
+                            }
+                        });
+                    }
+                    dialog.dismiss();
+                });
 
                 delBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -732,10 +1118,10 @@ public class DisciplinesActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
-                                    Toast.makeText(CoursesActivity.this, "Course deleted successfully", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(DisciplinesActivity.this, "Discipline deleted successfully", Toast.LENGTH_SHORT).show();
                                 }else{
                                     String error = task.getException().toString();
-                                    Toast.makeText(CoursesActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(DisciplinesActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -743,12 +1129,15 @@ public class DisciplinesActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-                dialog.show();
+
+                closeBtn.setOnClickListener((v)->{dialog.dismiss();});
+        }
 
 
 
 
-            }*/
+
+
 
             @NonNull
             @Override

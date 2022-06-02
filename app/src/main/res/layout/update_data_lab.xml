@@ -44,7 +44,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="Course"
+                    android:text="Laboratory"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -57,14 +57,14 @@
                 android:layout_weight="4">
 
                 <EditText
-                    android:id="@+id/mEditTextCourse"
+                    android:id="@+id/mEditTextLab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Course name"
+                    android:hint="Laboratory name"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -105,14 +105,14 @@
                 android:layout_weight="4">
 
                 <EditText
-                    android:id="@+id/mEditTextDescriptionCourse"
+                    android:id="@+id/mEditTextDescriptionLab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Course description"
+                    android:hint="Laboratory description"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -153,7 +153,7 @@
                 android:layout_weight="4">
 
                 <EditText
-                    android:id="@+id/courseMinGradeUpdate"
+                    android:id="@+id/labMinGradeUpdate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -197,7 +197,7 @@
                 android:layout_weight="4">
 
                 <EditText
-                    android:id="@+id/mEditTextPercentCourse"
+                    android:id="@+id/mEditTextPercentLab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -244,7 +244,7 @@
                 android:layout_weight="4">
 
                 <EditText
-                    android:id="@+id/mEditTextInstructorCourse"
+                    android:id="@+id/mEditTextInstructorLab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -292,14 +292,14 @@
                 android:layout_weight="4">
 
                 <EditText
-                    android:id="@+id/mEditTextLocationCourse"
+                    android:id="@+id/mEditTextLocationLab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Course location"
+                    android:hint="Laboratory location"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -341,7 +341,7 @@
                 android:layout_weight="4">
 
                 <TextView
-                    android:id="@+id/courseDueDateUpdate"
+                    android:id="@+id/labDueDateUpdate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -349,7 +349,7 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
 
-                    android:hint="End date for the course"
+                    android:hint="End date for the laboratory"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -372,7 +372,7 @@
                 android:layout_weight="2">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/UpdateBtnCourse"
+                    android:id="@+id/UpdateBtnLab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -485,9 +485,9 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:hint="Max grade"
+                    android:inputType="numberDecimal"
                     android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:inputType="numberDecimal"/>
+                    android:textStyle="bold" />
 
 
             </RelativeLayout>
@@ -535,7 +535,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="% from course final grade"
+                    android:text="% from laboratory final grade"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -575,7 +575,7 @@
                 android:layout_weight="4">
 
                 <TextView
-                    android:id="@+id/courseGradeDateUpdate"
+                    android:id="@+id/labGradeDateUpdate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -606,7 +606,7 @@
                 android:layout_weight="2">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/AddBtnCourse"
+                    android:id="@+id/AddBtnLab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"

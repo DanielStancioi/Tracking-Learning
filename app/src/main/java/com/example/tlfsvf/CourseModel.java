@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseModel {
-    private String course, description, id, date, location, instructor, endDate, minGrade;
+    private String course, description, id, date, location, instructor, endDate, minGrade, percent;
     private List<String> marks ;
     private List<String> marksMax ;
     private List<String> mMarksPercent;
@@ -13,7 +13,7 @@ public class CourseModel {
 
     }
 
-    public CourseModel(String course, String description, String id, String date, List<String> marks,  String instructor, String location, List<String> marksMax, List<String> mMarksPercent, String endDate, String minGrade, List<String> gradeDate) {
+    public CourseModel(String course, String description, String id, String date, List<String> marks,  String instructor, String location, List<String> marksMax, List<String> mMarksPercent, String endDate, String minGrade, List<String> gradeDate, String percent) {
         this.course = course;
         this.description = description;
         this.id = id;
@@ -21,7 +21,7 @@ public class CourseModel {
         this.marks= marks;
         this.location= location;
         this.instructor= instructor;
-
+        this.percent = percent;
         this.marksMax = marksMax;
         this.mMarksPercent = mMarksPercent;
         this.endDate = endDate;
@@ -110,5 +110,13 @@ public class CourseModel {
 
     public List<String> getGradeDate() {
         return gradeDate;
+    }
+
+    public String getPercent() {
+        return percent;
+    }
+
+    public void setPercent(String percent) {
+        this.percent = percent;
     }
 }
