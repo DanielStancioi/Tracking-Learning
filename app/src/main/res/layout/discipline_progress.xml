@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Add a new course"
+            android:text="Discipline details"
             android:layout_gravity="center"
             android:background="@drawable/background_design"
             android:padding="10dp"
@@ -43,9 +43,9 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="Course"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"/>
+                    android:text="Discipline"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="0dp"
@@ -53,15 +53,16 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_weight="4">
 
-                <EditText
-                    android:id="@+id/course"
+                <TextView
+                    android:id="@+id/disciplineProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Course name"
+                    android:hint="Discipline name"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
@@ -95,20 +96,19 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_weight="4">
 
-                <EditText
-                    android:id="@+id/courseDescription"
+                <TextView
+                    android:id="@+id/disciplineDescriptionProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Course description"
+                    android:hint="Discipline description"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
-
-
 
 
         <LinearLayout
@@ -130,7 +130,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="Minimum grade"
+                    android:text="Credits"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -140,101 +140,17 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_weight="4">
 
-                <EditText
-                    android:id="@+id/courseMinGrade"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:hint="Minimum grade to pass"
-                    android:inputType="numberDecimal"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-        </LinearLayout>
-
-        <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="horizontal">
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            tools:ignore="Suspicious0dp"
-            android:layout_weight="2">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:text="Percentage"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            tools:ignore="Suspicious0dp"
-            android:layout_weight="4">
-
-            <EditText
-                android:id="@+id/coursePercentGrade"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:hint="Percentage frm final grade"
-                android:inputType="numberDecimal"
-                android:textStyle="bold" />
-        </RelativeLayout>
-    </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="2">
-
                 <TextView
+                    android:id="@+id/disciplineCreditsProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="Instructor's name"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"/>
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="4">
-
-                <EditText
-                    android:id="@+id/courseInstructor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:hint="Instructor's name"
+                    android:hint="Discipline credits"
+                    android:inputType="number"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
@@ -258,7 +174,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="Location"
+                    android:text="End date"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -268,15 +184,16 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_weight="4">
 
-                <EditText
-                    android:id="@+id/courseLocation"
+                <TextView
+                    android:id="@+id/disciplineDueDateProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Ex: Room 103"
+                    android:hint="Discipline end date"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
@@ -300,11 +217,9 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="Exam date"
+                    android:text="Status"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
-
-
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="0dp"
@@ -313,24 +228,18 @@
                 android:layout_weight="4">
 
                 <TextView
-                    android:id="@+id/courseExamDate"
+                    android:id="@+id/disciplineStatusProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:editable="false"
-                    android:hint="Exam date for the course"
+                    android:hint="Discipline status"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
-
-
             </RelativeLayout>
-
         </LinearLayout>
-
-
 
 
         <LinearLayout
@@ -342,17 +251,21 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2">
+
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/saveButtonCourse"
+                    android:id="@+id/courseButtonDisciplineProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/background_design"
-                    android:text="Save"
+                    android:text="Course"
+                    android:textAllCaps="false"
                     android:textColor="@color/white"
-                    android:layout_margin="10dp"
-                    android:textStyle="bold"
                     android:textSize="18sp"
-                    android:textAllCaps="false"/>
+                    android:textStyle="bold" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -360,17 +273,51 @@
                 tools:ignore="Suspicious0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2">
+
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/cancelButtonCourse"
+                    android:id="@+id/labButtonDisciplineProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/background_design"
+                    android:text="Laboratory"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                tools:ignore="Suspicious0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/cancelButtonDisciplineProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/background_design"
                     android:text="Cancel"
+                    android:textAllCaps="false"
                     android:textColor="@color/white"
-                    android:layout_margin="10dp"
-                    android:textStyle="bold"
                     android:textSize="18sp"
-                    android:textAllCaps="false"/>
+                    android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
 

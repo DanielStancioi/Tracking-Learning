@@ -109,48 +109,7 @@
         </LinearLayout>
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
 
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="2">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Credits"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"/>
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="4">
-
-                <TextView
-                    android:id="@+id/courseCreditsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:hint="Course credits"
-                    android:inputType="number"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -190,6 +149,49 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:hint="Minimum grade to pass"
+                    android:inputType="numberDecimal"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Percentage"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="4">
+
+                <TextView
+                    android:id="@+id/coursePercentText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:hint="% from final grade"
                     android:inputType="numberDecimal"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -298,7 +300,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="End date"
+                    android:text="Exam date"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -311,7 +313,7 @@
                 android:layout_weight="4">
 
                 <TextView
-                    android:id="@+id/courseDueDateText"
+                    android:id="@+id/courseExamDateText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -319,7 +321,7 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
 
-                    android:hint="End date for the course"
+                    android:hint="Exam date for the course"
 
                     android:textStyle="bold" />
 
@@ -444,54 +446,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="3">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Course status"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tools:ignore="Suspicious0dp"
-                android:layout_weight="2">
-
-                <TextView
-                    android:id="@+id/courseStatText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:editable="false"
-                    android:hint="End date for the course"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-
-            </RelativeLayout>
-
-        </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -531,7 +485,7 @@
             tools:ignore="Suspicious0dp"
             android:layout_height="wrap_content">
             <com.jjoe64.graphview.GraphView
-                android:id="@+id/graphViewProgress"
+                android:id="@+id/courseGraphViewProgress"
                 android:layout_width="match_parent"
                 android:layout_height="450dp"
                 android:layout_marginStart="8dp"

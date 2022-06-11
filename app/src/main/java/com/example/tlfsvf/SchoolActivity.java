@@ -44,7 +44,7 @@ public class SchoolActivity extends AppCompatActivity{
         progressBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SchoolActivity.this, DisciplinesActivity.class);
+                Intent intent = new Intent(SchoolActivity.this, ProgressActivity.class);
                 startActivity(intent);
             }
         });

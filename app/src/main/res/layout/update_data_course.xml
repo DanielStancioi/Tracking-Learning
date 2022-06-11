@@ -328,7 +328,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="End date"
+                    android:text="Exam date"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -341,7 +341,7 @@
                 android:layout_weight="4">
 
                 <TextView
-                    android:id="@+id/courseDueDateUpdate"
+                    android:id="@+id/courseExamDateUpdate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -349,7 +349,7 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
 
-                    android:hint="End date for the course"
+                    android:hint="Exam date for the course"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
 
@@ -357,6 +357,8 @@
             </RelativeLayout>
 
         </LinearLayout>
+
+
 
         <LinearLayout
             android:layout_width="match_parent"

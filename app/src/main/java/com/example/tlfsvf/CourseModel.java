@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseModel {
-    private String course, description, id, date, location, instructor, endDate, minGrade, percent;
+    private String course, description, id, date, location, instructor, minGrade, percent, examDate;
     private List<String> marks ;
     private List<String> marksMax ;
     private List<String> mMarksPercent;
@@ -13,7 +13,7 @@ public class CourseModel {
 
     }
 
-    public CourseModel(String course, String description, String id, String date, List<String> marks,  String instructor, String location, List<String> marksMax, List<String> mMarksPercent, String endDate, String minGrade, List<String> gradeDate, String percent) {
+    public CourseModel(String course, String description, String id, String date, List<String> marks,  String instructor, String location, List<String> marksMax, List<String> mMarksPercent, String minGrade, List<String> gradeDate, String percent, String examDate) {
         this.course = course;
         this.description = description;
         this.id = id;
@@ -24,9 +24,10 @@ public class CourseModel {
         this.percent = percent;
         this.marksMax = marksMax;
         this.mMarksPercent = mMarksPercent;
-        this.endDate = endDate;
+
         this.minGrade =minGrade;
         this.gradeDate = gradeDate;
+        this.examDate = examDate;
     }
 
     public String getCourse() {
@@ -86,7 +87,13 @@ public class CourseModel {
         this.instructor = instructor;
     }
 
+    public String getExamDate() {
+        return examDate;
+    }
 
+    public void setExamDate(String examDate) {
+        this.examDate = examDate;
+    }
 
     public List<String> getMarksMax() {
         return marksMax;
@@ -96,13 +103,7 @@ public class CourseModel {
         return mMarksPercent;
     }
 
-    public String getEndDate() {
-        return endDate;
-    }
 
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
 
     public String getMinGrade() {
         return minGrade;
@@ -118,5 +119,25 @@ public class CourseModel {
 
     public void setPercent(String percent) {
         this.percent = percent;
+    }
+
+    public void setMinGrade(String minGrade) {
+        this.minGrade = minGrade;
+    }
+
+    public void setMarks(List<String> marks) {
+        this.marks = marks;
+    }
+
+    public void setMarksMax(List<String> marksMax) {
+        this.marksMax = marksMax;
+    }
+
+    public void setmMarksPercent(List<String> mMarksPercent) {
+        this.mMarksPercent = mMarksPercent;
+    }
+
+    public void setGradeDate(List<String> gradeDate) {
+        this.gradeDate = gradeDate;
     }
 }

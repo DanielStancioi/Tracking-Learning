@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class TasksActivity extends AppCompatActivity {
 
@@ -130,27 +131,29 @@ public class TasksActivity extends AppCompatActivity {
         List<String> doneTasks = new ArrayList<>();
         List<String> undoneTasks = new ArrayList<>();
         List<String> lateTasks = new ArrayList<>();
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String getCurrentDateTime = sdf.format(c.getTime());
+
+
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot ss: snapshot.getChildren()){
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    Calendar c = Calendar.getInstance();
+                    String getCurrentDateTime = sdf.format(c.getTime());
                     boolean done = (boolean) ss.child("done").getValue();
                     String date = ss.child("dueDate").getValue().toString();
 
                     if (done) {
                         doneTasks.add(ss.child("task").getValue().toString());
                     } else {
-                        if (getCurrentDateTime.compareTo(date) < 0)
+                        if (isDateAfter(getCurrentDateTime, date))
                         {
-                            undoneTasks.add(ss.child("task").getValue().toString());
+                            lateTasks.add(ss.child("task").getValue().toString());
                         }
                         else
                         {
-                            lateTasks.add(ss.child("task").getValue().toString());
+                            undoneTasks.add(ss.child("task").getValue().toString());
                         }
 
                     }
@@ -171,6 +174,21 @@ public class TasksActivity extends AppCompatActivity {
 
         AppCompatButton cancel = myView.findViewById(R.id.cancelButtonTaskProgress);
         cancel.setOnClickListener((v)->{dialog.dismiss();});
+    }
+
+    private boolean isDateAfter (String startDate, String endDate) {
+
+            try {
+                String myFormatString = "dd/MM/yyyy"; // for example
+                SimpleDateFormat df = new SimpleDateFormat(myFormatString);
+                Date endingDate = df.parse(endDate);
+                Date startingDate = df.parse(startDate);
+
+                return endingDate.equals(startingDate) || !endingDate.after(startingDate);
+            } catch (Exception e) {
+                return false;
+            }
+
     }
 
     private void addTask() {
@@ -274,25 +292,29 @@ public class TasksActivity extends AppCompatActivity {
                 key = getRef(position).getKey();
 
                 DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("tasks").child(onlineUserID).child(key);
-                Calendar c = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                String getCurrentDateTime = sdf.format(c.getTime());
+
+
 
                 final ValueEventListener eventListener = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        Calendar c = Calendar.getInstance();
+                        String getCurrentDateTime = sdf.format(c.getTime());
                         String text;
                         boolean done = (boolean) snapshot.child("done").getValue();
+                        String date = snapshot.child("dueDate").getValue().toString();
+
                         if (done) {
                             text = "Your task is DONE ";
                         } else {
-                            if (getCurrentDateTime.compareTo(model.getDueDate()) < 0)
+                            if (isDateAfter(getCurrentDateTime, date))
                             {
-                                text = "Your task is STILL IN PROGRESS ";
+                                text = "Your task is LATE ";
                             }
                             else
                             {
-                                text = "Your task is LATE";
+                                text = "Your task is STILL IN PROGRESS";
                             }
 
                         }
@@ -343,6 +365,7 @@ public class TasksActivity extends AppCompatActivity {
 
 
             }
+
             private void updateTaskSetDone() {
                 AlertDialog.Builder mDialog = new AlertDialog.Builder(TasksActivity.this);
                 LayoutInflater inflater =LayoutInflater.from(TasksActivity.this);

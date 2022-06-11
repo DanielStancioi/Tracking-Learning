@@ -1,4 +1,4 @@
-/*
+
 package com.example.tlfsvf;
 
 import android.annotation.SuppressLint;
@@ -66,12 +66,9 @@ public class ProgressActivity extends AppCompatActivity {
     private String onlineUserID;
 
     private String key="";
-    private String course;
+    private String discipline;
     private String description;
-    private String location;
-    private String instructor;
     private String credits;
-    private String minGrade;
     private String endDate;
     List<String> mMarks = new ArrayList<>();
     List<String> mMarksMax = new ArrayList<>();
@@ -104,7 +101,7 @@ public class ProgressActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         onlineUserID = mUser.getUid();
-        reference = FirebaseDatabase.getInstance().getReference().child("courses").child(onlineUserID);
+        reference = FirebaseDatabase.getInstance().getReference().child("disciplines").child(onlineUserID);
 
 
 
@@ -114,56 +111,67 @@ public class ProgressActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseRecyclerOptions<CourseModel> options = new FirebaseRecyclerOptions.Builder<CourseModel>().setQuery(reference, CourseModel.class).build();
-        FirebaseRecyclerAdapter<CourseModel, MyViewHolder> adapter = new FirebaseRecyclerAdapter<CourseModel, MyViewHolder>(options) {
+        FirebaseRecyclerOptions<DisciplineModel> options = new FirebaseRecyclerOptions.Builder<DisciplineModel>().setQuery(reference, DisciplineModel.class).build();
+        FirebaseRecyclerAdapter<DisciplineModel, MyViewHolder> adapter = new FirebaseRecyclerAdapter<DisciplineModel, MyViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position, @NonNull CourseModel cmodel) {
+            protected void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position, @NonNull DisciplineModel dmodel) {
 
-                holder.setTask(cmodel.getCourse());
+                holder.setTask(dmodel.getName());
 
                 key = getRef(position).getKey();
 
-                DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("courses").child(onlineUserID).child(key);
-                Calendar c = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                String getCurrentDateTime = sdf.format(c.getTime());
+                DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("disciplines").child(onlineUserID).child(key);
+
 
 
 
                 reff.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                        Calendar c = Calendar.getInstance();
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        String getCurrentDateTime = sdf.format(c.getTime());
                         String text;
-                        //boolean done = (boolean) snapshot.child("done").getValue();
 
-                        List<String> marks;
-                        List<String> marksPercent;
+                        boolean cPass = false;
+                        boolean lPass = false;
+                        CourseModel cmodel = dmodel.getCmodel();
+                        LabModel lmodel = dmodel.getLabModel();
 
-                        marks = cmodel.getMarks();
-                        marksPercent = cmodel.getmMarksPercent();
+                        List<String> cMarks = cmodel.getMarks();
+                        List<String> lMarks = lmodel.getMarks();
+                        List<String> cMarksPercent = cmodel.getmMarksPercent();
+                        List<String> lMarksPercent = lmodel.getmMarksPercent();
 
+                        Double cMinMark, lMinMark;
+                        Double cMed = 0.0;
+                        Double lMed = 0.0;
 
-                        Double med = 0.0;
+                        cMinMark = Double.parseDouble(cmodel.getMinGrade().trim());
+                        lMinMark = Double.parseDouble(lmodel.getMinGrade().trim());
 
-                        for (int i=0; i<marks.size();i++){
-                            med = med + Double.parseDouble(marks.get(i))*(Double.parseDouble(marksPercent.get(i))/100.0);
+                        for(int i=1; i<cMarks.size();i++){
+                            cMed = cMed + Double.parseDouble(cMarks.get(i))*(Double.parseDouble(cMarksPercent.get(i))/100.0);
                         }
 
+                        for(int i=1; i<lMarks.size();i++){
+                            lMed = lMed + Double.parseDouble(lMarks.get(i))*(Double.parseDouble(lMarksPercent.get(i))/100.0);
+                        }
+                        if(cMed >= cMinMark){cPass = true;}
+                        if(lMed >= lMinMark){lPass = true;}
 
-                        Double minMark = Double.parseDouble(snapshot.child("minGrade").getValue().toString());
 
 
-                        if (getCurrentDateTime.compareTo(cmodel.getEndDate()) < 0) {
+                        if (!isDateAfter(getCurrentDateTime, dmodel.getEndDate())) {
                             text = "STILL IN PROGRESS ";
                         } else {
-                            if (med < minMark)
+                            if (cPass && lPass)
                             {
-                                text = "FAILED";
+                                text = "PASSED";
                             }
                             else
                             {
-                                text = "PASSED";
+                                text = "FAILED";
                             }
 
                         }
@@ -179,19 +187,17 @@ public class ProgressActivity extends AppCompatActivity {
 
                     }
                 });
-                holder.setDescription(cmodel.getDescription());
+                holder.setDescription(dmodel.getDescription());
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         key = getRef(position).getKey();
-                        course = cmodel.getCourse();
-                        description = cmodel.getDescription();
-                        location = cmodel.getLocation();
-                        instructor = cmodel.getInstructor();
-                        credits = cmodel.getCredits();
-                        minGrade = cmodel.getMinGrade();
-                        endDate = cmodel.getEndDate();
+                        discipline = dmodel.getName();
+                        description = dmodel.getDescription();
+                        credits = dmodel.getCredits();
+
+                        endDate = dmodel.getEndDate();
 
 
                         viewProgress();
@@ -207,132 +213,97 @@ public class ProgressActivity extends AppCompatActivity {
             private void viewProgress() {
                 AlertDialog.Builder mDialog = new AlertDialog.Builder(ProgressActivity.this);
                 LayoutInflater inflater =LayoutInflater.from(ProgressActivity.this);
-                View view = inflater.inflate(R.layout.course_progress, null);
+                View view = inflater.inflate(R.layout.discipline_progress, null);
                 mDialog.setView(view);
 
 
                 AlertDialog dialog = mDialog.create();
 
-                TextView mCourse = view.findViewById(R.id.courseText);
-                TextView mDescription = view.findViewById(R.id.courseDescriptionText);
-                TextView mCredits = view.findViewById(R.id.courseCreditsText);
-                TextView mMinGrade = view.findViewById(R.id.courseMinGradeText);
-                TextView mInstructor = view.findViewById(R.id.courseInstructorText);
-                TextView mLocation = view.findViewById(R.id.courseLocationText);
-                TextView mMed = view.findViewById(R.id.currentGradeText);
-                TextView mMedMax = view.findViewById(R.id.currentMaxGradeText);
-                TextView mStatus = view.findViewById(R.id.courseStatText);
+                TextView mDiscipline = view.findViewById(R.id.disciplineProgress);
+                TextView mDescription = view.findViewById(R.id.disciplineDescriptionProgress);
+                TextView mCredits = view.findViewById(R.id.disciplineCreditsProgress);
+                TextView mStatus = view.findViewById(R.id.disciplineStatusProgress);
+                TextView mEndDate = view.findViewById(R.id.disciplineDueDateProgress);
 
-
-                TextView mEndDate = view.findViewById(R.id.courseDueDateText);
-
-                mCourse.setText(course);
+                mDiscipline.setText(discipline);
 
                 mDescription.setText(description);
 
                 mCredits.setText(credits);
 
-                mMinGrade.setText(minGrade);
-
-                mInstructor.setText(instructor);
-
-                mLocation.setText(location);
                 mEndDate.setText(endDate);
 
-                androidx.appcompat.widget.AppCompatButton cancel = view.findViewById(R.id.cancelButtonCourseProgress);
+                androidx.appcompat.widget.AppCompatButton cancel = view.findViewById(R.id.cancelButtonDisciplineProgress);
+                androidx.appcompat.widget.AppCompatButton courseBtn = view.findViewById(R.id.courseButtonDisciplineProgress);
+                androidx.appcompat.widget.AppCompatButton labBtn = view.findViewById(R.id.labButtonDisciplineProgress);
+
                 cancel.setOnClickListener((v)->{dialog.dismiss();});
+                courseBtn.setOnClickListener((v)->{showProgressCourse();});
+                labBtn.setOnClickListener((v)->{showProgressLab();});
 
 
-                DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("courses").child(onlineUserID).child(key);
-                Calendar c = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                String getCurrentDateTime = sdf.format(c.getTime());
+
+                DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("disciplines").child(onlineUserID).child(key);
+
+
+
 
                 reff.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        CourseModel cModel = snapshot.getValue(CourseModel.class);
+                        DisciplineModel dmodel = snapshot.getValue(DisciplineModel.class);
+
+                        Calendar c = Calendar.getInstance();
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        String getCurrentDateTime = sdf.format(c.getTime());
                         String text;
-                        //boolean done = (boolean) snapshot.child("done").getValue();
 
-                        List<String> marks;
-                        List<String> marksMax;
-                        List<String> marksPercent;
-                        List<String> gradeDate;
+                        boolean cPass = false;
+                        boolean lPass = false;
+                        CourseModel cmodel = dmodel.getCmodel();
+                        LabModel lmodel = dmodel.getLabModel();
 
-                        marks = cModel.getMarks();
-                        marksMax = cModel.getMarksMax();
-                        marksPercent = cModel.getmMarksPercent();
-                        gradeDate = cModel.getGradeDate();
+                        List<String> cMarks = cmodel.getMarks();
+                        List<String> lMarks = lmodel.getMarks();
+                        List<String> cMarksPercent = cmodel.getmMarksPercent();
+                        List<String> lMarksPercent = lmodel.getmMarksPercent();
 
+                        Double cMinMark, lMinMark;
+                        Double cMed = 0.0;
+                        Double lMed = 0.0;
 
-                        Double med = 0.0;
-                        Double medMax = 0.0;
+                        cMinMark = Double.parseDouble(cmodel.getMinGrade().trim());
+                        lMinMark = Double.parseDouble(lmodel.getMinGrade().trim());
 
-                        for (int i=0; i<marks.size();i++){
-                            med = med + Double.parseDouble(marks.get(i))*(Double.parseDouble(marksPercent.get(i))/100.0);
-                            medMax = medMax + Double.parseDouble(marksMax.get(i))*(Double.parseDouble(marksPercent.get(i))/100.0);
+                        for(int i=1; i<cMarks.size();i++){
+                            cMed = cMed + Double.parseDouble(cMarks.get(i))*(Double.parseDouble(cMarksPercent.get(i))/100.0);
                         }
 
+                        for(int i=1; i<lMarks.size();i++){
+                            lMed = lMed + Double.parseDouble(lMarks.get(i))*(Double.parseDouble(lMarksPercent.get(i))/100.0);
+                        }
+                        if(cMed >= cMinMark){cPass = true;}
+                        if(lMed >= lMinMark){lPass = true;}
 
-                        Double minMark = Double.parseDouble(cModel.getMinGrade());
 
 
-                        if (getCurrentDateTime.compareTo(cModel.getEndDate()) < 0) {
+                        if (!isDateAfter(getCurrentDateTime, dmodel.getEndDate())) {
                             text = "STILL IN PROGRESS ";
                         } else {
-                            if (med < minMark)
-                            {
-                                text = "FAILED";
-                            }
-                            else
+                            if (cPass && lPass)
                             {
                                 text = "PASSED";
                             }
+                            else
+                            {
+                                text = "FAILED";
+                            }
 
                         }
 
-                        mMed.setText(""+med);
-                        mMedMax.setText(""+medMax);
+
                         mStatus.setText(text);
-
-                        //graphView = view.findViewById(R.id.graphViewProgress);
-
-                        graphView = view.findViewById(R.id.graphViewProgress);
-
-
-
-                        int index = 0;
-                        DataPoint[] dp = new  DataPoint[gradeDate.size()-1];
-
-                        for (int i = 1; i<marks.size(); i++){
-                            //Date d = (Date) formatter.parse(gradeDate.get(i));
-                            //long milliseconds = d.getTime();
-                            DataPoint dp1 = new DataPoint(i, Double.parseDouble(marks.get(i)));
-                            dp[index] = dp1;
-                            index++;
-                        }
-                        LineGraphSeries series = new LineGraphSeries();
-                        series.resetData(dp);
-
-
-                        graphView.addSeries(series);
-
-
-                        series.setDrawDataPoints(true);
-                        series.setColor(Color.BLACK);
-                        series.setThickness(10);
-                        series.setDrawBackground(true);
-                        series.setBackgroundColor(Color.argb(60, 255, 102, 255));
-                        //graphView.getViewport().setXAxisBoundsManual(true);
-                        graphView.getViewport().setMinY(0);
-                        //graphView.getViewport().setMaxY(10);
-                        graphView.getViewport().setScrollable(true);
-                        graphView.getViewport().setScrollableY(true);
-                        graphView.getViewport().setScalable(true);
-                        graphView.getViewport().setScalableY(true);
                         reff.removeEventListener(this);
-
 
                     }
 
@@ -362,6 +333,230 @@ public class ProgressActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
         adapter.startListening();
+    }
+
+    private void showProgressLab() {
+        AlertDialog.Builder myDialogLab = new AlertDialog.Builder(this);
+        LayoutInflater inflaterLab = LayoutInflater.from(this);
+
+        View myViewLab = inflaterLab.inflate(R.layout.lab_progress, null);
+        myDialogLab.setView(myViewLab);
+
+        AlertDialog dialogLab = myDialogLab.create();
+        dialogLab.setCancelable(true);
+        dialogLab.show();
+
+        final TextView lab = myViewLab.findViewById(R.id.labText);
+        final TextView descriptionLab = myViewLab.findViewById(R.id.labDescriptionText);
+        final TextView percentLab = myViewLab.findViewById(R.id.labPercentText);
+        final TextView minGradeLab = myViewLab.findViewById(R.id.labMinGradeText);
+        final TextView instructorLab = myViewLab.findViewById(R.id.labInstructorText);
+        final TextView locationLab = myViewLab.findViewById(R.id.labLocationText);
+
+
+        final TextView currentGradeLab = myViewLab.findViewById(R.id.labCurrentGradeText);
+        final TextView currentMaxGradeLab = myViewLab.findViewById(R.id.labCurrentMaxGradeText);
+        final GraphView graphView  = myViewLab.findViewById(R.id.labGraphViewProgress);
+
+        androidx.appcompat.widget.AppCompatButton cancel = myViewLab.findViewById(R.id.cancelButtonLabProgress);
+
+
+        cancel.setOnClickListener((v)->{dialogLab.dismiss();});
+        DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("disciplines").child(onlineUserID).child(key);
+
+        reff.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DisciplineModel dmodel = snapshot.getValue(DisciplineModel.class);
+                LabModel lmodel = dmodel.getLabModel();
+                lab.setText(lmodel.getLab());
+                descriptionLab.setText(lmodel.getDescription());
+                percentLab.setText(lmodel.getPercent());
+                minGradeLab.setText(lmodel.getMinGrade());
+                instructorLab.setText(lmodel.getInstructor());
+                locationLab.setText(lmodel.getLocation());
+
+
+                List<String> lMarks = lmodel.getMarks();
+                List<String> lMarksMax = lmodel.getMarksMax();
+                List<String> lMarksPercent = lmodel.getmMarksPercent();
+                List<String> cMarksDate = lmodel.getGradeDate();
+
+
+
+                double minMed = Double.parseDouble(lmodel.getMinGrade());
+
+                double lMed = 0.0;
+                for(int i = 1; i<lMarks.size();i++){
+                    lMed = lMed+ Double.parseDouble(lMarks.get(i))*(Double.parseDouble(lMarksPercent.get(i))/100.0);
+                }
+                double lMedMax = 0.0;
+                for(int i = 1; i<lMarksMax.size();i++){
+                    lMedMax = lMedMax+ Double.parseDouble(lMarksMax.get(i))*(Double.parseDouble(lMarksPercent.get(i))/100.0);
+                }
+                currentGradeLab.setText(lMed+"");
+                currentMaxGradeLab.setText(lMedMax+"");
+
+                int index = 0;
+                DataPoint[] dp = new  DataPoint[lMarks.size()-1];
+
+                for (int i = 1; i<lMarks.size(); i++){
+                    //Date d = (Date) formatter.parse(gradeDate.get(i));
+                    //long milliseconds = d.getTime();
+                    DataPoint dp1 = new DataPoint(i, Double.parseDouble(lMarks.get(i)));
+                    dp[index] = dp1;
+                    index++;
+                }
+                LineGraphSeries series = new LineGraphSeries();
+                series.resetData(dp);
+
+
+                graphView.addSeries(series);
+
+
+                series.setDrawDataPoints(true);
+                series.setColor(Color.BLACK);
+                series.setThickness(10);
+                series.setDrawBackground(true);
+                series.setBackgroundColor(Color.argb(60, 255, 102, 255));
+                //graphView.getViewport().setXAxisBoundsManual(true);
+                graphView.getViewport().setMinY(0);
+                //graphView.getViewport().setMaxY(10);
+                graphView.getViewport().setScrollable(true);
+                graphView.getViewport().setScrollableY(true);
+                graphView.getViewport().setScalable(true);
+                graphView.getViewport().setScalableY(true);
+                reff.removeEventListener(this);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private void showProgressCourse() {
+        AlertDialog.Builder myDialogCourse = new AlertDialog.Builder(this);
+        LayoutInflater inflaterCourse = LayoutInflater.from(this);
+
+        View myViewCourse = inflaterCourse.inflate(R.layout.course_progress, null);
+        myDialogCourse.setView(myViewCourse);
+
+        AlertDialog dialogCourse = myDialogCourse.create();
+        dialogCourse.setCancelable(true);
+        dialogCourse.show();
+
+        final TextView course = myViewCourse.findViewById(R.id.courseText);
+        final TextView descriptionCourse = myViewCourse.findViewById(R.id.courseDescriptionText);
+        final TextView percentCourse = myViewCourse.findViewById(R.id.coursePercentText);
+        final TextView minGradeCourse = myViewCourse.findViewById(R.id.courseMinGradeText);
+        final TextView instructorCourse = myViewCourse.findViewById(R.id.courseInstructorText);
+        final TextView locationCourse = myViewCourse.findViewById(R.id.courseLocationText);
+        final TextView examDateCourse = myViewCourse.findViewById(R.id.courseExamDateText);
+
+        final TextView currentGradeCourse = myViewCourse.findViewById(R.id.currentGradeText);
+        final TextView currentMaxGradeCourse = myViewCourse.findViewById(R.id.currentMaxGradeText);
+        final GraphView graphView  = myViewCourse.findViewById(R.id.courseGraphViewProgress);
+
+        androidx.appcompat.widget.AppCompatButton cancel = myViewCourse.findViewById(R.id.cancelButtonCourseProgress);
+
+
+        cancel.setOnClickListener((v)->{dialogCourse.dismiss();});
+        DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("disciplines").child(onlineUserID).child(key);
+
+        reff.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DisciplineModel dmodel = snapshot.getValue(DisciplineModel.class);
+                CourseModel cmodel = dmodel.getCmodel();
+                course.setText(cmodel.getCourse());
+                descriptionCourse.setText(cmodel.getDescription());
+                percentCourse.setText(cmodel.getPercent());
+                minGradeCourse.setText(cmodel.getMinGrade());
+                instructorCourse.setText(cmodel.getInstructor());
+                locationCourse.setText(cmodel.getLocation());
+                examDateCourse.setText(cmodel.getExamDate());
+
+                List<String> cMarks = cmodel.getMarks();
+                List<String> cMarksMax = cmodel.getMarksMax();
+                List<String> cMarksPercent = cmodel.getmMarksPercent();
+                List<String> cMarksDate = cmodel.getGradeDate();
+
+
+
+                double minMed = Double.parseDouble(cmodel.getMinGrade());
+
+                double cMed = 0.0;
+                for(int i = 1; i<cMarks.size();i++){
+                    cMed = cMed+ Double.parseDouble(cMarks.get(i))*(Double.parseDouble(cMarksPercent.get(i))/100.0);
+                }
+                double cMedMax = 0.0;
+                for(int i = 1; i<cMarksMax.size();i++){
+                    cMedMax = cMedMax+ Double.parseDouble(cMarksMax.get(i))*(Double.parseDouble(cMarksPercent.get(i))/100.0);
+                }
+                currentGradeCourse.setText(cMed+"");
+                currentMaxGradeCourse.setText(cMedMax+"");
+
+                int index = 0;
+                DataPoint[] dp = new  DataPoint[cMarks.size()-1];
+
+                for (int i = 1; i<cMarks.size(); i++){
+                    //Date d = (Date) formatter.parse(gradeDate.get(i));
+                    //long milliseconds = d.getTime();
+                    DataPoint dp1 = new DataPoint(i, Double.parseDouble(cMarks.get(i)));
+                    dp[index] = dp1;
+                    index++;
+                }
+                LineGraphSeries series = new LineGraphSeries();
+                series.resetData(dp);
+
+
+                graphView.addSeries(series);
+
+
+                series.setDrawDataPoints(true);
+                series.setColor(Color.BLACK);
+                series.setThickness(10);
+                series.setDrawBackground(true);
+                series.setBackgroundColor(Color.argb(60, 255, 102, 255));
+                //graphView.getViewport().setXAxisBoundsManual(true);
+                graphView.getViewport().setMinY(0);
+                //graphView.getViewport().setMaxY(10);
+                graphView.getViewport().setScrollable(true);
+                graphView.getViewport().setScrollableY(true);
+                graphView.getViewport().setScalable(true);
+                graphView.getViewport().setScalableY(true);
+                reff.removeEventListener(this);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+
+    }
+
+    private boolean isDateAfter(String startDate, String endDate) {
+        try {
+            String myFormatString = "dd/MM/yyyy"; // for example
+            SimpleDateFormat df = new SimpleDateFormat(myFormatString);
+            Date endingDate = df.parse(endDate);
+            Date startingDate = df.parse(startDate);
+
+            return endingDate.equals(startingDate) || !endingDate.after(startingDate);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
@@ -409,4 +604,39 @@ public class ProgressActivity extends AppCompatActivity {
 
 }
 
- */
+/*
+ graphView = view.findViewById(R.id.graphViewProgress);
+
+
+
+                        int index = 0;
+                        DataPoint[] dp = new  DataPoint[gradeDate.size()-1];
+
+                        for (int i = 1; i<marks.size(); i++){
+                            //Date d = (Date) formatter.parse(gradeDate.get(i));
+                            //long milliseconds = d.getTime();
+                            DataPoint dp1 = new DataPoint(i, Double.parseDouble(marks.get(i)));
+                            dp[index] = dp1;
+                            index++;
+                        }
+                        LineGraphSeries series = new LineGraphSeries();
+                        series.resetData(dp);
+
+
+                        graphView.addSeries(series);
+
+
+                        series.setDrawDataPoints(true);
+                        series.setColor(Color.BLACK);
+                        series.setThickness(10);
+                        series.setDrawBackground(true);
+                        series.setBackgroundColor(Color.argb(60, 255, 102, 255));
+                        //graphView.getViewport().setXAxisBoundsManual(true);
+                        graphView.getViewport().setMinY(0);
+                        //graphView.getViewport().setMaxY(10);
+                        graphView.getViewport().setScrollable(true);
+                        graphView.getViewport().setScrollableY(true);
+                        graphView.getViewport().setScalable(true);
+                        graphView.getViewport().setScalableY(true);
+                        reff.removeEventListener(this);
+*/

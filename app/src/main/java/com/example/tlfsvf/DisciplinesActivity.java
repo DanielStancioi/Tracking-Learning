@@ -59,7 +59,7 @@ public class DisciplinesActivity extends AppCompatActivity {
 
     private String discipline;
     private String descriptionDiscipline;
-    private String credits;
+    private String credits, endDateDiscipline;
 
     private String key="";
     private String course;
@@ -68,6 +68,7 @@ public class DisciplinesActivity extends AppCompatActivity {
     private String instructorCourse;
 
     private String minGradeCourse;
+    private String examCourse;
     private String endDateCourse;
     List<String> mMarksCourse = new ArrayList<>();
     List<String> mMarksMaxCourse = new ArrayList<>();
@@ -138,6 +139,7 @@ public class DisciplinesActivity extends AppCompatActivity {
 
     }
 
+    /*
     private void showProgress(){
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -208,7 +210,7 @@ public class DisciplinesActivity extends AppCompatActivity {
 
         AppCompatButton cancel = myView.findViewById(R.id.cancelButtonCourseStat);
         cancel.setOnClickListener((v)->{dialog.dismiss();});
-    }
+    }*/
 
     private void addDiscipline() {
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
@@ -225,10 +227,30 @@ public class DisciplinesActivity extends AppCompatActivity {
         final EditText discipline = myView.findViewById(R.id.discipline);
         final EditText descriptionDiscipline = myView.findViewById(R.id.disciplineDescription);
         final EditText credits = myView.findViewById(R.id.disciplineCredits);
+        final TextView endDateDiscipline = myView.findViewById(R.id.disciplineDueDate);
         AppCompatButton save = myView.findViewById(R.id.saveButtonDiscipline);
         AppCompatButton cancel = myView.findViewById(R.id.cancelButtonDiscipline);
         AppCompatButton courseBtn = myView.findViewById(R.id.courseButtonDiscipline);
         AppCompatButton labBtn = myView.findViewById(R.id.labButtonDiscipline);
+        Calendar calendar1 =  Calendar.getInstance();
+        final int year1 = calendar1.get(Calendar.YEAR);
+        final int month1 = calendar1.get(Calendar.MONTH);
+        final int day1 = calendar1.get(Calendar.DAY_OF_MONTH);
+
+        endDateDiscipline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                        month = month+1;
+                        String examDateStr = day + "/"+month+"/"+year;
+                        endDateDiscipline.setText(examDateStr);
+                    }
+                }, year1, month1, day1);
+                datePickerDialog.show();
+            }
+        });
 
         AtomicBoolean courseAdded = new AtomicBoolean(false);
         AtomicBoolean labAdded = new AtomicBoolean(false);
@@ -250,8 +272,8 @@ public class DisciplinesActivity extends AppCompatActivity {
             final EditText minGradeCourse = myViewCourse.findViewById(R.id.courseMinGrade);
             final EditText instructorCourse = myViewCourse.findViewById(R.id.courseInstructor);
             final EditText locationCourse = myViewCourse.findViewById(R.id.courseLocation);
+            final TextView examDateCourse = myViewCourse.findViewById(R.id.courseExamDate);
 
-            final TextView endDateCourse = myViewCourse.findViewById(R.id.courseDueDate);
 
 
 
@@ -260,20 +282,21 @@ public class DisciplinesActivity extends AppCompatActivity {
             final int month = calendar.get(Calendar.MONTH);
             final int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-            endDateCourse.setOnClickListener(new View.OnClickListener() {
+            examDateCourse.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                             month = month+1;
-                            String endDateStr = day + "/"+month+"/"+year;
-                            endDateCourse.setText(endDateStr);
+                            String examDateStr = day + "/"+month+"/"+year;
+                            examDateCourse.setText(examDateStr);
                         }
                     }, year, month, day);
                     datePickerDialog.show();
                 }
             });
+
 
             AppCompatButton saveCourse = myViewCourse.findViewById(R.id.saveButtonCourse);
             AppCompatButton cancelCourse = myViewCourse.findViewById(R.id.cancelButtonCourse);
@@ -291,7 +314,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                 String mMinGrade = minGradeCourse.getText().toString().trim();
                 String id = reference.push().getKey();
                 String date = DateFormat.getDateInstance().format(new Date());
-                String mEndDate = endDateCourse.getText().toString();
+                String mExamDate = examDateCourse.getText().toString();
                 List<String> mMarks1 = new ArrayList<>();
                 List<String> mMarks1Max = new ArrayList<>();
                 List<String> mMarks1Percent = new ArrayList<>();
@@ -303,6 +326,10 @@ public class DisciplinesActivity extends AppCompatActivity {
 
                 if(TextUtils.isEmpty(mCourse)){
                     course.setError("Course name required");
+                    return;
+                }
+                if(TextUtils.isEmpty(mExamDate)){
+                    examDateCourse.setError("Exam date required");
                     return;
                 }
                 if(TextUtils.isEmpty(mDescription)){
@@ -323,10 +350,6 @@ public class DisciplinesActivity extends AppCompatActivity {
                     return;
                 }
 
-                if(TextUtils.isEmpty(mEndDate)){
-                    endDateCourse.setError("End date required");
-                    return;
-                }
 
                 if(TextUtils.isEmpty(mLocation)){
                     locationCourse.setError("Course location required");
@@ -336,7 +359,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                     loader.setCanceledOnTouchOutside(false);
                     loader.show();
 
-                    CourseModel modelCourse = new CourseModel(mCourse, mDescription, id, date, mMarks1, mInstructor, mLocation, mMarks1Max, mMarks1Percent, mEndDate, mMinGrade, mGradeDate, mPercent);
+                    CourseModel modelCourse = new CourseModel(mCourse, mDescription, id, date, mMarks1, mInstructor, mLocation, mMarks1Max, mMarks1Percent, mMinGrade, mGradeDate, mPercent, mExamDate);
                     courseModel = modelCourse;
                     courseAdded.set(true);
                     loader.dismiss();
@@ -369,7 +392,7 @@ public class DisciplinesActivity extends AppCompatActivity {
             final EditText instructorLab = myViewLab.findViewById(R.id.LabInstructor);
             final EditText locationLab = myViewLab.findViewById(R.id.LabLocation);
 
-            final TextView endDateLab = myViewLab.findViewById(R.id.LabDueDate);
+
 
 
 
@@ -378,20 +401,6 @@ public class DisciplinesActivity extends AppCompatActivity {
             final int month = calendar.get(Calendar.MONTH);
             final int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-            endDateLab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                            month = month+1;
-                            String endDateStr = day + "/"+month+"/"+year;
-                            endDateLab.setText(endDateStr);
-                        }
-                    }, year, month, day);
-                    datePickerDialog.show();
-                }
-            });
 
             AppCompatButton saveLab= myViewLab.findViewById(R.id.saveButtonLab);
             AppCompatButton cancelLab = myViewLab.findViewById(R.id.cancelButtonLab);
@@ -409,7 +418,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                 String mMinGrade = minGradeLab.getText().toString().trim();
                 String id = reference.push().getKey();
                 String date = DateFormat.getDateInstance().format(new Date());
-                String mEndDate = endDateLab.getText().toString();
+
                 List<String> mMarks1 = new ArrayList<>();
                 List<String> mMarks1Max = new ArrayList<>();
                 List<String> mMarks1Percent = new ArrayList<>();
@@ -436,10 +445,6 @@ public class DisciplinesActivity extends AppCompatActivity {
                     return;
                 }
 
-                if(TextUtils.isEmpty(mEndDate)){
-                    endDateLab.setError("End date required");
-                    return;
-                }
 
                 if(TextUtils.isEmpty(mLocation)){
                     locationLab.setError("Laboratory location required");
@@ -449,7 +454,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                     loader.setCanceledOnTouchOutside(false);
                     loader.show();
 
-                    LabModel modelLab = new LabModel(mLab, mDescription, id, date,mLocation, mInstructor,mEndDate,mMinGrade,mPercent, mMarks1, mMarks1Max, mMarks1Percent, mGradeDate);
+                    LabModel modelLab = new LabModel(mLab, mDescription, id, date,mLocation, mInstructor,mMinGrade,mPercent, mMarks1, mMarks1Max, mMarks1Percent, mGradeDate);
                     labModel = modelLab;
                     labAdded.set(true);
                     loader.dismiss();
@@ -471,6 +476,7 @@ public class DisciplinesActivity extends AppCompatActivity {
             String mDescription = descriptionDiscipline.getText().toString().trim();
             String mCredits = credits.getText().toString().trim();
             String id = reference.push().getKey();
+            String mDisciplineEndDate = endDateDiscipline.getText().toString().trim();
             String date = DateFormat.getDateInstance().format(new Date());
 
 
@@ -498,7 +504,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                 loader.setCanceledOnTouchOutside(false);
                 loader.show();
 
-                DisciplineModel disciplineModel = new DisciplineModel(mDiscipline, mDescription, id, date, mCredits, courseModel, labModel);
+                DisciplineModel disciplineModel = new DisciplineModel(mDiscipline, mDescription, id, date, mCredits, mDisciplineEndDate, courseModel, labModel);
                 reference.child(id).setValue(disciplineModel).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -547,6 +553,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                         discipline = dmodel.getName();
                         descriptionDiscipline = dmodel.getDescription();
                         credits = dmodel.getCredits();
+                        endDateDiscipline = dmodel.getEndDate();
                         courseModel = dmodel.getCmodel();
                         labModel = dmodel.getLabModel();
                         //reff.removeEventListener(eventListener);
@@ -571,6 +578,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                 EditText mDiscipline = view.findViewById(R.id.discipline);
                 EditText mDescription = view.findViewById(R.id.disciplineDescription);
                 EditText mCredits = view.findViewById(R.id.disciplineCredits);
+                TextView mEndDate = view.findViewById(R.id.disciplineDueDateUpdate);
                 AppCompatButton delBtn = view.findViewById(R.id.delButtonDiscipline);
                 AppCompatButton closeBtn = view.findViewById(R.id.cancelButtonDiscipline);
                 AppCompatButton updateBtn = view.findViewById(R.id.updateButtonDiscipline);
@@ -585,6 +593,28 @@ public class DisciplinesActivity extends AppCompatActivity {
 
                 mCredits.setText(credits);
                 mCredits.setSelection(credits.length());
+
+                mEndDate.setText(endDateDiscipline);
+                mCredits.setSelection(credits.length());
+                Calendar calendar1 =  Calendar.getInstance();
+                final int year1 = calendar1.get(Calendar.YEAR);
+                final int month1 = calendar1.get(Calendar.MONTH);
+                final int day1 = calendar1.get(Calendar.DAY_OF_MONTH);
+
+                mEndDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                month = month+1;
+                                String examDateStr = day + "/"+month+"/"+year;
+                                mEndDate.setText(examDateStr);
+                            }
+                        }, year1, month1, day1);
+                        datePickerDialog.show();
+                    }
+                });
 
 
 
@@ -614,8 +644,8 @@ public class DisciplinesActivity extends AppCompatActivity {
                     EditText mMarkMax = myViewCourse.findViewById(R.id.mEditTextGradeMax);
                     EditText mMarkPercent = myViewCourse.findViewById(R.id.mEditTextPercentageGrade);
                     TextView mGradeDate = myViewCourse.findViewById(R.id.courseGradeDateUpdate);
+                    final TextView examDateCourse = myViewCourse.findViewById(R.id.courseExamDateUpdate);
 
-                    final TextView endDateCourse = myViewCourse.findViewById(R.id.courseDueDateUpdate);
 
                     course.setText(courseModel.getCourse());
                     course.setSelection(courseModel.getCourse().length());
@@ -636,27 +666,29 @@ public class DisciplinesActivity extends AppCompatActivity {
                     locationCourse.setText(courseModel.getLocation());
                     locationCourse.setSelection(courseModel.getLocation().length());
 
-                    endDateCourse.setText(courseModel.getEndDate());
+                    examDateCourse.setText(courseModel.getExamDate());
 
                     Calendar calendar =  Calendar.getInstance();
                     final int year = calendar.get(Calendar.YEAR);
                     final int month = calendar.get(Calendar.MONTH);
                     final int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-                    endDateCourse.setOnClickListener(new View.OnClickListener() {
+                    examDateCourse.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
                                 @Override
                                 public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                                     month = month+1;
-                                    String dueDateStr = day + "/"+month+"/"+year;
-                                    endDateCourse.setText(dueDateStr);
+                                    String examDateStr = day + "/"+month+"/"+year;
+                                    examDateCourse.setText(examDateStr);
                                 }
                             }, year, month, day);
                             datePickerDialog.show();
                         }
                     });
+
+
 
                     mGradeDate.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -690,7 +722,8 @@ public class DisciplinesActivity extends AppCompatActivity {
                         String mMinGrade = minGradeCourse.getText().toString().trim();
                         String id = reference.push().getKey();
                         String date = DateFormat.getDateInstance().format(new Date());
-                        String mEndDate = endDateCourse.getText().toString();
+
+                        String mExamDate = examDateCourse.getText().toString();
 
 
                         if(TextUtils.isEmpty(mCourse)){
@@ -699,6 +732,11 @@ public class DisciplinesActivity extends AppCompatActivity {
                         }
                         if(TextUtils.isEmpty(mDescriptionCourse)){
                             descriptionCourse.setError("Course description required");
+                            return;
+                        }
+
+                        if(TextUtils.isEmpty(mExamDate)){
+                            examDateCourse.setError("Exam date required");
                             return;
                         }
                         if(TextUtils.isEmpty(mMinGrade)){
@@ -715,10 +753,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                             return;
                         }
 
-                        if(TextUtils.isEmpty(mEndDate)){
-                            endDateCourse.setError("End date required");
-                            return;
-                        }
+
 
                         if(TextUtils.isEmpty(mLocation)){
                             locationCourse.setError("Course location required");
@@ -728,7 +763,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                             loader.setCanceledOnTouchOutside(false);
                             loader.show();
 
-                            CourseModel modelCourse = new CourseModel(mCourse, mDescriptionCourse, id, date, mMarksCourse, mInstructor, mLocation, mMarksMaxCourse, mMarksPercentCourse, mEndDate, mMinGrade, gradeDateCourse, mPercent);
+                            CourseModel modelCourse = new CourseModel(mCourse, mDescriptionCourse, id, date, mMarksCourse, mInstructor, mLocation, mMarksMaxCourse, mMarksPercentCourse, mMinGrade, gradeDateCourse, mPercent, mExamDate);
                             courseModel = modelCourse;
 
                             loader.dismiss();
@@ -768,7 +803,8 @@ public class DisciplinesActivity extends AppCompatActivity {
                                 String mMinGrade = minGradeCourse.getText().toString().trim();
                                 String id = reference.push().getKey();
 
-                                String mEndDate = endDateCourse.getText().toString();
+
+                                String mExamDate = examDateCourse.getText().toString();
 
 
                                 if (TextUtils.isEmpty(mCourse)) {
@@ -793,8 +829,8 @@ public class DisciplinesActivity extends AppCompatActivity {
                                     return;
                                 }
 
-                                if (TextUtils.isEmpty(mEndDate)) {
-                                    endDateCourse.setError("End date required");
+                                if (TextUtils.isEmpty(mExamDate)) {
+                                    examDateCourse.setError("End date required");
                                     return;
                                 }
 
@@ -802,7 +838,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                                     locationCourse.setError("Course location required");
                                     return;
                                 } else {
-                                    loader.setMessage("Adding your new course");
+                                    loader.setMessage("Adding your new grade");
                                     loader.setCanceledOnTouchOutside(false);
                                     loader.show();
                                     mMarksCourse.add(markText);
@@ -811,7 +847,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                                     gradeDateCourse.add(gradeDateText);
                                     String date = DateFormat.getDateInstance()
                                             .format(new Date());
-                                    CourseModel modelCourse = new CourseModel(mCourse, mDescriptionCourse, id, date, mMarksCourse, mInstructor, mLocation, mMarksMaxCourse, mMarksPercentCourse, mEndDate, mMinGrade, gradeDateCourse, mPercent);
+                                    CourseModel modelCourse = new CourseModel(mCourse, mDescriptionCourse, id, date, mMarksCourse, mInstructor, mLocation, mMarksMaxCourse, mMarksPercentCourse, mMinGrade, gradeDateCourse, mPercent, mExamDate);
                                     courseModel = modelCourse;
                                     loader.dismiss();
                                     dialogCourse.dismiss();
@@ -859,7 +895,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                     EditText mMarkPercent = myViewLab.findViewById(R.id.mEditTextPercentageGrade);
                     TextView mGradeDate = myViewLab.findViewById(R.id.labGradeDateUpdate);
 
-                    final TextView endDateLab = myViewLab.findViewById(R.id.labDueDateUpdate);
+
 
                     lab.setText(labModel.getLab());
                     lab.setSelection(labModel.getLab().length());
@@ -880,27 +916,13 @@ public class DisciplinesActivity extends AppCompatActivity {
                     locationLab.setText(labModel.getLocation());
                     locationLab.setSelection(labModel.getLocation().length());
 
-                    endDateLab.setText(labModel.getEndDate());
+
 
                     Calendar calendar =  Calendar.getInstance();
                     final int year = calendar.get(Calendar.YEAR);
                     final int month = calendar.get(Calendar.MONTH);
                     final int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-                    endDateLab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            DatePickerDialog datePickerDialog = new DatePickerDialog(DisciplinesActivity.this, new DatePickerDialog.OnDateSetListener() {
-                                @Override
-                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                    month = month+1;
-                                    String dueDateStr = day + "/"+month+"/"+year;
-                                    endDateLab.setText(dueDateStr);
-                                }
-                            }, year, month, day);
-                            datePickerDialog.show();
-                        }
-                    });
 
                     mGradeDate.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -934,7 +956,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                         String mMinGrade = minGradeLab.getText().toString().trim();
                         String id = reference.push().getKey();
                         String date = DateFormat.getDateInstance().format(new Date());
-                        String mEndDate = endDateLab.getText().toString();
+
 
 
                         if(TextUtils.isEmpty(mLab)){
@@ -959,11 +981,6 @@ public class DisciplinesActivity extends AppCompatActivity {
                             return;
                         }
 
-                        if(TextUtils.isEmpty(mEndDate)){
-                            endDateLab.setError("End date required");
-                            return;
-                        }
-
                         if(TextUtils.isEmpty(mLocation)){
                             locationLab.setError("Laboratory location required");
                             return;
@@ -972,7 +989,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                             loader.setCanceledOnTouchOutside(false);
                             loader.show();
 
-                            LabModel modelLab = new LabModel(mLab, mDescriptionLab, id, date,mLocation, mInstructor,mEndDate,mMinGrade,mPercent, mMarksLab, mMarksMaxLab, mMarksPercentLab, gradeDateLab);
+                            LabModel modelLab = new LabModel(mLab, mDescriptionLab, id, date,mLocation, mInstructor,mMinGrade,mPercent, mMarksLab, mMarksMaxLab, mMarksPercentLab, gradeDateLab);
                             labModel = modelLab;
 
                             loader.dismiss();
@@ -1012,7 +1029,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                             String mMinGrade = minGradeLab.getText().toString().trim();
                             String id = reference.push().getKey();
 
-                            String mEndDate = endDateLab.getText().toString();
+
 
 
                             if (TextUtils.isEmpty(mlab)) {
@@ -1037,10 +1054,6 @@ public class DisciplinesActivity extends AppCompatActivity {
                                 return;
                             }
 
-                            if (TextUtils.isEmpty(mEndDate)) {
-                                endDateLab.setError("End date required");
-                                return;
-                            }
 
                             if (TextUtils.isEmpty(mLocation)) {
                                 locationLab.setError("Laboratory location required");
@@ -1055,7 +1068,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                                 gradeDateLab.add(gradeDateText);
                                 String date = DateFormat.getDateInstance()
                                         .format(new Date());
-                                LabModel modelLab = new LabModel(mlab, mDescriptionLab, id, date,mLocation, mInstructor,mEndDate,mMinGrade,mPercent, mMarksLab, mMarksMaxLab, mMarksPercentLab, gradeDateLab);
+                                LabModel modelLab = new LabModel(mlab, mDescriptionLab, id, date,mLocation, mInstructor,mMinGrade,mPercent, mMarksLab, mMarksMaxLab, mMarksPercentLab, gradeDateLab);
                                 labModel = modelLab;
                                 loader.dismiss();
                                 dialogLab.dismiss();
@@ -1073,6 +1086,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                     String mDisciplineTxt = mDiscipline.getText().toString();
                     String mDescriptionTxt = mDescription.getText().toString().trim();
                     String mCreditsTxt = mCredits.getText().toString().trim();
+                    String mEndDateTxt = mEndDate.getText().toString().trim();
                     String id = reference.push().getKey();
                     String date = DateFormat.getDateInstance().format(new Date());
 
@@ -1085,15 +1099,19 @@ public class DisciplinesActivity extends AppCompatActivity {
                         mDescription.setError("Discipline description required");
                         return;
                     }
+                    if(TextUtils.isEmpty(mEndDateTxt)){
+                        mEndDate.setError("Discipline end date required");
+                        return;
+                    }
                     if(TextUtils.isEmpty(mCreditsTxt)){
                         mCredits.setError("Discipline credits required");
                         return;
                     }else{
-                        loader.setMessage("Adding your new discipline");
+                        loader.setMessage("Updating your discipline");
                         loader.setCanceledOnTouchOutside(false);
                         loader.show();
 
-                        DisciplineModel disciplineModel = new DisciplineModel(mDisciplineTxt, mDescriptionTxt, id, date, mCreditsTxt, courseModel, labModel);
+                        DisciplineModel disciplineModel = new DisciplineModel(mDisciplineTxt, mDescriptionTxt, id, date, mCreditsTxt,mEndDateTxt, courseModel, labModel);
                         reference.child(key).setValue(disciplineModel).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
