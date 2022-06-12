@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,6 +16,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +47,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DisciplinesActivity extends AppCompatActivity {
@@ -59,7 +65,7 @@ public class DisciplinesActivity extends AppCompatActivity {
 
     private String discipline;
     private String descriptionDiscipline;
-    private String credits, endDateDiscipline;
+    private String credits, endDateDiscipline, disciplineYear;
 
     private String key="";
     private String course;
@@ -121,7 +127,7 @@ public class DisciplinesActivity extends AppCompatActivity {
         floatingActionButton = findViewById(R.id.fabDisciplines);
 
 
-        //floatingActionButtonProgress = findViewById(R.id.disciplinesProgress);
+        floatingActionButtonProgress = findViewById(R.id.disciplinesProgress);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,34 +135,39 @@ public class DisciplinesActivity extends AppCompatActivity {
             }
         });
 
-        /*floatingActionButtonProgress.setOnClickListener(new View.OnClickListener() {
+        floatingActionButtonProgress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showProgress();
             }
-        });*/
+        });
 
 
     }
 
-    /*
+
     private void showProgress(){
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
         LayoutInflater inflater = LayoutInflater.from(this);
         DatePickerDialog.OnDateSetListener setListener;
-        View myView = inflater.inflate(R.layout.course_stat, null);
+        View myView = inflater.inflate(R.layout.discipline_stat, null);
         myDialog.setView(myView);
 
         AlertDialog dialog = myDialog.create();
 
         dialog.show();
 
-        final TextView passed = myView.findViewById(R.id.passedCourses);
-        final TextView undone = myView.findViewById(R.id.StillInProgressCourses);
-        final TextView failed = myView.findViewById(R.id.failedCourses);
+        final TextView passed = myView.findViewById(R.id.passedDisciplines);
+        final TextView undone = myView.findViewById(R.id.StillInProgressDisciplines);
+        final TextView failed = myView.findViewById(R.id.failedDisciplines);
+        TableLayout tableDisciplines = myView.findViewById(R.id.tableDisciplineStat);
+
+
         List<String> undoneLst = new ArrayList<>();
         List<String> passedLst = new ArrayList<>();
         List<String> failedLst = new ArrayList<>();
+        List<DisciplineModel> disciplinesLst = new ArrayList<>();
+        Map<String, Integer> mapYearCredits = new HashMap<>();
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String getCurrentDateTime = sdf.format(c.getTime());
@@ -167,36 +178,153 @@ public class DisciplinesActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot ss: snapshot.getChildren()){
-                    CourseModel model = ss.getValue(CourseModel.class);
-                    List<String> marks = model.getMarks();
-                    List<String> marksPercent = model.getmMarksPercent();
+                    DisciplineModel dmodel = ss.getValue(DisciplineModel.class);
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    String getCurrentDateTime = sdf.format(c.getTime());
+                    String text;
 
-                    Double med = 0.0;
+                    boolean cPass = false;
+                    boolean lPass = false;
+                    CourseModel cmodel = dmodel.getCmodel();
+                    LabModel lmodel = dmodel.getLabModel();
 
-                    for (int i=0; i<marks.size();i++){
-                        med = med + Double.parseDouble(marks.get(i))* (Double.parseDouble(marksPercent.get(i))/100.0);
+                    List<String> cMarks = cmodel.getMarks();
+                    List<String> lMarks = lmodel.getMarks();
+                    List<String> cMarksPercent = cmodel.getmMarksPercent();
+                    List<String> lMarksPercent = lmodel.getmMarksPercent();
+
+                    Double cMinMark, lMinMark;
+                    Double cMed = 0.0;
+                    Double lMed = 0.0;
+
+                    cMinMark = Double.parseDouble(cmodel.getMinGrade().trim());
+                    lMinMark = Double.parseDouble(lmodel.getMinGrade().trim());
+
+                    for(int i=1; i<cMarks.size();i++){
+                        cMed = cMed + Double.parseDouble(cMarks.get(i))*(Double.parseDouble(cMarksPercent.get(i))/100.0);
                     }
-                    Double minMark = Double.parseDouble(model.getMinGrade());
-                    String date = model.getEndDate();
 
-                    if (getCurrentDateTime.compareTo(date) < 0) {
+                    for(int i=1; i<lMarks.size();i++){
+                        lMed = lMed + Double.parseDouble(lMarks.get(i))*(Double.parseDouble(lMarksPercent.get(i))/100.0);
+                    }
+                    if(cMed >= cMinMark){cPass = true;}
+                    if(lMed >= lMinMark){lPass = true;}
 
+
+
+                    if (!isDateAfter(getCurrentDateTime, dmodel.getEndDate())) {
                         undoneLst.add("text");
                     } else {
-                        if (med < minMark)
+                        if (cPass && lPass)
                         {
-                            failedLst.add("text");
+
+                            passedLst.add("text");
+                            disciplinesLst.add(dmodel);
                         }
                         else
                         {
-                            passedLst.add("text");
+
+                            failedLst.add("text");
                         }
+
                     }
                 }
                 passed.setText(""+ passedLst.size());
                 undone.setText(""+undoneLst.size());
                 failed.setText(""+failedLst.size());
                 reference.removeEventListener(this);
+
+                for(DisciplineModel el : disciplinesLst){
+                    if(!mapYearCredits.containsKey(el.getYear())){
+                        mapYearCredits.put(el.getYear(), Integer.parseInt(el.getCredits()));
+                    }else{
+                        int c = mapYearCredits.get(el.getCredits());
+                        c = c + Integer.parseInt(el.getCredits());
+                        mapYearCredits.put(el.getYear(), c);
+                    }
+                }
+                TableLayout.LayoutParams tableRowParams=
+                        new TableLayout.LayoutParams
+                                (TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.WRAP_CONTENT);
+
+
+
+                TableRow tbrow0 = new TableRow(DisciplinesActivity.this);
+                TextView tv0 = new TextView(DisciplinesActivity.this);
+                tv0.setText(" Year ");
+                tv0.setTextColor(Color.BLACK);
+                tv0.setElegantTextHeight(true);
+                tv0.setTextSize(17);
+                tv0.setTypeface(null, Typeface.BOLD);
+                tv0.setBackgroundResource(R.drawable.border);
+                tbrow0.addView(tv0);
+                TextView tv1 = new TextView(DisciplinesActivity.this);
+                tv1.setText(" Credits ");
+                tv1.setTextColor(Color.BLACK);
+                tv1.setTypeface(null, Typeface.BOLD);
+                tv1.setBackgroundResource(R.drawable.border);
+                tv1.setElegantTextHeight(true);
+                tv1.setTextSize(17);
+                tbrow0.addView(tv1);
+                tbrow0.setLayoutParams(tableRowParams);
+
+                tableDisciplines.addView(tbrow0);
+
+                if (mapYearCredits.isEmpty()){
+
+
+                    TableRow tbrow1 = new TableRow(DisciplinesActivity.this);
+                    TextView tv2 = new TextView(DisciplinesActivity.this);
+                    tv2.setText(" None ");
+                    tv2.setTextColor(Color.BLACK);
+                    tv2.setBackgroundResource(R.drawable.border);
+                    tv2.setElegantTextHeight(true);
+                    tv2.setTextSize(17);
+                    tbrow1.addView(tv2);
+                    TextView tv3 = new TextView(DisciplinesActivity.this);
+                    tv3.setText(" None ");
+                    tv3.setTextColor(Color.BLACK);
+                    tv3.setBackgroundResource(R.drawable.border);
+                    tv3.setElegantTextHeight(true);
+                    tv3.setTextSize(17);
+
+                    tbrow1.addView(tv3);
+                    tbrow1.setLayoutParams(tableRowParams);
+
+                    tableDisciplines.addView(tbrow1);
+
+
+                }else{
+
+                    for (Map.Entry<String, Integer> me : mapYearCredits.entrySet()){
+                        String year = me.getKey();
+                        int credits = me.getValue();
+
+
+                        TableRow tbrow1 = new TableRow(DisciplinesActivity.this);
+                        TextView tv2 = new TextView(DisciplinesActivity.this);
+                        tv2.setText(year);
+                        tv2.setTextColor(Color.BLACK);
+                        tv2.setBackgroundResource(R.drawable.border);
+                        tv2.setElegantTextHeight(true);
+                        tv2.setTextSize(17);
+                        tbrow1.addView(tv2);
+                        TextView tv3 = new TextView(DisciplinesActivity.this);
+                        tv3.setText(credits+"");
+                        tv3.setTextColor(Color.BLACK);
+                        tv3.setBackgroundResource(R.drawable.border);
+                        tv3.setElegantTextHeight(true);
+                        tv3.setTextSize(17);
+                        tbrow1.addView(tv3);
+                        tbrow1.setLayoutParams(tableRowParams);
+
+                        tableDisciplines.addView(tbrow1);
+                    }
+                }
+
+
+
             }
 
             @Override
@@ -208,9 +336,23 @@ public class DisciplinesActivity extends AppCompatActivity {
 
 
 
-        AppCompatButton cancel = myView.findViewById(R.id.cancelButtonCourseStat);
+        AppCompatButton cancel = myView.findViewById(R.id.cancelButtonDisciplinesStat);
         cancel.setOnClickListener((v)->{dialog.dismiss();});
-    }*/
+    }
+
+    private boolean isDateAfter(String startDate, String endDate) {
+        try {
+            String myFormatString = "dd/MM/yyyy"; // for example
+            SimpleDateFormat df = new SimpleDateFormat(myFormatString);
+            Date endingDate = df.parse(endDate);
+            Date startingDate = df.parse(startDate);
+
+            return endingDate.equals(startingDate) || !endingDate.after(startingDate);
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
 
     private void addDiscipline() {
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
@@ -228,6 +370,7 @@ public class DisciplinesActivity extends AppCompatActivity {
         final EditText descriptionDiscipline = myView.findViewById(R.id.disciplineDescription);
         final EditText credits = myView.findViewById(R.id.disciplineCredits);
         final TextView endDateDiscipline = myView.findViewById(R.id.disciplineDueDate);
+        final TextView disciplineYearTv = myView.findViewById(R.id.disciplineYear);
         AppCompatButton save = myView.findViewById(R.id.saveButtonDiscipline);
         AppCompatButton cancel = myView.findViewById(R.id.cancelButtonDiscipline);
         AppCompatButton courseBtn = myView.findViewById(R.id.courseButtonDiscipline);
@@ -475,6 +618,7 @@ public class DisciplinesActivity extends AppCompatActivity {
             String mDiscipline = discipline.getText().toString();
             String mDescription = descriptionDiscipline.getText().toString().trim();
             String mCredits = credits.getText().toString().trim();
+            String mDisciplineYear = disciplineYearTv.getText().toString().trim();
             String id = reference.push().getKey();
             String mDisciplineEndDate = endDateDiscipline.getText().toString().trim();
             String date = DateFormat.getDateInstance().format(new Date());
@@ -482,6 +626,10 @@ public class DisciplinesActivity extends AppCompatActivity {
 
             if(TextUtils.isEmpty(mDiscipline)){
                 discipline.setError("Discipline name required");
+                return;
+            }
+            if(TextUtils.isEmpty(mDisciplineYear)){
+                disciplineYearTv.setError("Discipline year required");
                 return;
             }
             if(TextUtils.isEmpty(mDescription)){
@@ -504,7 +652,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                 loader.setCanceledOnTouchOutside(false);
                 loader.show();
 
-                DisciplineModel disciplineModel = new DisciplineModel(mDiscipline, mDescription, id, date, mCredits, mDisciplineEndDate, courseModel, labModel);
+                DisciplineModel disciplineModel = new DisciplineModel(mDiscipline, mDescription, id, date, mCredits,mDisciplineYear, mDisciplineEndDate, courseModel, labModel);
                 reference.child(id).setValue(disciplineModel).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -554,6 +702,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                         descriptionDiscipline = dmodel.getDescription();
                         credits = dmodel.getCredits();
                         endDateDiscipline = dmodel.getEndDate();
+                        disciplineYear = dmodel.getYear();
                         courseModel = dmodel.getCmodel();
                         labModel = dmodel.getLabModel();
                         //reff.removeEventListener(eventListener);
@@ -577,6 +726,7 @@ public class DisciplinesActivity extends AppCompatActivity {
 
                 EditText mDiscipline = view.findViewById(R.id.discipline);
                 EditText mDescription = view.findViewById(R.id.disciplineDescription);
+                EditText mDisciplineYearTv = view.findViewById(R.id.disciplineYear);
                 EditText mCredits = view.findViewById(R.id.disciplineCredits);
                 TextView mEndDate = view.findViewById(R.id.disciplineDueDateUpdate);
                 AppCompatButton delBtn = view.findViewById(R.id.delButtonDiscipline);
@@ -587,6 +737,9 @@ public class DisciplinesActivity extends AppCompatActivity {
 
                 mDiscipline.setText(discipline);
                 mDiscipline.setSelection(discipline.length());
+
+                mDisciplineYearTv.setText(disciplineYear);
+                mDisciplineYearTv.setSelection(disciplineYear.length());
 
                 mDescription.setText(descriptionDiscipline);
                 mDescription.setSelection(descriptionDiscipline.length());
@@ -1086,6 +1239,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                     String mDisciplineTxt = mDiscipline.getText().toString();
                     String mDescriptionTxt = mDescription.getText().toString().trim();
                     String mCreditsTxt = mCredits.getText().toString().trim();
+                    String mDisciplineYearTxt = mDisciplineYearTv.getText().toString().trim();
                     String mEndDateTxt = mEndDate.getText().toString().trim();
                     String id = reference.push().getKey();
                     String date = DateFormat.getDateInstance().format(new Date());
@@ -1093,6 +1247,10 @@ public class DisciplinesActivity extends AppCompatActivity {
 
                     if(TextUtils.isEmpty(mDisciplineTxt)){
                         mDiscipline.setError("Discipline name required");
+                        return;
+                    }
+                    if(TextUtils.isEmpty(mDisciplineYearTxt)){
+                        mDiscipline.setError("Discipline year required");
                         return;
                     }
                     if(TextUtils.isEmpty(mDescriptionTxt)){
@@ -1111,7 +1269,7 @@ public class DisciplinesActivity extends AppCompatActivity {
                         loader.setCanceledOnTouchOutside(false);
                         loader.show();
 
-                        DisciplineModel disciplineModel = new DisciplineModel(mDisciplineTxt, mDescriptionTxt, id, date, mCreditsTxt,mEndDateTxt, courseModel, labModel);
+                        DisciplineModel disciplineModel = new DisciplineModel(mDisciplineTxt, mDescriptionTxt, id, date, mCreditsTxt,mDisciplineYearTxt, mEndDateTxt, courseModel, labModel);
                         reference.child(key).setValue(disciplineModel).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

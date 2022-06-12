@@ -5,8 +5,11 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +19,8 @@ import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,8 +50,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class TasksActivity extends AppCompatActivity {
 
@@ -128,9 +135,13 @@ public class TasksActivity extends AppCompatActivity {
         final TextView done = myView.findViewById(R.id.FinishedTasks);
         final TextView undone = myView.findViewById(R.id.StillInProgressTasks);
         final TextView late = myView.findViewById(R.id.lateTasks);
+        TableLayout tableTasks = myView.findViewById(R.id.tableTasksStat);
+
         List<String> doneTasks = new ArrayList<>();
         List<String> undoneTasks = new ArrayList<>();
         List<String> lateTasks = new ArrayList<>();
+        List<Model> tasksLst = new ArrayList<>();
+        Map<String, List<String>> mapDateName = new HashMap<>();
 
 
 
@@ -143,9 +154,12 @@ public class TasksActivity extends AppCompatActivity {
                     String getCurrentDateTime = sdf.format(c.getTime());
                     boolean done = (boolean) ss.child("done").getValue();
                     String date = ss.child("dueDate").getValue().toString();
+                    Model model = ss.getValue(Model.class);
+
 
                     if (done) {
                         doneTasks.add(ss.child("task").getValue().toString());
+
                     } else {
                         if (isDateAfter(getCurrentDateTime, date))
                         {
@@ -154,6 +168,7 @@ public class TasksActivity extends AppCompatActivity {
                         else
                         {
                             undoneTasks.add(ss.child("task").getValue().toString());
+                            tasksLst.add(model);
                         }
 
                     }
@@ -161,6 +176,106 @@ public class TasksActivity extends AppCompatActivity {
                 done.setText(""+doneTasks.size());
                 undone.setText(""+undoneTasks.size());
                 late.setText(""+lateTasks.size());
+
+                for(Model el : tasksLst){
+                    if(!mapDateName.containsKey(el.getDueDate())){
+                       List<String> lst = new ArrayList<>();
+                       lst.add("-"+el.getTask());
+                       mapDateName.put(el.getDueDate(), lst);
+                    }else{
+                        List<String> lst = mapDateName.get(el.getDueDate());
+                        lst.add("-"+el.getTask());
+                        mapDateName.put(el.getDueDate(), lst);
+                    }
+                }
+                TableLayout.LayoutParams tableRowParams=
+                        new TableLayout.LayoutParams
+                                (TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.WRAP_CONTENT);
+
+
+
+                TableRow tbrow0 = new TableRow(TasksActivity.this);
+                TextView tv0 = new TextView(TasksActivity.this);
+                tv0.setText(" Date ");
+                tv0.setTextColor(Color.BLACK);
+                tv0.setElegantTextHeight(true);
+                tv0.setTextSize(17);
+                tv0.setTypeface(null, Typeface.BOLD);
+                tv0.setBackgroundResource(R.drawable.border);
+                tbrow0.addView(tv0);
+                TextView tv1 = new TextView(TasksActivity.this);
+                tv1.setText(" Task name ");
+                tv1.setTextColor(Color.BLACK);
+                tv1.setTypeface(null, Typeface.BOLD);
+                tv1.setBackgroundResource(R.drawable.border);
+                tv1.setElegantTextHeight(true);
+                tv1.setTextSize(17);
+                tbrow0.addView(tv1);
+                tbrow0.setLayoutParams(tableRowParams);
+
+                tableTasks.addView(tbrow0);
+
+                if (mapDateName.isEmpty()){
+
+
+                    TableRow tbrow1 = new TableRow(TasksActivity.this);
+                    TextView tv2 = new TextView(TasksActivity.this);
+                    tv2.setText(" None ");
+                    tv2.setTextColor(Color.BLACK);
+                    tv2.setBackgroundResource(R.drawable.border);
+                    tv2.setElegantTextHeight(true);
+                    tv2.setTextSize(17);
+                    tbrow1.addView(tv2);
+                    TextView tv3 = new TextView(TasksActivity.this);
+                    tv3.setText(" None ");
+                    tv3.setTextColor(Color.BLACK);
+                    tv3.setBackgroundResource(R.drawable.border);
+                    tv3.setElegantTextHeight(true);
+                    tv3.setTextSize(17);
+
+                    tbrow1.addView(tv3);
+                    tbrow1.setLayoutParams(tableRowParams);
+
+                    tableTasks.addView(tbrow1);
+
+
+                }else{
+
+                    for (Map.Entry<String, List<String>> me : mapDateName.entrySet()){
+                        String date = me.getKey();
+
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < me.getValue().size()-1; i++) {
+                            stringBuilder.append("\n");
+                        }
+                        String enter = stringBuilder.toString();
+
+                        List<String> tasks = me.getValue();
+                        String tasksStr = String.join(",\n", tasks);
+                        TableRow tbrow1 = new TableRow(TasksActivity.this);
+                        TextView tv2 = new TextView(TasksActivity.this);
+
+                        tv2.setText(date+enter);
+                        tv2.setTextColor(Color.BLACK);
+                        tv2.setBackgroundResource(R.drawable.border);
+                        tv2.setElegantTextHeight(true);
+                        tv2.setTextSize(17);
+                        tbrow1.addView(tv2);
+                        TextView tv3 = new TextView(TasksActivity.this);
+                        tv3.setText(tasksStr);
+                        tv3.setTextColor(Color.BLACK);
+                        tv3.setBackgroundResource(R.drawable.border);
+                        tv3.setElegantTextHeight(true);
+                        tv3.setTextSize(17);
+                        tbrow1.addView(tv3);
+                        tbrow1.setLayoutParams(tableRowParams);
+
+                        tableTasks.addView(tbrow1);
+                    }
+                }
+
+
+
             }
 
             @Override

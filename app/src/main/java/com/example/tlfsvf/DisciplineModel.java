@@ -1,7 +1,7 @@
 package com.example.tlfsvf;
 
 public class DisciplineModel {
-    private String name, description, id, date, credits, endDate;
+    private String name, description, id, date, credits, endDate, year;
     private CourseModel cmodel;
     private LabModel labModel;
 
@@ -9,7 +9,7 @@ public class DisciplineModel {
 
     }
 
-    public DisciplineModel(String name, String description, String id, String date, String credits,String endDate, CourseModel cmodel, LabModel labModel) {
+    public DisciplineModel(String name, String description, String id, String date, String credits,String year, String endDate, CourseModel cmodel, LabModel labModel) {
         this.name = name;
         this.description = description;
         this.id = id;
@@ -18,10 +18,19 @@ public class DisciplineModel {
         this.cmodel = cmodel;
         this.labModel = labModel;
         this.endDate = endDate;
+        this.year = year;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 
     public void setName(String name) {
