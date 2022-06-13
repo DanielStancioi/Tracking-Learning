@@ -3,10 +3,13 @@ package com.example.tlfsvf;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -29,6 +32,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -77,6 +82,8 @@ public class TasksActivity extends AppCompatActivity {
 
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,8 +122,11 @@ public class TasksActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 showProgress();
+
             }
         });
+
+
 
 
     }
@@ -255,7 +265,7 @@ public class TasksActivity extends AppCompatActivity {
                         TableRow tbrow1 = new TableRow(TasksActivity.this);
                         TextView tv2 = new TextView(TasksActivity.this);
 
-                        tv2.setText(date+enter);
+                        tv2.setText(  date+enter);
                         tv2.setTextColor(Color.BLACK);
                         tv2.setBackgroundResource(R.drawable.border);
                         tv2.setElegantTextHeight(true);
@@ -299,10 +309,24 @@ public class TasksActivity extends AppCompatActivity {
                 Date endingDate = df.parse(endDate);
                 Date startingDate = df.parse(startDate);
 
-                return endingDate.equals(startingDate) || !endingDate.after(startingDate);
+                return !endingDate.equals(startingDate) && !endingDate.after(startingDate);
             } catch (Exception e) {
                 return false;
             }
+
+    }
+    private boolean isDateEqual (String startDate, String endDate) {
+
+        try {
+            String myFormatString = "dd/MM/yyyy"; // for example
+            SimpleDateFormat df = new SimpleDateFormat(myFormatString);
+            Date endingDate = df.parse(endDate);
+            Date startingDate = df.parse(startDate);
+
+            return endingDate.equals(startingDate);
+        } catch (Exception e) {
+            return false;
+        }
 
     }
 
@@ -820,5 +844,7 @@ public class TasksActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
 }

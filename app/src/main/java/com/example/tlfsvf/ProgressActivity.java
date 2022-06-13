@@ -553,7 +553,7 @@ public class ProgressActivity extends AppCompatActivity {
             Date endingDate = df.parse(endDate);
             Date startingDate = df.parse(startDate);
 
-            return endingDate.equals(startingDate) || !endingDate.after(startingDate);
+            return !endingDate.equals(startingDate) && !endingDate.after(startingDate);
         } catch (Exception e) {
             return false;
         }
