@@ -6,8 +6,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -185,7 +183,7 @@
         tools:ignore="Suspicious0dp"
         android:layout_height="wrap_content">
         <TableLayout
-            android:id="@+id/tableTasksStat"
+            android:id="@+id/tableTasksUndoneStat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -195,8 +193,97 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:textAlignment="center"
+            android:stretchColumns="0"
 
              />
+
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Your done tasks"
+        android:layout_gravity="center"
+        android:background="@drawable/background_design"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textAlignment="center"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+
+        android:orientation="horizontal">
+
+        android:layout_width="0dp"
+        tools:ignore="Suspicious0dp"
+        android:layout_height="wrap_content">
+
+        <TableLayout
+            android:id="@+id/tableTasksDoneStat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:stretchColumns="0"
+
+            />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Your late tasks"
+        android:layout_gravity="center"
+        android:background="@drawable/background_design"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textAlignment="center"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+
+        android:gravity="center">
+
+        android:layout_width="0dp"
+        tools:ignore="Suspicious0dp"
+        android:layout_height="wrap_content">
+        <TableLayout
+            android:id="@+id/tableTasksLateStat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:stretchColumns="0"
+
+            />
 
 
 

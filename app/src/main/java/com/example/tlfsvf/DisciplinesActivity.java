@@ -179,13 +179,27 @@ public class DisciplinesActivity extends AppCompatActivity {
                 List<String> undoneLst = new ArrayList<>();
                 List<String> passedLst = new ArrayList<>();
                 List<String> failedLst = new ArrayList<>();
-                List<DisciplineModel> disciplinesLst = new ArrayList<>();
+                List<DisciplineModel> disciplinesLstCredits = new ArrayList<>();
+                List<DisciplineModel> disciplinesLstInProgress = new ArrayList<>();
+                //List<DisciplineModel> disciplinesLstPassed = new ArrayList<>();
+                List<DisciplineModel> disciplinesLstFailed = new ArrayList<>();
+
                 Map<String, Integer> mapYearCredits = new HashMap<>();
+                Map<String, Integer> mapYearInProgress = new HashMap<>();
+                Map<String, Integer> mapYearPassed = new HashMap<>();
+                Map<String, Integer> mapYearFailed = new HashMap<>();
+
                 Calendar c = Calendar.getInstance();
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String getCurrentDateTime = sdf.format(c.getTime());
-                TableLayout tableDisciplines = myView.findViewById(R.id.tableDisciplineStat);
-                tableDisciplines.removeAllViews();
+                TableLayout tableDisciplinesCredits = myView.findViewById(R.id.tableDisciplineStat);
+                TableLayout tableDisciplinesInProgress= myView.findViewById(R.id.tableDisciplineInProgressStat);
+                TableLayout tableDisciplinesPassed = myView.findViewById(R.id.tableDisciplinePassedStat);
+                TableLayout tableDisciplinesFailed = myView.findViewById(R.id.tableDisciplineFailedStat);
+                tableDisciplinesCredits.removeAllViews();
+                tableDisciplinesInProgress.removeAllViews();
+                tableDisciplinesPassed.removeAllViews();
+                tableDisciplinesFailed.removeAllViews();
 
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -232,26 +246,30 @@ public class DisciplinesActivity extends AppCompatActivity {
 
 
                                 if (!isDateAfter(getCurrentDateTime, dmodel.getEndDate())) {
-                                    undoneLst.add("text");
+                                    //undoneLst.add("text");
+                                    disciplinesLstInProgress.add(dmodel);
                                 } else {
                                     if (cPass && lPass) {
 
-                                        passedLst.add("text");
-                                        disciplinesLst.add(dmodel);
+                                        //passedLst.add("text");
+                                        disciplinesLstCredits.add(dmodel);
                                     } else {
 
-                                        failedLst.add("text");
+                                        //failedLst.add("text");
+                                        disciplinesLstFailed.add(dmodel);
                                     }
 
                                 }
                             }
                         }
-                        passed.setText(""+ passedLst.size());
-                        undone.setText(""+undoneLst.size());
-                        failed.setText(""+failedLst.size());
+                        passed.setText(""+ disciplinesLstCredits.size());
+                        undone.setText(""+disciplinesLstInProgress.size());
+                        failed.setText(""+disciplinesLstFailed.size());
                         reference.removeEventListener(this);
 
-                        for(DisciplineModel el : disciplinesLst){
+
+                        //credits table
+                        for(DisciplineModel el : disciplinesLstCredits){
                             String keyStr = el.getType() + ", Year: " + el.getYear();
                             if(!mapYearCredits.containsKey(keyStr)){
                                 mapYearCredits.put(keyStr, Integer.parseInt(el.getCredits()));
@@ -267,6 +285,17 @@ public class DisciplinesActivity extends AppCompatActivity {
 
 
 
+
+                        TableRow.LayoutParams text1Params = new TableRow.LayoutParams();
+                        text1Params.width = 0;
+                        text1Params.weight = (float) 0.33333;
+                        TableRow.LayoutParams text2Params = new TableRow.LayoutParams();
+                        text2Params.weight = (float) 0.33333;
+                        text2Params.width = 0;
+                        TableRow.LayoutParams text3Params = new TableRow.LayoutParams();
+                        text2Params.weight = (float) 0.33333;
+                        text2Params.width = 0;
+
                         TableRow tbrow0 = new TableRow(DisciplinesActivity.this);
                         TextView tv0 = new TextView(DisciplinesActivity.this);
                         tv0.setText(" Type & Year ");
@@ -274,19 +303,21 @@ public class DisciplinesActivity extends AppCompatActivity {
                         tv0.setElegantTextHeight(true);
                         tv0.setTextSize(17);
                         tv0.setTypeface(null, Typeface.BOLD);
-                        tv0.setBackgroundResource(R.drawable.border);
+                        tv0.setLayoutParams(text1Params);
                         tbrow0.addView(tv0);
                         TextView tv1 = new TextView(DisciplinesActivity.this);
                         tv1.setText(" Credits ");
                         tv1.setTextColor(Color.BLACK);
                         tv1.setTypeface(null, Typeface.BOLD);
-                        tv1.setBackgroundResource(R.drawable.border);
+
                         tv1.setElegantTextHeight(true);
                         tv1.setTextSize(17);
+                        tv1.setLayoutParams(text2Params);
                         tbrow0.addView(tv1);
                         tbrow0.setLayoutParams(tableRowParams);
+                        tbrow0.setBackgroundResource(R.drawable.border);
 
-                        tableDisciplines.addView(tbrow0);
+                        tableDisciplinesCredits.addView(tbrow0);
 
                         if (mapYearCredits.isEmpty()){
 
@@ -295,27 +326,28 @@ public class DisciplinesActivity extends AppCompatActivity {
                             TextView tv2 = new TextView(DisciplinesActivity.this);
                             tv2.setText(" None ");
                             tv2.setTextColor(Color.BLACK);
-                            tv2.setBackgroundResource(R.drawable.border);
+
                             tv2.setElegantTextHeight(true);
                             tv2.setTextSize(17);
+                            tv2.setLayoutParams(text1Params);
                             tbrow1.addView(tv2);
                             TextView tv3 = new TextView(DisciplinesActivity.this);
                             tv3.setText(" None ");
                             tv3.setTextColor(Color.BLACK);
-                            tv3.setBackgroundResource(R.drawable.border);
+
                             tv3.setElegantTextHeight(true);
                             tv3.setTextSize(17);
-
+                            tv3.setLayoutParams(text2Params);
                             tbrow1.addView(tv3);
                             tbrow1.setLayoutParams(tableRowParams);
-
-                            tableDisciplines.addView(tbrow1);
+                            tbrow1.setBackgroundResource(R.drawable.border);
+                            tableDisciplinesCredits.addView(tbrow1);
 
 
                         }else{
 
                             for (Map.Entry<String, Integer> me : mapYearCredits.entrySet()){
-                                String year = "    " + me.getKey() + "    ";
+                                String year = me.getKey() ;
                                 int credits = me.getValue();
 
 
@@ -323,23 +355,386 @@ public class DisciplinesActivity extends AppCompatActivity {
                                 TextView tv2 = new TextView(DisciplinesActivity.this);
                                 tv2.setText(year);
                                 tv2.setTextColor(Color.BLACK);
-                                tv2.setBackgroundResource(R.drawable.border);
+
                                 tv2.setElegantTextHeight(true);
                                 tv2.setTextSize(17);
+                                tv2.setLayoutParams(text1Params);
                                 tbrow1.addView(tv2);
                                 TextView tv3 = new TextView(DisciplinesActivity.this);
-                                tv3.setText("    "+credits+"    ");
+                                tv3.setText(""+credits);
+
                                 tv3.setTextColor(Color.BLACK);
-                                tv3.setBackgroundResource(R.drawable.border);
+
                                 tv3.setElegantTextHeight(true);
                                 tv3.setTextSize(17);
+                                tv3.setLayoutParams(text2Params);
                                 tbrow1.addView(tv3);
                                 tbrow1.setLayoutParams(tableRowParams);
-
-                                tableDisciplines.addView(tbrow1);
+                                tbrow1.setBackgroundResource(R.drawable.border);
+                                tableDisciplinesCredits.addView(tbrow1);
                             }
                         }
 
+                        //in progress table
+                        TableRow tbrow0InProgress = new TableRow(DisciplinesActivity.this);
+                        TextView tv0InProgress = new TextView(DisciplinesActivity.this);
+                        tv0InProgress.setText(" Name ");
+                        tv0InProgress.setTextColor(Color.BLACK);
+                        tv0InProgress.setElegantTextHeight(true);
+                        tv0InProgress.setTextSize(17);
+                        tv0InProgress.setLayoutParams(text1Params);
+                        tv0InProgress.setTypeface(null, Typeface.BOLD);
+                        tbrow0InProgress.addView(tv0InProgress);
+
+
+
+                        TextView tv1InProgress = new TextView(DisciplinesActivity.this);
+                        tv1InProgress.setText(" Credits ");
+                        tv1InProgress.setTextColor(Color.BLACK);
+                        tv1InProgress.setTypeface(null, Typeface.BOLD);
+
+                        tv1InProgress.setElegantTextHeight(true);
+                        tv1InProgress.setTextSize(17);
+                        tv1InProgress.setLayoutParams(text2Params);
+                        tbrow0InProgress.addView(tv1InProgress);
+
+                        TextView tv01InProgress = new TextView(DisciplinesActivity.this);
+                        tv01InProgress.setText(" Type & Year ");
+                        tv01InProgress.setTextColor(Color.BLACK);
+                        tv01InProgress.setElegantTextHeight(true);
+                        tv01InProgress.setTextSize(17);
+                        tv01InProgress.setLayoutParams(text3Params);
+                        tv01InProgress.setTypeface(null, Typeface.BOLD);
+                        tbrow0InProgress.addView(tv01InProgress);
+
+                        tbrow0InProgress.setLayoutParams(tableRowParams);
+                        tbrow0InProgress.setBackgroundResource(R.drawable.border);
+
+                        tableDisciplinesInProgress.addView(tbrow0InProgress);
+
+                        if (disciplinesLstInProgress.isEmpty()){
+
+
+                            TableRow tbrow1InProgress = new TableRow(DisciplinesActivity.this);
+                            TextView tv2InProgress = new TextView(DisciplinesActivity.this);
+                            tv2InProgress.setText(" None ");
+                            tv2InProgress.setTextColor(Color.BLACK);
+
+                            tv2InProgress.setElegantTextHeight(true);
+                            tv2InProgress.setTextSize(17);
+                            tv2InProgress.setLayoutParams(text1Params);
+                            tbrow1InProgress.addView(tv2InProgress);
+
+
+
+                            TextView tv3InProgress = new TextView(DisciplinesActivity.this);
+                            tv3InProgress.setText(" None ");
+                            tv3InProgress.setTextColor(Color.BLACK);
+
+                            tv3InProgress.setElegantTextHeight(true);
+                            tv3InProgress.setLayoutParams(text2Params);
+                            tv3InProgress.setTextSize(17);
+
+                            tbrow1InProgress.addView(tv3InProgress);
+
+                            TextView tv21InProgress = new TextView(DisciplinesActivity.this);
+                            tv21InProgress.setText(" None ");
+                            tv21InProgress.setTextColor(Color.BLACK);
+
+                            tv21InProgress.setElegantTextHeight(true);
+                            tv21InProgress.setTextSize(17);
+                            tv21InProgress.setLayoutParams(text3Params);
+                            tbrow1InProgress.addView(tv21InProgress);
+
+                            tbrow1InProgress.setLayoutParams(tableRowParams);
+                            tbrow1InProgress.setBackgroundResource(R.drawable.border);
+                            tableDisciplinesInProgress.addView(tbrow1InProgress);
+
+
+                        }else{
+
+                            for (DisciplineModel el : disciplinesLstInProgress){
+                                String name =el.getName() ;
+                                String year = el.getYear();
+                                String type = el.getType();
+                                int credits = Integer.parseInt(el.getCredits());
+
+
+                                TableRow tbrow1InProgress = new TableRow(DisciplinesActivity.this);
+                                TextView tv2InProgress = new TextView(DisciplinesActivity.this);
+                                tv2InProgress.setText(name);
+                                tv2InProgress.setTextColor(Color.BLACK);
+
+                                tv2InProgress.setElegantTextHeight(true);
+                                tv2InProgress.setTextSize(17);
+                                tv2InProgress.setLayoutParams(text1Params);
+                                tbrow1InProgress.addView(tv2InProgress);
+
+
+
+                                TextView tv3InProgress = new TextView(DisciplinesActivity.this);
+                                tv3InProgress.setText("  "+credits);
+                                tv3InProgress.setTextColor(Color.BLACK);
+
+                                tv3InProgress.setElegantTextHeight(true);
+                                tv3InProgress.setTextSize(17);
+                                tv3InProgress.setLayoutParams(text2Params);
+                                tbrow1InProgress.addView(tv3InProgress);
+
+                                TextView tv21InProgress = new TextView(DisciplinesActivity.this);
+                                tv21InProgress.setText(type + ", Year: "+year);
+                                tv21InProgress.setTextColor(Color.BLACK);
+                                tv21InProgress.setElegantTextHeight(true);
+                                tv21InProgress.setTextSize(17);
+                                tv21InProgress.setLayoutParams(text3Params);
+                                tbrow1InProgress.addView(tv21InProgress);
+
+                                tbrow1InProgress.setLayoutParams(tableRowParams);
+                                tbrow1InProgress.setBackgroundResource(R.drawable.border);
+                                tableDisciplinesInProgress.addView(tbrow1InProgress);
+                            }
+                        }
+
+                        // passed table
+                        TableRow tbrow0Passed = new TableRow(DisciplinesActivity.this);
+                        TextView tv0Passed = new TextView(DisciplinesActivity.this);
+                        tv0Passed.setText(" Name ");
+                        tv0Passed.setTextColor(Color.BLACK);
+                        tv0Passed.setElegantTextHeight(true);
+                        tv0Passed.setTextSize(17);
+                        tv0Passed.setLayoutParams(text1Params);
+                        tv0Passed.setTypeface(null, Typeface.BOLD);
+
+                        tbrow0Passed.addView(tv0Passed);
+
+
+
+                        TextView tv1Passed = new TextView(DisciplinesActivity.this);
+                        tv1Passed.setText(" Credits ");
+                        tv1Passed.setTextColor(Color.BLACK);
+                        tv1Passed.setTypeface(null, Typeface.BOLD);
+
+                        tv1Passed.setElegantTextHeight(true);
+                        tv1Passed.setTextSize(17);
+                        tv1Passed.setLayoutParams(text2Params);
+                        tbrow0Passed.addView(tv1Passed);
+
+                        TextView tv01Passed = new TextView(DisciplinesActivity.this);
+                        tv01Passed.setText(" Type & Year ");
+                        tv01Passed.setTextColor(Color.BLACK);
+                        tv01Passed.setElegantTextHeight(true);
+                        tv01Passed.setTextSize(17);
+                        tv01Passed.setLayoutParams(text3Params);
+                        tv01Passed.setTypeface(null, Typeface.BOLD);
+
+                        tbrow0Passed.addView(tv01Passed);
+
+                        tbrow0Passed.setLayoutParams(tableRowParams);
+                        tbrow0Passed.setBackgroundResource(R.drawable.border);
+                        tableDisciplinesPassed.addView(tbrow0Passed);
+
+                        if (disciplinesLstCredits.isEmpty()){
+
+
+                            TableRow tbrow1Passed = new TableRow(DisciplinesActivity.this);
+                            TextView tv2Passed = new TextView(DisciplinesActivity.this);
+                            tv2Passed.setText(" None ");
+                            tv2Passed.setTextColor(Color.BLACK);
+
+                            tv2Passed.setElegantTextHeight(true);
+                            tv2Passed.setLayoutParams(text1Params);
+                            tv2Passed.setTextSize(17);
+                            tbrow1Passed.addView(tv2Passed);
+
+
+
+                            TextView tv3Passed = new TextView(DisciplinesActivity.this);
+                            tv3Passed.setText(" None ");
+                            tv3Passed.setTextColor(Color.BLACK);
+
+                            tv3Passed.setElegantTextHeight(true);
+                            tv3Passed.setTextSize(17);
+                            tv3Passed.setLayoutParams(text2Params);
+                            tbrow1Passed.addView(tv3Passed);
+
+                            TextView tv21Passed = new TextView(DisciplinesActivity.this);
+                            tv21Passed.setText(" None ");
+                            tv21Passed.setTextColor(Color.BLACK);
+
+                            tv21Passed.setElegantTextHeight(true);
+                            tv21Passed.setLayoutParams(text3Params);
+                            tv21Passed.setTextSize(17);
+                            tbrow1Passed.addView(tv21Passed);
+
+                            tbrow1Passed.setLayoutParams(tableRowParams);
+                            tbrow1Passed.setBackgroundResource(R.drawable.border);
+                            tableDisciplinesPassed.addView(tbrow1Passed);
+
+
+                        }else{
+
+                            for (DisciplineModel el : disciplinesLstCredits){
+                                String name = el.getName();
+                                String year = el.getYear();
+                                String type = el.getType();
+                                int credits = Integer.parseInt(el.getCredits());
+
+
+                                TableRow tbrow1Passed = new TableRow(DisciplinesActivity.this);
+                                TextView tv2Passed = new TextView(DisciplinesActivity.this);
+                                tv2Passed.setText(name);
+                                tv2Passed.setTextColor(Color.BLACK);
+
+                                tv2Passed.setElegantTextHeight(true);
+                                tv2Passed.setTextSize(17);
+                                tv2Passed.setLayoutParams(text1Params);
+                                tbrow1Passed.addView(tv2Passed);
+
+
+
+                                TextView tv3Passed = new TextView(DisciplinesActivity.this);
+                                tv3Passed.setText("  "+credits);
+                                tv3Passed.setTextColor(Color.BLACK);
+
+                                tv3Passed.setElegantTextHeight(true);
+                                tv3Passed.setTextSize(17);
+                                tv3Passed.setLayoutParams(text2Params);
+                                tbrow1Passed.addView(tv3Passed);
+
+                                TextView tv21Passed = new TextView(DisciplinesActivity.this);
+                                tv21Passed.setText(type+", Year: "+year);
+                                tv21Passed.setTextColor(Color.BLACK);
+
+                                tv21Passed.setElegantTextHeight(true);
+                                tv21Passed.setTextSize(17);
+                                tv21Passed.setLayoutParams(text3Params);
+                                tbrow1Passed.addView(tv21Passed);
+
+                                tbrow1Passed.setLayoutParams(tableRowParams);
+                                tbrow1Passed.setBackgroundResource(R.drawable.border);
+                                tableDisciplinesPassed.addView(tbrow1Passed);
+                            }
+                        }
+
+                        //failed table
+                        TableRow tbrow0Failed = new TableRow(DisciplinesActivity.this);
+                        TextView tv0Failed = new TextView(DisciplinesActivity.this);
+                        tv0Failed.setText(" Name ");
+                        tv0Failed.setTextColor(Color.BLACK);
+                        tv0Failed.setElegantTextHeight(true);
+                        tv0Failed.setTextSize(17);
+                        tv0Failed.setLayoutParams(text1Params);
+                        tv0Failed.setTypeface(null, Typeface.BOLD);
+
+                        tbrow0Failed.addView(tv0Failed);
+
+
+
+                        TextView tv1Failed = new TextView(DisciplinesActivity.this);
+                        tv1Failed.setText(" Credits ");
+                        tv1Failed.setTextColor(Color.BLACK);
+                        tv1Failed.setTypeface(null, Typeface.BOLD);
+
+                        tv1Failed.setElegantTextHeight(true);
+                        tv1Failed.setTextSize(17);
+                        tv1Failed.setLayoutParams(text2Params);
+                        tbrow0Failed.addView(tv1Failed);
+
+                        TextView tv01Failed = new TextView(DisciplinesActivity.this);
+                        tv01Failed.setText(" Type & Year ");
+                        tv01Failed.setTextColor(Color.BLACK);
+                        tv01Failed.setElegantTextHeight(true);
+                        tv01Failed.setTextSize(17);
+                        tv01Failed.setLayoutParams(text3Params);
+                        tv01Failed.setTypeface(null, Typeface.BOLD);
+
+                        tbrow0Failed.addView(tv01Failed);
+
+                        tbrow0Failed.setLayoutParams(tableRowParams);
+                        tbrow0Failed.setBackgroundResource(R.drawable.border);
+                        tableDisciplinesFailed.addView(tbrow0Failed);
+
+                        if (disciplinesLstFailed.isEmpty()){
+
+
+                            TableRow tbrow1Failed = new TableRow(DisciplinesActivity.this);
+                            TextView tv2Failed = new TextView(DisciplinesActivity.this);
+                            tv2Failed.setText(" None ");
+                            tv2Failed.setTextColor(Color.BLACK);
+
+                            tv2Failed.setElegantTextHeight(true);
+                            tv2Failed.setTextSize(17);
+                            tv2Failed.setLayoutParams(text1Params);
+                            tbrow1Failed.addView(tv2Failed);
+
+
+
+                            TextView tv3Failed = new TextView(DisciplinesActivity.this);
+                            tv3Failed.setText(" None ");
+                            tv3Failed.setTextColor(Color.BLACK);
+
+                            tv3Failed.setElegantTextHeight(true);
+                            tv3Failed.setTextSize(17);
+                            tv3Failed.setLayoutParams(text2Params);
+                            tbrow1Failed.addView(tv3Failed);
+
+                            TextView tv21Failed = new TextView(DisciplinesActivity.this);
+                            tv21Failed.setText(" None ");
+                            tv21Failed.setTextColor(Color.BLACK);
+                            tv21Failed.setElegantTextHeight(true);
+                            tv21Failed.setTextSize(17);
+                            tv21Failed.setLayoutParams(text3Params);
+                            tbrow1Failed.addView(tv21Failed);
+
+                            tbrow1Failed.setLayoutParams(tableRowParams);
+                            tbrow1Failed.setBackgroundResource(R.drawable.border);
+                            tableDisciplinesFailed.addView(tbrow1Failed);
+
+
+                        }else{
+
+                            for (DisciplineModel el : disciplinesLstFailed){
+                                String name =  el.getName();
+                                String year = el.getYear();
+                                String type = el.getType();
+                                int credits = Integer.parseInt(el.getCredits());
+
+
+                                TableRow tbrow1Failed = new TableRow(DisciplinesActivity.this);
+                                TextView tv2Failed = new TextView(DisciplinesActivity.this);
+                                tv2Failed.setText(name);
+                                tv2Failed.setTextColor(Color.BLACK);
+
+                                tv2Failed.setElegantTextHeight(true);
+                                tv2Failed.setTextSize(17);
+                                tv2Failed.setLayoutParams(text1Params);
+                                tbrow1Failed.addView(tv2Failed);
+
+
+
+                                TextView tv3Failed = new TextView(DisciplinesActivity.this);
+                                tv3Failed.setText("  "+credits);
+                                tv3Failed.setTextColor(Color.BLACK);
+
+                                tv3Failed.setElegantTextHeight(true);
+                                tv3Failed.setTextSize(17);
+                                tv3Failed.setLayoutParams(text2Params);
+                                tbrow1Failed.addView(tv3Failed);
+
+                                TextView tv21Failed = new TextView(DisciplinesActivity.this);
+                                tv21Failed.setText(type+", Year: "+year);
+                                tv21Failed.setTextColor(Color.BLACK);
+
+                                tv21Failed.setElegantTextHeight(true);
+                                tv21Failed.setTextSize(17);
+                                tv21Failed.setLayoutParams(text3Params);
+                                tbrow1Failed.addView(tv21Failed);
+
+                                tbrow1Failed.setLayoutParams(tableRowParams);
+                                tbrow1Failed.setBackgroundResource(R.drawable.border);
+                                tableDisciplinesFailed.addView(tbrow1Failed);
+                            }
+                        }
 
 
                     }

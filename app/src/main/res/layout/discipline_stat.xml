@@ -237,11 +237,9 @@
         android:layout_margin="10dp"
         android:orientation="horizontal"
 
-        android:gravity="center">
 
-        android:layout_width="0dp"
-        tools:ignore="Suspicious0dp"
-        android:layout_height="wrap_content">
+        android:gravity="center">
+        >
         <TableLayout
             android:id="@+id/tableDisciplineStat"
             android:layout_width="wrap_content"
@@ -253,12 +251,145 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:textAlignment="center"
+            android:stretchColumns="0"
 
             />
 
 
 
     </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="In progress"
+        android:layout_gravity="center"
+        android:background="@drawable/background_design"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textAlignment="center"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+
+        android:gravity="center">
+
+        android:layout_width="0dp"
+        tools:ignore="Suspicious0dp"
+        android:layout_height="wrap_content">
+        <TableLayout
+            android:id="@+id/tableDisciplineInProgressStat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:stretchColumns="0"
+
+            />
+
+
+
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Passed"
+        android:layout_gravity="center"
+        android:background="@drawable/background_design"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textAlignment="center"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+
+        android:gravity="center">
+
+        android:layout_width="0dp"
+        tools:ignore="Suspicious0dp"
+        android:layout_height="wrap_content">
+        <TableLayout
+            android:id="@+id/tableDisciplinePassedStat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:stretchColumns="0"
+
+            />
+
+
+
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Failed"
+        android:layout_gravity="center"
+        android:background="@drawable/background_design"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textAlignment="center"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+
+        android:gravity="center">
+
+        android:layout_width="0dp"
+        tools:ignore="Suspicious0dp"
+        android:layout_height="wrap_content">
+        <TableLayout
+            android:id="@+id/tableDisciplineFailedStat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:stretchColumns="0"
+
+
+            />
+
+
+
+    </LinearLayout>
+
+
 
 
 

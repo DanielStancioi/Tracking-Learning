@@ -66,6 +66,8 @@ public class TasksActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
     private FloatingActionButton floatingActionButtonProgress;
+    private AppCompatButton searchBtn, resetBtn;
+    private TextView dateSearch;
 
     private DatabaseReference reference;
     private FirebaseAuth mAuth;
@@ -111,13 +113,6 @@ public class TasksActivity extends AppCompatActivity {
         floatingActionButton = findViewById(R.id.fab);
         floatingActionButtonProgress = findViewById(R.id.tasksProgress);
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addTask();
-            }
-        });
-
         floatingActionButtonProgress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,6 +125,7 @@ public class TasksActivity extends AppCompatActivity {
 
 
     }
+
 
     private void showProgress(){
         AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
@@ -145,13 +141,19 @@ public class TasksActivity extends AppCompatActivity {
         final TextView done = myView.findViewById(R.id.FinishedTasks);
         final TextView undone = myView.findViewById(R.id.StillInProgressTasks);
         final TextView late = myView.findViewById(R.id.lateTasks);
-        TableLayout tableTasks = myView.findViewById(R.id.tableTasksStat);
+        TableLayout tableTasksUndone = myView.findViewById(R.id.tableTasksUndoneStat);
+        TableLayout tableTasksDone = myView.findViewById(R.id.tableTasksDoneStat);
+        TableLayout tableTasksLate = myView.findViewById(R.id.tableTasksLateStat);
 
         List<String> doneTasks = new ArrayList<>();
         List<String> undoneTasks = new ArrayList<>();
         List<String> lateTasks = new ArrayList<>();
-        List<Model> tasksLst = new ArrayList<>();
-        Map<String, List<String>> mapDateName = new HashMap<>();
+        List<Model> tasksUndoneLst = new ArrayList<>();
+        List<Model> tasksDoneLst = new ArrayList<>();
+        List<Model> tasksLateLst = new ArrayList<>();
+        Map<String, List<String>> mapDateNameUndone = new HashMap<>();
+        Map<String, List<String>> mapDateNameDone = new HashMap<>();
+        Map<String, List<String>> mapDateNameLate = new HashMap<>();
 
 
 
@@ -168,39 +170,53 @@ public class TasksActivity extends AppCompatActivity {
 
 
                     if (done) {
-                        doneTasks.add(ss.child("task").getValue().toString());
+                        //doneTasks.add(ss.child("task").getValue().toString());
+                        tasksDoneLst.add(model);
 
                     } else {
                         if (isDateAfter(getCurrentDateTime, date))
                         {
-                            lateTasks.add(ss.child("task").getValue().toString());
+                            //lateTasks.add(ss.child("task").getValue().toString());
+                            tasksLateLst.add(model);
                         }
                         else
                         {
-                            undoneTasks.add(ss.child("task").getValue().toString());
-                            tasksLst.add(model);
+                            //undoneTasks.add(ss.child("task").getValue().toString());
+                            tasksUndoneLst.add(model);
                         }
 
                     }
                 }
-                done.setText(""+doneTasks.size());
-                undone.setText(""+undoneTasks.size());
-                late.setText(""+lateTasks.size());
+                done.setText(""+tasksDoneLst.size());
+                undone.setText(""+tasksUndoneLst.size());
+                late.setText(""+tasksLateLst.size());
 
-                for(Model el : tasksLst){
-                    if(!mapDateName.containsKey(el.getDueDate())){
+
+                //undone table
+                for(Model el : tasksUndoneLst){
+                    if(!mapDateNameUndone.containsKey(el.getDueDate())){
                        List<String> lst = new ArrayList<>();
-                       lst.add("-"+el.getTask());
-                       mapDateName.put(el.getDueDate(), lst);
+                       lst.add("*"+el.getTask());
+                       mapDateNameUndone.put(el.getDueDate(), lst);
                     }else{
-                        List<String> lst = mapDateName.get(el.getDueDate());
-                        lst.add("-"+el.getTask());
-                        mapDateName.put(el.getDueDate(), lst);
+                        List<String> lst = mapDateNameUndone.get(el.getDueDate());
+                        lst.add("*"+el.getTask());
+                        mapDateNameUndone.put(el.getDueDate(), lst);
                     }
                 }
                 TableLayout.LayoutParams tableRowParams=
                         new TableLayout.LayoutParams
                                 (TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.WRAP_CONTENT);
+
+
+
+
+                TableRow.LayoutParams text1Params = new TableRow.LayoutParams();
+                text1Params.width = 0;
+                text1Params.weight = (float) 0.5;
+                TableRow.LayoutParams text2Params = new TableRow.LayoutParams();
+                text2Params.weight = (float) 0.5;
+                text2Params.width = 0;
 
 
 
@@ -210,48 +226,51 @@ public class TasksActivity extends AppCompatActivity {
                 tv0.setTextColor(Color.BLACK);
                 tv0.setElegantTextHeight(true);
                 tv0.setTextSize(17);
+                tv0.setLayoutParams(text1Params);
                 tv0.setTypeface(null, Typeface.BOLD);
-                tv0.setBackgroundResource(R.drawable.border);
+
                 tbrow0.addView(tv0);
                 TextView tv1 = new TextView(TasksActivity.this);
                 tv1.setText(" Task name ");
                 tv1.setTextColor(Color.BLACK);
                 tv1.setTypeface(null, Typeface.BOLD);
-                tv1.setBackgroundResource(R.drawable.border);
+
                 tv1.setElegantTextHeight(true);
                 tv1.setTextSize(17);
+                tv1.setLayoutParams(text2Params);
                 tbrow0.addView(tv1);
                 tbrow0.setLayoutParams(tableRowParams);
+                tbrow0.setBackgroundResource(R.drawable.border);
+                tableTasksUndone.addView(tbrow0);
 
-                tableTasks.addView(tbrow0);
-
-                if (mapDateName.isEmpty()){
+                if (mapDateNameUndone.isEmpty()){
 
 
                     TableRow tbrow1 = new TableRow(TasksActivity.this);
                     TextView tv2 = new TextView(TasksActivity.this);
                     tv2.setText(" None ");
                     tv2.setTextColor(Color.BLACK);
-                    tv2.setBackgroundResource(R.drawable.border);
+
                     tv2.setElegantTextHeight(true);
                     tv2.setTextSize(17);
+                    tv2.setLayoutParams(text1Params);
                     tbrow1.addView(tv2);
                     TextView tv3 = new TextView(TasksActivity.this);
                     tv3.setText(" None ");
                     tv3.setTextColor(Color.BLACK);
-                    tv3.setBackgroundResource(R.drawable.border);
+
                     tv3.setElegantTextHeight(true);
                     tv3.setTextSize(17);
-
+                    tv3.setLayoutParams(text2Params);
                     tbrow1.addView(tv3);
                     tbrow1.setLayoutParams(tableRowParams);
-
-                    tableTasks.addView(tbrow1);
+                    tbrow1.setBackgroundResource(R.drawable.border);
+                    tableTasksUndone.addView(tbrow1);
 
 
                 }else{
 
-                    for (Map.Entry<String, List<String>> me : mapDateName.entrySet()){
+                    for (Map.Entry<String, List<String>> me : mapDateNameUndone.entrySet()){
                         String date = me.getKey();
 
                         StringBuilder stringBuilder = new StringBuilder();
@@ -267,20 +286,222 @@ public class TasksActivity extends AppCompatActivity {
 
                         tv2.setText(  date+enter);
                         tv2.setTextColor(Color.BLACK);
-                        tv2.setBackgroundResource(R.drawable.border);
+
                         tv2.setElegantTextHeight(true);
                         tv2.setTextSize(17);
+                        tv2.setLayoutParams(text1Params);
                         tbrow1.addView(tv2);
                         TextView tv3 = new TextView(TasksActivity.this);
                         tv3.setText(tasksStr);
                         tv3.setTextColor(Color.BLACK);
-                        tv3.setBackgroundResource(R.drawable.border);
+
                         tv3.setElegantTextHeight(true);
                         tv3.setTextSize(17);
+                        tv3.setLayoutParams(text2Params);
                         tbrow1.addView(tv3);
                         tbrow1.setLayoutParams(tableRowParams);
+                        tbrow1.setBackgroundResource(R.drawable.border);
+                        tableTasksUndone.addView(tbrow1);
+                    }
+                }
 
-                        tableTasks.addView(tbrow1);
+                //done table
+                for(Model el : tasksDoneLst){
+                    if(!mapDateNameDone.containsKey(el.getDueDate())){
+                        List<String> lst = new ArrayList<>();
+                        lst.add("*"+el.getTask());
+                        mapDateNameDone.put(el.getDueDate(), lst);
+                    }else{
+                        List<String> lst = mapDateNameDone.get(el.getDueDate());
+                        lst.add("*"+el.getTask());
+                        mapDateNameDone.put(el.getDueDate(), lst);
+                    }
+                }
+
+
+
+                TableRow tbrow0Done = new TableRow(TasksActivity.this);
+                TextView tv0Done = new TextView(TasksActivity.this);
+                tv0Done.setText(" Date ");
+                tv0Done.setTextColor(Color.BLACK);
+                tv0Done.setElegantTextHeight(true);
+                tv0Done.setTextSize(17);
+                tv0Done.setLayoutParams(text1Params);
+                tv0Done.setTypeface(null, Typeface.BOLD);
+
+                tbrow0Done.addView(tv0Done);
+                TextView tv1Done = new TextView(TasksActivity.this);
+                tv1Done.setText(" Task name ");
+                tv1Done.setTextColor(Color.BLACK);
+                tv1Done.setTypeface(null, Typeface.BOLD);
+
+                tv1Done.setElegantTextHeight(true);
+                tv1Done.setTextSize(17);
+                tv1Done.setLayoutParams(text2Params);
+                tbrow0Done.addView(tv1Done);
+                tbrow0Done.setLayoutParams(tableRowParams);
+                tbrow0Done.setBackgroundResource(R.drawable.border);
+                tableTasksDone.addView(tbrow0Done);
+
+                if (mapDateNameDone.isEmpty()){
+
+
+                    TableRow tbrow1Done = new TableRow(TasksActivity.this);
+                    TextView tv2Done = new TextView(TasksActivity.this);
+                    tv2Done.setText(" None ");
+                    tv2Done.setTextColor(Color.BLACK);
+
+                    tv2Done.setElegantTextHeight(true);
+                    tv2Done.setTextSize(17);
+                    tv2Done.setLayoutParams(text1Params);
+                    tbrow1Done.addView(tv2Done);
+                    TextView tv3Done = new TextView(TasksActivity.this);
+                    tv3Done.setText(" None ");
+                    tv3Done.setTextColor(Color.BLACK);
+
+                    tv3Done.setElegantTextHeight(true);
+                    tv3Done.setTextSize(17);
+                    tv3Done.setLayoutParams(text2Params);
+                    tbrow1Done.addView(tv3Done);
+                    tbrow1Done.setLayoutParams(tableRowParams);
+                    tbrow1Done.setBackgroundResource(R.drawable.border);
+                    tableTasksDone.addView(tbrow1Done);
+
+
+                }else{
+
+                    for (Map.Entry<String, List<String>> me : mapDateNameDone.entrySet()){
+                        String date = me.getKey();
+
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < me.getValue().size()-1; i++) {
+                            stringBuilder.append("\n");
+                        }
+                        String enter = stringBuilder.toString();
+
+                        List<String> tasks = me.getValue();
+                        String tasksStr = String.join(",\n", tasks);
+                        TableRow tbrow1Done = new TableRow(TasksActivity.this);
+                        TextView tv2Done = new TextView(TasksActivity.this);
+
+                        tv2Done.setText(  date+enter);
+                        tv2Done.setTextColor(Color.BLACK);
+
+                        tv2Done.setElegantTextHeight(true);
+                        tv2Done.setTextSize(17);
+                        tv2Done.setLayoutParams(text1Params);
+                        tbrow1Done.addView(tv2Done);
+                        TextView tv3Done = new TextView(TasksActivity.this);
+                        tv3Done.setText(tasksStr);
+                        tv3Done.setTextColor(Color.BLACK);
+
+                        tv3Done.setElegantTextHeight(true);
+                        tv3Done.setTextSize(17);
+                        tv3Done.setLayoutParams(text2Params);
+                        tbrow1Done.addView(tv3Done);
+                        tbrow1Done.setLayoutParams(tableRowParams);
+                        tbrow1Done.setBackgroundResource(R.drawable.border);
+                        tableTasksDone.addView(tbrow1Done);
+                    }
+                }
+
+                //late table
+                for(Model el : tasksLateLst){
+                    if(!mapDateNameLate.containsKey(el.getDueDate())){
+                        List<String> lst = new ArrayList<>();
+                        lst.add("*"+el.getTask());
+                        mapDateNameLate.put(el.getDueDate(), lst);
+                    }else{
+                        List<String> lst = mapDateNameLate.get(el.getDueDate());
+                        lst.add("*"+el.getTask());
+                        mapDateNameLate.put(el.getDueDate(), lst);
+                    }
+                }
+
+
+
+                TableRow tbrow0Late = new TableRow(TasksActivity.this);
+                TextView tv0Late = new TextView(TasksActivity.this);
+                tv0Late.setText(" Date ");
+                tv0Late.setTextColor(Color.BLACK);
+                tv0Late.setElegantTextHeight(true);
+                tv0Late.setTextSize(17);
+                tv0Late.setLayoutParams(text1Params);
+                tv0Late.setTypeface(null, Typeface.BOLD);
+
+                tbrow0Late.addView(tv0Late);
+                TextView tv1Late = new TextView(TasksActivity.this);
+                tv1Late.setText(" Task name ");
+                tv1Late.setTextColor(Color.BLACK);
+                tv1Late.setTypeface(null, Typeface.BOLD);
+
+                tv1Late.setElegantTextHeight(true);
+                tv1Late.setTextSize(17);
+                tv1Late.setLayoutParams(text2Params);
+                tbrow0Late.addView(tv1Late);
+                tbrow0Late.setLayoutParams(tableRowParams);
+                tbrow0Late.setBackgroundResource(R.drawable.border);
+                tableTasksLate.addView(tbrow0Late);
+
+                if (mapDateNameLate.isEmpty()){
+
+
+                    TableRow tbrow1Late = new TableRow(TasksActivity.this);
+                    TextView tv2Late = new TextView(TasksActivity.this);
+                    tv2Late.setText(" None ");
+                    tv2Late.setTextColor(Color.BLACK);
+
+                    tv2Late.setElegantTextHeight(true);
+                    tv2Late.setTextSize(17);
+                    tv2Late.setLayoutParams(text1Params);
+                    tbrow1Late.addView(tv2Late);
+                    TextView tv3Late = new TextView(TasksActivity.this);
+                    tv3Late.setText(" None ");
+                    tv3Late.setTextColor(Color.BLACK);
+
+                    tv3Late.setElegantTextHeight(true);
+                    tv3Late.setTextSize(17);
+                    tv3Late.setLayoutParams(text2Params);
+                    tbrow1Late.addView(tv3Late);
+                    tbrow1Late.setLayoutParams(tableRowParams);
+                    tbrow1Late.setBackgroundResource(R.drawable.border);
+                    tableTasksLate.addView(tbrow1Late);
+
+
+                }else{
+
+                    for (Map.Entry<String, List<String>> me : mapDateNameLate.entrySet()){
+                        String date = me.getKey();
+
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < me.getValue().size()-1; i++) {
+                            stringBuilder.append("\n");
+                        }
+                        String enter = stringBuilder.toString();
+
+                        List<String> tasks = me.getValue();
+                        String tasksStr = String.join(",\n", tasks);
+                        TableRow tbrow1Late = new TableRow(TasksActivity.this);
+                        TextView tv2Late = new TextView(TasksActivity.this);
+
+                        tv2Late.setText(  date+enter);
+                        tv2Late.setTextColor(Color.BLACK);
+
+                        tv2Late.setElegantTextHeight(true);
+                        tv2Late.setTextSize(17);
+                        tv2Late.setLayoutParams(text1Params);
+                        tbrow1Late.addView(tv2Late);
+                        TextView tv3Late = new TextView(TasksActivity.this);
+                        tv3Late.setText(tasksStr);
+                        tv3Late.setTextColor(Color.BLACK);
+
+                        tv3Late.setElegantTextHeight(true);
+                        tv3Late.setTextSize(17);
+                        tv3Late.setLayoutParams(text2Params);
+                        tbrow1Late.addView(tv3Late);
+                        tbrow1Late.setLayoutParams(tableRowParams);
+                        tbrow1Late.setBackgroundResource(R.drawable.border);
+                        tableTasksLate.addView(tbrow1Late);
                     }
                 }
 
@@ -421,6 +642,16 @@ public class TasksActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addTask();
+            }
+
+
+        });
+
         FirebaseRecyclerOptions<Model> options = new FirebaseRecyclerOptions.Builder<Model>().setQuery(reference, Model.class).build();
         FirebaseRecyclerAdapter<Model, MyViewHolder> adapter = new FirebaseRecyclerAdapter<Model, MyViewHolder>(options) {
             @Override
@@ -607,30 +838,30 @@ public class TasksActivity extends AppCompatActivity {
 
 
                 doneBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    task = mTask.getText().toString().trim();
-                    description = mDescription.getText().toString().trim();
-                    dueDate = mDueDate.getText().toString().trim();
+                    @Override
+                    public void onClick(View view) {
+                        task = mTask.getText().toString().trim();
+                        description = mDescription.getText().toString().trim();
+                        dueDate = mDueDate.getText().toString().trim();
 
-                    String date = DateFormat.getDateInstance().format(new Date());
+                        String date = DateFormat.getDateInstance().format(new Date());
 
-                    Model model = new Model(task, description, key, date, true, dueDate);
+                        Model model = new Model(task, description, key, date, true, dueDate);
 
-                    reference.child(key).setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Toast.makeText(TasksActivity.this, "Task marked as done", Toast.LENGTH_SHORT).show();
-                            }else {
-                                String error = task.getException().toString();
-                                Toast.makeText(TasksActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                        reference.child(key).setValue(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(TasksActivity.this, "Task marked as done", Toast.LENGTH_SHORT).show();
+                                }else {
+                                    String error = task.getException().toString();
+                                    Toast.makeText(TasksActivity.this, "Failed "+error, Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
-                    dialog.dismiss();
-                }
-            });
+                        });
+                        dialog.dismiss();
+                    }
+                });
 
 
 
@@ -801,6 +1032,7 @@ public class TasksActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         adapter.startListening();
     }
+
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
