@@ -61,7 +61,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Lab name"
+                    android:text="Lab name"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
@@ -103,7 +104,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Lab description"
+                    android:text="Lab description"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
@@ -146,7 +148,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Minimum grade to pass"
+                    android:text="Minimum grade to pass"
+                    android:textColor="@color/black"
                     android:inputType="numberDecimal"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -188,7 +191,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="% from final grade"
+                    android:text="% from final grade"
+                    android:textColor="@color/black"
                     android:inputType="numberDecimal"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -230,7 +234,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Instructor's name"
+                    android:text="Instructor's name"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
@@ -272,7 +277,8 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Ex: Room 103"
+                    android:text="Ex: Room 103"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
@@ -425,18 +431,20 @@
             android:layout_margin="10dp"
             android:orientation="horizontal">
 
-            android:layout_width="0dp"
-            tools:ignore="Suspicious0dp"
-            android:layout_height="wrap_content">
-            <com.jjoe64.graphview.GraphView
-                android:id="@+id/labGraphViewProgress"
-                android:layout_width="match_parent"
-                android:layout_height="450dp"
+            <TableLayout
+                android:id="@+id/tableLabStat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                tools:ignore="MissingClass" />
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:stretchColumns="0"
+
+                />
 
 
 

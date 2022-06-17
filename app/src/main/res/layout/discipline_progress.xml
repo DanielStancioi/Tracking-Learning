@@ -61,7 +61,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Discipline name"
+                    android:text="Discipline name"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -104,7 +104,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Discipline description"
+                    android:text="Discipline description"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -148,9 +148,138 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Discipline credits"
+                    android:text="Discipline credits"
                     android:inputType="number"
                     android:textColor="@color/black"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Context"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="4">
+
+                <TextView
+                    android:id="@+id/disciplineContextUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Discipline context"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Type"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="4">
+
+                <TextView
+                    android:id="@+id/disciplineTypeUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Discipline type"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Year"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:ignore="Suspicious0dp"
+                android:layout_weight="4">
+
+                <TextView
+                    android:id="@+id/disciplineYearUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Discipline year"
+                   android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
         </LinearLayout>
@@ -192,7 +321,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Discipline end date"
+                    android:text="Discipline end date"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -235,7 +364,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:hint="Discipline status"
+                    android:text="Discipline status"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
             </RelativeLayout>

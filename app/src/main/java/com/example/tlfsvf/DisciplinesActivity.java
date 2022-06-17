@@ -163,7 +163,7 @@ public class DisciplinesActivity extends AppCompatActivity {
         final TextView passed = myView.findViewById(R.id.passedDisciplines);
         final TextView undone = myView.findViewById(R.id.StillInProgressDisciplines);
         final TextView failed = myView.findViewById(R.id.failedDisciplines);
-        final TextView context = myView.findViewById(R.id.contextStat);
+        final EditText context = myView.findViewById(R.id.contextStat);
         AppCompatButton contextBtn = myView.findViewById(R.id.contextStatBtn);
 
 
@@ -1747,7 +1747,8 @@ public class DisciplinesActivity extends AppCompatActivity {
                 delBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        referenceTask.child(key).removeValue();
+                        if (referenceTask.child(key) != null)
+                            referenceTask.child(key).removeValue();
                         reference.child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

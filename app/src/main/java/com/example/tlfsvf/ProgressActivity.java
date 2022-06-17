@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,11 +27,21 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -51,7 +64,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class ProgressActivity extends AppCompatActivity {
 
@@ -59,6 +75,7 @@ public class ProgressActivity extends AppCompatActivity {
     private GraphView graphView;
     private RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
+
 
     private DatabaseReference reference;
     private FirebaseAuth mAuth;
@@ -69,7 +86,7 @@ public class ProgressActivity extends AppCompatActivity {
     private String discipline;
     private String description;
     private String credits;
-    private String endDate;
+    private String endDate, context, type, year;
     List<String> mMarks = new ArrayList<>();
     List<String> mMarksMax = new ArrayList<>();
     List<String> mMarksPercent = new ArrayList<>();
@@ -102,6 +119,245 @@ public class ProgressActivity extends AppCompatActivity {
         mUser = mAuth.getCurrentUser();
         onlineUserID = mUser.getUid();
         reference = FirebaseDatabase.getInstance().getReference().child("disciplines").child(onlineUserID);
+        floatingActionButton = findViewById(R.id.fabProgressDisciplines);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart();
+            }
+        });
+
+
+
+    }
+
+    private void showChart() {
+        AlertDialog.Builder mDialog = new AlertDialog.Builder(ProgressActivity.this);
+        LayoutInflater inflater =LayoutInflater.from(ProgressActivity.this);
+        View view = inflater.inflate(R.layout.chart_layout, null);
+        mDialog.setView(view);
+
+
+        AlertDialog dialog = mDialog.create();
+        dialog.show();
+        BarChart courseBC, labBC;
+        final EditText context = view.findViewById(R.id.contextChart);
+        final EditText type = view.findViewById(R.id.typeChart);
+        final EditText year = view.findViewById(R.id.yearChart);
+        courseBC = view.findViewById(R.id.courseBarChart);
+        labBC = view.findViewById(R.id.labBarChart);
+        AppCompatButton searchBtn = view.findViewById(R.id.searchBtn);
+        AppCompatButton cancelBtn = view.findViewById(R.id.cancelButtonChart);
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String contextTxt = context.getText().toString().trim().toLowerCase(Locale.ROOT);
+                String typeTxt = type.getText().toString().trim().toLowerCase(Locale.ROOT);
+                String yearTxt = year.getText().toString().trim().toLowerCase(Locale.ROOT);
+
+                Map<Float, Integer> gradesCourseMap = new HashMap<>();
+                Map<Float, Integer> gradesLabMap = new HashMap<>();
+
+                gradesCourseMap.clear();
+                gradesLabMap.clear();
+
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot ss: snapshot.getChildren()) {
+                            DisciplineModel dmodel = ss.getValue(DisciplineModel.class);
+                            CourseModel cmodel = dmodel.getCmodel();
+                            LabModel lmodel = dmodel.getLabModel();
+
+                            List<Float> gradesCourse = new ArrayList<>();
+                            List<Float> gradesLab = new ArrayList<>();
+
+                            String contextModel = dmodel.getContext().toLowerCase(Locale.ROOT);
+                            String typeModel  = dmodel.getType().toLowerCase(Locale.ROOT);
+                            String yearModel  = dmodel.getYear().toLowerCase(Locale.ROOT);
+
+                            if((contextModel.compareTo(contextTxt) == 0) && (typeModel.compareTo(typeTxt) == 0) && (yearModel.compareTo(yearTxt) == 0)){
+                                for(int i = 1; i<cmodel.getMarks().size(); i++){
+                                    gradesCourse.add(Float.parseFloat(cmodel.getMarks().get(i)));
+                                }
+
+                                for(int i = 1; i<lmodel.getMarks().size(); i++){
+                                    gradesLab.add(Float.parseFloat(lmodel.getMarks().get(i)));
+                                }
+
+                                for(Float el : gradesCourse){
+                                    if(!gradesCourseMap.containsKey(el)){
+                                        gradesCourseMap.put( el, 1);
+                                    }else{
+                                        int c = gradesCourseMap.get(el);
+                                        c = c + 1;
+                                        gradesCourseMap.put(el, c);
+                                    }
+                                }
+
+                                for(Float el : gradesLab){
+                                    if(!gradesLabMap.containsKey(el)){
+                                        gradesLabMap.put( el, 1);
+                                    }else{
+                                        int c = gradesLabMap.get(el);
+                                        c = c + 1;
+                                        gradesLabMap.put(el, c);
+                                    }
+                                }}
+
+                                // for course
+                                if (!gradesCourseMap.isEmpty()){
+                                    int i = 0;
+                                    ArrayList<BarEntry> barEntriesCourse = new ArrayList<>();
+                                    ArrayList<String> labelsName = new ArrayList<>();
+
+                                    for (Map.Entry<Float, Integer> me : gradesCourseMap.entrySet()){
+                                        barEntriesCourse.add(new BarEntry(i, me.getValue()));
+                                        labelsName.add(me.getKey().toString());
+                                        i++;
+                                    }
+                                    BarDataSet barDataSetCourse = new BarDataSet(barEntriesCourse, "Amount of grades");
+                                    Description description = new Description();
+                                    description.setText("Grades");
+                                    description.setTextSize(10f);
+                                    courseBC.setDescription(description);
+                                    barDataSetCourse.setColor(getResources().getColor(R.color.purple_300));
+                                    barDataSetCourse.setValueTextSize(13f);
+                                    barDataSetCourse.setValueTextColor(getResources().getColor(R.color.black));
+                                    BarData theDataCourse = new BarData(barDataSetCourse);
+                                    courseBC.setData(theDataCourse);
+
+
+
+                                    XAxis xaxis = courseBC.getXAxis();
+                                    YAxis yAxisRigth = courseBC.getAxisRight();
+                                    yAxisRigth.setAxisMinimum(0);
+                                    yAxisRigth.setAxisMaximum(gradesCourseMap.values().stream().max(Integer::compare).get());
+                                    yAxisRigth.setLabelCount(gradesCourseMap.values().stream().max(Integer::compare).get());
+                                    YAxis yAxisLeft = courseBC.getAxisLeft();
+                                    yAxisLeft.setAxisMinimum(0);
+                                    yAxisLeft.setAxisMaximum(gradesCourseMap.values().stream().max(Integer::compare).get());
+                                    yAxisLeft.setLabelCount(gradesCourseMap.values().stream().max(Integer::compare).get());
+                                    xaxis.setValueFormatter(new IndexAxisValueFormatter(labelsName));
+                                    xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                                    xaxis.setTextSize(13f);
+                                    xaxis.setDrawGridLines(false);
+                                    xaxis.setDrawAxisLine(false);
+                                    xaxis.setGranularity(1f);
+                                    xaxis.setLabelCount(labelsName.size());
+                                    xaxis.setLabelRotationAngle(270);
+                                    courseBC.animateY(2000);
+                                    courseBC.invalidate();
+
+
+                                } else {
+                                    //courseBC.removeAllViews();
+                                    courseBC.clear();
+                                    //labBC.removeAllViews();
+                                    labBC.clear();
+                                    if (contextModel.compareTo(contextTxt) != 0) {
+                                        context.setError("No disciplines with this context");
+                                        return;
+                                    }
+                                    if (typeModel.compareTo(typeTxt) != 0) {
+                                        type.setError("No disciplines with this type");
+                                        return;
+                                    }
+                                    if (yearModel.compareTo(yearTxt) != 0) {
+                                        year.setError("No disciplines with this year");
+                                        return;
+                                    }
+                                }
+
+
+
+                                // for lab
+                                if (!gradesLabMap.isEmpty()){
+                                    int i = 0;
+                                    ArrayList<BarEntry> barEntriesLab = new ArrayList<>();
+                                    ArrayList<String> labelsNameLab = new ArrayList<>();
+
+                                    for (Map.Entry<Float, Integer> me : gradesLabMap.entrySet()){
+                                        barEntriesLab.add(new BarEntry(i, me.getValue()));
+                                        labelsNameLab.add(me.getKey().toString());
+                                        i++;
+                                    }
+                                    BarDataSet barDataSetLab = new BarDataSet(barEntriesLab, "Amount of grades");
+                                    Description description = new Description();
+                                    description.setText("Grades");
+                                    description.setTextSize(10f);
+                                    labBC.setDescription(description);
+                                    barDataSetLab.setColor(getResources().getColor(R.color.purple_300));
+                                    barDataSetLab.setValueTextSize(13f);
+                                    barDataSetLab.setValueTextColor(getResources().getColor(R.color.black));
+                                    BarData theDataLab = new BarData(barDataSetLab);
+                                    labBC.setData(theDataLab);
+
+
+
+                                    XAxis xaxis = labBC.getXAxis();
+                                    YAxis yAxisRigth = labBC.getAxisRight();
+                                    yAxisRigth.setAxisMinimum(0);
+                                    yAxisRigth.setAxisMaximum(gradesLabMap.values().stream().max(Integer::compare).get());
+                                    yAxisRigth.setLabelCount(gradesLabMap.values().stream().max(Integer::compare).get());
+                                    YAxis yAxisLeft = labBC.getAxisLeft();
+                                    yAxisLeft.setAxisMinimum(0);
+                                    yAxisLeft.setAxisMaximum(gradesLabMap.values().stream().max(Integer::compare).get());
+                                    yAxisLeft.setLabelCount(gradesLabMap.values().stream().max(Integer::compare).get());
+                                    xaxis.setValueFormatter(new IndexAxisValueFormatter(labelsNameLab));
+                                    xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                                    xaxis.setTextSize(13f);
+                                    xaxis.setDrawGridLines(false);
+                                    xaxis.setDrawAxisLine(false);
+                                    xaxis.setGranularity(1f);
+                                    xaxis.setLabelCount(labelsNameLab.size());
+                                    xaxis.setLabelRotationAngle(270);
+                                    labBC.animateY(2000);
+                                    labBC.invalidate();
+
+
+                                }else {
+                                    //courseBC.removeAllViews();
+                                    courseBC.clear();
+                                    //labBC.removeAllViews();
+                                    labBC.clear();
+                                    if (contextModel.compareTo(contextTxt) != 0) {
+                                        context.setError("No disciplines with this context");
+                                        return;
+                                    }
+                                    if (typeModel.compareTo(typeTxt) != 0) {
+                                        type.setError("No disciplines with this type");
+                                        return;
+                                    }
+                                    if (yearModel.compareTo(yearTxt) != 0) {
+                                        year.setError("No disciplines with this year");
+                                        return;
+                                    }
+                                }
+
+
+
+
+                        reference.removeEventListener(this);
+                    }}
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
+
 
 
 
@@ -196,6 +452,9 @@ public class ProgressActivity extends AppCompatActivity {
                         discipline = dmodel.getName();
                         description = dmodel.getDescription();
                         credits = dmodel.getCredits();
+                        context = dmodel.getContext();
+                        type = dmodel.getType();
+                        year = dmodel.getYear();
 
                         endDate = dmodel.getEndDate();
 
@@ -224,10 +483,17 @@ public class ProgressActivity extends AppCompatActivity {
                 TextView mCredits = view.findViewById(R.id.disciplineCreditsProgress);
                 TextView mStatus = view.findViewById(R.id.disciplineStatusProgress);
                 TextView mEndDate = view.findViewById(R.id.disciplineDueDateProgress);
+                TextView mContext = view.findViewById(R.id.disciplineContextUpdate);
+                TextView mType = view.findViewById(R.id.disciplineTypeUpdate);
+                TextView mYear = view.findViewById(R.id.disciplineYearUpdate);
 
                 mDiscipline.setText(discipline);
 
                 mDescription.setText(description);
+
+                mContext.setText(context);
+                mType.setText(type);
+                mYear.setText(year);
 
                 mCredits.setText(credits);
 
@@ -356,7 +622,8 @@ public class ProgressActivity extends AppCompatActivity {
 
         final TextView currentGradeLab = myViewLab.findViewById(R.id.labCurrentGradeText);
         final TextView currentMaxGradeLab = myViewLab.findViewById(R.id.labCurrentMaxGradeText);
-        final GraphView graphView  = myViewLab.findViewById(R.id.labGraphViewProgress);
+        TableLayout tableLab = myViewLab.findViewById(R.id.tableLabStat);
+
 
         androidx.appcompat.widget.AppCompatButton cancel = myViewLab.findViewById(R.id.cancelButtonLabProgress);
 
@@ -368,6 +635,7 @@ public class ProgressActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 DisciplineModel dmodel = snapshot.getValue(DisciplineModel.class);
+                Map<String, List<Pair<String, String>>> gradesDates = new HashMap<>();
                 LabModel lmodel = dmodel.getLabModel();
                 lab.setText(lmodel.getLab());
                 descriptionLab.setText(lmodel.getDescription());
@@ -380,7 +648,7 @@ public class ProgressActivity extends AppCompatActivity {
                 List<String> lMarks = lmodel.getMarks();
                 List<String> lMarksMax = lmodel.getMarksMax();
                 List<String> lMarksPercent = lmodel.getmMarksPercent();
-                List<String> cMarksDate = lmodel.getGradeDate();
+                List<String> lMarksDate = lmodel.getGradeDate();
 
 
 
@@ -397,36 +665,151 @@ public class ProgressActivity extends AppCompatActivity {
                 currentGradeLab.setText(lMed+"");
                 currentMaxGradeLab.setText(lMedMax+"");
 
-                int index = 0;
-                DataPoint[] dp = new  DataPoint[lMarks.size()-1];
 
-                for (int i = 1; i<lMarks.size(); i++){
-                    //Date d = (Date) formatter.parse(gradeDate.get(i));
-                    //long milliseconds = d.getTime();
-                    DataPoint dp1 = new DataPoint(i, Double.parseDouble(lMarks.get(i)));
-                    dp[index] = dp1;
-                    index++;
+                //table
+                TableLayout.LayoutParams tableRowParams=
+                        new TableLayout.LayoutParams
+                                (TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.WRAP_CONTENT);
+
+
+
+
+                TableRow.LayoutParams text1Params = new TableRow.LayoutParams();
+                text1Params.width = 0;
+                text1Params.weight = (float) 0.33333;
+                TableRow.LayoutParams text2Params = new TableRow.LayoutParams();
+                text2Params.weight = (float) 0.33333;
+                text2Params.width = 0;
+                TableRow.LayoutParams text3Params = new TableRow.LayoutParams();
+                text2Params.weight = (float) 0.33333;
+                text2Params.width = 0;
+
+                TableRow tbrow0 = new TableRow(ProgressActivity.this);
+                TextView tv0 = new TextView(ProgressActivity.this);
+                tv0.setText(" Date ");
+                tv0.setTextColor(Color.BLACK);
+                tv0.setElegantTextHeight(true);
+                tv0.setTextSize(17);
+                tv0.setTypeface(null, Typeface.BOLD);
+                tv0.setLayoutParams(text1Params);
+                tbrow0.addView(tv0);
+                TextView tv1 = new TextView(ProgressActivity.this);
+                tv1.setText(" Grade ");
+                tv1.setTextColor(Color.BLACK);
+                tv1.setTypeface(null, Typeface.BOLD);
+
+                tv1.setElegantTextHeight(true);
+                tv1.setTextSize(17);
+                tv1.setLayoutParams(text2Params);
+                tbrow0.addView(tv1);
+
+
+                TextView tv3 = new TextView(ProgressActivity.this);
+                tv3.setText(" Percent ");
+                tv3.setTextColor(Color.BLACK);
+                tv3.setElegantTextHeight(true);
+                tv3.setTextSize(17);
+                tv3.setTypeface(null, Typeface.BOLD);
+                tv3.setLayoutParams(text3Params);
+                tbrow0.addView(tv3);
+                tbrow0.setLayoutParams(tableRowParams);
+                tbrow0.setBackgroundResource(R.drawable.border);
+
+                tableLab.addView(tbrow0);
+
+                if (lMarks.size()>1){
+                    for (int i = 1; i<lMarks.size(); i++){
+                        String keyStr = lMarksDate.get(i);
+                        if(!gradesDates.containsKey(keyStr)){
+                            List<Pair<String, String>> lst = new ArrayList<>();
+                            lst.add(new Pair<>(lMarks.get(i), lMarksPercent.get(i)+"%"));
+                            gradesDates.put(keyStr, lst);
+                        }else{
+                            List<Pair<String, String>> lst = gradesDates.get(keyStr);
+                            lst.add(new Pair<>(lMarks.get(i), lMarksPercent.get(i)+"%"));
+                            gradesDates.put(keyStr, lst);
+                        }
+                    }
+
+                    for (Map.Entry<String, List<Pair<String,String>>> me : gradesDates.entrySet()){
+                        List<Pair<String,String>> gradesPercent = me.getValue();
+                        List<String> grades = new ArrayList<>();
+                        List<String> percents = new ArrayList<>();
+                        for (Pair<String,String> el:gradesPercent){
+                            grades.add(el.first);
+                            percents.add(el.second);
+                        }
+                        String date = me.getKey();
+                        String gradesStr = String.join(", ", grades);
+                        String percentsStr = String.join(", ", percents);
+                        TableRow tbrow1 = new TableRow(ProgressActivity.this);
+                        TextView tv2 = new TextView(ProgressActivity.this);
+
+                        tv2.setText("  "+date+"  ");
+                        tv2.setTextColor(Color.BLACK);
+
+                        tv2.setElegantTextHeight(true);
+                        tv2.setTextSize(17);
+                        tv2.setLayoutParams(text1Params);
+                        tbrow1.addView(tv2);
+                        TextView tv4 = new TextView(ProgressActivity.this);
+                        tv4.setText("  "+gradesStr+"  ");
+                        tv4.setTextColor(Color.BLACK);
+
+                        tv4.setElegantTextHeight(true);
+                        tv4.setTextSize(17);
+                        tv4.setLayoutParams(text2Params);
+                        tbrow1.addView(tv4);
+
+                        TextView tv5 = new TextView(ProgressActivity.this);
+                        tv5.setText("  "+percentsStr+"  ");
+                        tv5.setTextColor(Color.BLACK);
+
+                        tv5.setElegantTextHeight(true);
+                        tv5.setTextSize(17);
+                        tv5.setLayoutParams(text3Params);
+                        tbrow1.addView(tv5);
+                        tbrow1.setLayoutParams(tableRowParams);
+                        tbrow1.setBackgroundResource(R.drawable.border);
+                        tableLab.addView(tbrow1);
+
+
+                    }
+                }else {
+
+                    TableRow tbrow1 = new TableRow(ProgressActivity.this);
+                    TextView tv2 = new TextView(ProgressActivity.this);
+                    tv2.setText(" None ");
+                    tv2.setTextColor(Color.BLACK);
+
+                    tv2.setElegantTextHeight(true);
+                    tv2.setTextSize(17);
+                    tv2.setLayoutParams(text1Params);
+                    tbrow1.addView(tv2);
+                    TextView tv4 = new TextView(ProgressActivity.this);
+                    tv4.setText(" None ");
+                    tv4.setTextColor(Color.BLACK);
+
+                    tv4.setElegantTextHeight(true);
+                    tv4.setTextSize(17);
+                    tv4.setLayoutParams(text2Params);
+                    tbrow1.addView(tv4);
+                    TextView tv5 = new TextView(ProgressActivity.this);
+                    tv5.setText(" None ");
+                    tv5.setTextColor(Color.BLACK);
+
+                    tv5.setElegantTextHeight(true);
+                    tv5.setTextSize(17);
+                    tv5.setLayoutParams(text3Params);
+                    tbrow1.addView(tv5);
+
+                    tbrow1.setLayoutParams(tableRowParams);
+                    tbrow1.setBackgroundResource(R.drawable.border);
+                    tableLab.addView(tbrow1);
+
                 }
-                LineGraphSeries series = new LineGraphSeries();
-                series.resetData(dp);
-
-
-                graphView.addSeries(series);
-
-
-                series.setDrawDataPoints(true);
-                series.setColor(Color.BLACK);
-                series.setThickness(10);
-                series.setDrawBackground(true);
-                series.setBackgroundColor(Color.argb(60, 255, 102, 255));
-                //graphView.getViewport().setXAxisBoundsManual(true);
-                graphView.getViewport().setMinY(0);
-                //graphView.getViewport().setMaxY(10);
-                graphView.getViewport().setScrollable(true);
-                graphView.getViewport().setScrollableY(true);
-                graphView.getViewport().setScalable(true);
-                graphView.getViewport().setScalableY(true);
                 reff.removeEventListener(this);
+
 
 
             }
@@ -458,9 +841,11 @@ public class ProgressActivity extends AppCompatActivity {
         final TextView locationCourse = myViewCourse.findViewById(R.id.courseLocationText);
         final TextView examDateCourse = myViewCourse.findViewById(R.id.courseExamDateText);
 
+
         final TextView currentGradeCourse = myViewCourse.findViewById(R.id.currentGradeText);
         final TextView currentMaxGradeCourse = myViewCourse.findViewById(R.id.currentMaxGradeText);
-        final GraphView graphView  = myViewCourse.findViewById(R.id.courseGraphViewProgress);
+        TableLayout tableCourse = myViewCourse.findViewById(R.id.tableCourseStat);
+
 
         androidx.appcompat.widget.AppCompatButton cancel = myViewCourse.findViewById(R.id.cancelButtonCourseProgress);
 
@@ -485,6 +870,7 @@ public class ProgressActivity extends AppCompatActivity {
                 List<String> cMarksMax = cmodel.getMarksMax();
                 List<String> cMarksPercent = cmodel.getmMarksPercent();
                 List<String> cMarksDate = cmodel.getGradeDate();
+                Map<String, List<Pair<String, String>>> gradesDates = new HashMap<>();
 
 
 
@@ -501,35 +887,148 @@ public class ProgressActivity extends AppCompatActivity {
                 currentGradeCourse.setText(cMed+"");
                 currentMaxGradeCourse.setText(cMedMax+"");
 
-                int index = 0;
-                DataPoint[] dp = new  DataPoint[cMarks.size()-1];
+                //table
+                TableLayout.LayoutParams tableRowParams=
+                        new TableLayout.LayoutParams
+                                (TableLayout.LayoutParams.WRAP_CONTENT,TableLayout.LayoutParams.WRAP_CONTENT);
 
-                for (int i = 1; i<cMarks.size(); i++){
-                    //Date d = (Date) formatter.parse(gradeDate.get(i));
-                    //long milliseconds = d.getTime();
-                    DataPoint dp1 = new DataPoint(i, Double.parseDouble(cMarks.get(i)));
-                    dp[index] = dp1;
-                    index++;
+
+
+
+                TableRow.LayoutParams text1Params = new TableRow.LayoutParams();
+                text1Params.width = 0;
+                text1Params.weight = (float) 0.33333;
+                TableRow.LayoutParams text2Params = new TableRow.LayoutParams();
+                text2Params.weight = (float) 0.33333;
+                text2Params.width = 0;
+                TableRow.LayoutParams text3Params = new TableRow.LayoutParams();
+                text2Params.weight = (float) 0.33333;
+                text2Params.width = 0;
+
+                TableRow tbrow0 = new TableRow(ProgressActivity.this);
+                TextView tv0 = new TextView(ProgressActivity.this);
+                tv0.setText(" Date ");
+                tv0.setTextColor(Color.BLACK);
+                tv0.setElegantTextHeight(true);
+                tv0.setTextSize(17);
+                tv0.setTypeface(null, Typeface.BOLD);
+                tv0.setLayoutParams(text1Params);
+                tbrow0.addView(tv0);
+                TextView tv1 = new TextView(ProgressActivity.this);
+                tv1.setText(" Grade ");
+                tv1.setTextColor(Color.BLACK);
+                tv1.setTypeface(null, Typeface.BOLD);
+
+                tv1.setElegantTextHeight(true);
+                tv1.setTextSize(17);
+                tv1.setLayoutParams(text2Params);
+                tbrow0.addView(tv1);
+
+
+                TextView tv3 = new TextView(ProgressActivity.this);
+                tv3.setText(" Percent ");
+                tv3.setTextColor(Color.BLACK);
+                tv3.setElegantTextHeight(true);
+                tv3.setTextSize(17);
+                tv3.setTypeface(null, Typeface.BOLD);
+                tv3.setLayoutParams(text3Params);
+                tbrow0.addView(tv3);
+                tbrow0.setLayoutParams(tableRowParams);
+                tbrow0.setBackgroundResource(R.drawable.border);
+
+                tableCourse.addView(tbrow0);
+
+                if (cMarks.size()>1){
+                    for (int i = 1; i<cMarks.size(); i++){
+                        String keyStr = cMarksDate.get(i);
+                        if(!gradesDates.containsKey(keyStr)){
+                            List<Pair<String, String>> lst = new ArrayList<>();
+                            lst.add(new Pair<>(cMarks.get(i), cMarksPercent.get(i)+"%"));
+                            gradesDates.put(keyStr, lst);
+                        }else{
+                            List<Pair<String, String>> lst = gradesDates.get(keyStr);
+                            lst.add(new Pair<>(cMarks.get(i), cMarksPercent.get(i)+"%"));
+                            gradesDates.put(keyStr, lst);
+                        }
+                    }
+
+                    for (Map.Entry<String, List<Pair<String,String>>> me : gradesDates.entrySet()){
+                        List<Pair<String,String>> gradesPercent = me.getValue();
+                        List<String> grades = new ArrayList<>();
+                        List<String> percents = new ArrayList<>();
+                        for (Pair<String,String> el:gradesPercent){
+                            grades.add(el.first);
+                            percents.add(el.second);
+                        }
+                        String date = me.getKey();
+                        String gradesStr = String.join(", ", grades);
+                        String percentsStr = String.join(", ", percents);
+                        TableRow tbrow1 = new TableRow(ProgressActivity.this);
+                        TextView tv2 = new TextView(ProgressActivity.this);
+
+                        tv2.setText("  "+date+"  ");
+                        tv2.setTextColor(Color.BLACK);
+
+                        tv2.setElegantTextHeight(true);
+                        tv2.setTextSize(17);
+                        tv2.setLayoutParams(text1Params);
+                        tbrow1.addView(tv2);
+                        TextView tv4 = new TextView(ProgressActivity.this);
+                        tv4.setText("  "+gradesStr+"  ");
+                        tv4.setTextColor(Color.BLACK);
+
+                        tv4.setElegantTextHeight(true);
+                        tv4.setTextSize(17);
+                        tv4.setLayoutParams(text2Params);
+                        tbrow1.addView(tv4);
+
+                        TextView tv5 = new TextView(ProgressActivity.this);
+                        tv5.setText("  "+percentsStr+"  ");
+                        tv5.setTextColor(Color.BLACK);
+
+                        tv5.setElegantTextHeight(true);
+                        tv5.setTextSize(17);
+                        tv5.setLayoutParams(text3Params);
+                        tbrow1.addView(tv5);
+                        tbrow1.setLayoutParams(tableRowParams);
+                        tbrow1.setBackgroundResource(R.drawable.border);
+                        tableCourse.addView(tbrow1);
+
+
+                    }
+                }else {
+
+                    TableRow tbrow1 = new TableRow(ProgressActivity.this);
+                    TextView tv2 = new TextView(ProgressActivity.this);
+                    tv2.setText(" None ");
+                    tv2.setTextColor(Color.BLACK);
+
+                    tv2.setElegantTextHeight(true);
+                    tv2.setTextSize(17);
+                    tv2.setLayoutParams(text1Params);
+                    tbrow1.addView(tv2);
+                    TextView tv4 = new TextView(ProgressActivity.this);
+                    tv4.setText(" None ");
+                    tv4.setTextColor(Color.BLACK);
+
+                    tv4.setElegantTextHeight(true);
+                    tv4.setTextSize(17);
+                    tv4.setLayoutParams(text2Params);
+                    tbrow1.addView(tv4);
+                    TextView tv5 = new TextView(ProgressActivity.this);
+                    tv5.setText(" None ");
+                    tv5.setTextColor(Color.BLACK);
+
+                    tv5.setElegantTextHeight(true);
+                    tv5.setTextSize(17);
+                    tv5.setLayoutParams(text3Params);
+                    tbrow1.addView(tv5);
+
+                    tbrow1.setLayoutParams(tableRowParams);
+                    tbrow1.setBackgroundResource(R.drawable.border);
+                    tableCourse.addView(tbrow1);
+
                 }
-                LineGraphSeries series = new LineGraphSeries();
-                series.resetData(dp);
-
-
-                graphView.addSeries(series);
-
-
-                series.setDrawDataPoints(true);
-                series.setColor(Color.BLACK);
-                series.setThickness(10);
-                series.setDrawBackground(true);
-                series.setBackgroundColor(Color.argb(60, 255, 102, 255));
-                //graphView.getViewport().setXAxisBoundsManual(true);
-                graphView.getViewport().setMinY(0);
-                //graphView.getViewport().setMaxY(10);
-                graphView.getViewport().setScrollable(true);
-                graphView.getViewport().setScrollableY(true);
-                graphView.getViewport().setScalable(true);
-                graphView.getViewport().setScalableY(true);
                 reff.removeEventListener(this);
 
 

@@ -504,7 +504,7 @@ public class TasksActivity extends AppCompatActivity {
                         tableTasksLate.addView(tbrow1Late);
                     }
                 }
-
+                reference.removeEventListener(this);
 
 
             }
@@ -665,7 +665,7 @@ public class TasksActivity extends AppCompatActivity {
 
 
 
-                final ValueEventListener eventListener = new ValueEventListener() {
+                reff.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -689,15 +689,17 @@ public class TasksActivity extends AppCompatActivity {
 
                         }
                         holder.setStatus(text);
+                        reff.removeEventListener(this);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                };
+                });
 
-                reff.addValueEventListener(eventListener);
+
+
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -707,7 +709,6 @@ public class TasksActivity extends AppCompatActivity {
                         description = model.getDescription();
                         dueDate = model.getDueDate();
                         TasksActivity.this.done = model.isDone();
-                        reff.removeEventListener(eventListener);
                         reff.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
