@@ -164,28 +164,24 @@ public class ProgressActivity extends AppCompatActivity {
                 String typeTxt = type.getText().toString().trim().toLowerCase(Locale.ROOT);
                 String yearTxt = year.getText().toString().trim().toLowerCase(Locale.ROOT);
 
-                Map<Float, Integer> gradesCourseMap = new HashMap<>();
-                Map<Float, Integer> gradesLabMap = new HashMap<>();
 
-                gradesCourseMap.clear();
-                gradesLabMap.clear();
 
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Map<Float, Integer> gradesCourseMap = new HashMap<>();
+                        Map<Float, Integer> gradesLabMap = new HashMap<>();
+                        List<Float> gradesCourse = new ArrayList<>();
+                        List<Float> gradesLab = new ArrayList<>();
+
                         for(DataSnapshot ss: snapshot.getChildren()) {
                             DisciplineModel dmodel = ss.getValue(DisciplineModel.class);
                             CourseModel cmodel = dmodel.getCmodel();
                             LabModel lmodel = dmodel.getLabModel();
 
-                            List<Float> gradesCourse = new ArrayList<>();
-                            List<Float> gradesLab = new ArrayList<>();
 
-                            String contextModel = dmodel.getContext().toLowerCase(Locale.ROOT);
-                            String typeModel  = dmodel.getType().toLowerCase(Locale.ROOT);
-                            String yearModel  = dmodel.getYear().toLowerCase(Locale.ROOT);
 
-                            if((contextModel.compareTo(contextTxt) == 0) && (typeModel.compareTo(typeTxt) == 0) && (yearModel.compareTo(yearTxt) == 0)){
+                            if((dmodel.getContext().toLowerCase(Locale.ROOT).compareTo(contextTxt) == 0) && (dmodel.getType().toLowerCase(Locale.ROOT).compareTo(typeTxt) == 0) && (dmodel.getYear().toLowerCase(Locale.ROOT).compareTo(yearTxt) == 0)){
                                 for(int i = 1; i<cmodel.getMarks().size(); i++){
                                     gradesCourse.add(Float.parseFloat(cmodel.getMarks().get(i)));
                                 }
@@ -214,149 +210,140 @@ public class ProgressActivity extends AppCompatActivity {
                                     }
                                 }}
 
-                                // for course
-                                if (!gradesCourseMap.isEmpty()){
-                                    int i = 0;
-                                    ArrayList<BarEntry> barEntriesCourse = new ArrayList<>();
-                                    ArrayList<String> labelsName = new ArrayList<>();
-
-                                    for (Map.Entry<Float, Integer> me : gradesCourseMap.entrySet()){
-                                        barEntriesCourse.add(new BarEntry(i, me.getValue()));
-                                        labelsName.add(me.getKey().toString());
-                                        i++;
-                                    }
-                                    BarDataSet barDataSetCourse = new BarDataSet(barEntriesCourse, "Amount of grades");
-                                    Description description = new Description();
-                                    description.setText("Grades");
-                                    description.setTextSize(10f);
-                                    courseBC.setDescription(description);
-                                    barDataSetCourse.setColor(getResources().getColor(R.color.purple_300));
-                                    barDataSetCourse.setValueTextSize(13f);
-                                    barDataSetCourse.setValueTextColor(getResources().getColor(R.color.black));
-                                    BarData theDataCourse = new BarData(barDataSetCourse);
-                                    courseBC.setData(theDataCourse);
-
-
-
-                                    XAxis xaxis = courseBC.getXAxis();
-                                    YAxis yAxisRigth = courseBC.getAxisRight();
-                                    yAxisRigth.setAxisMinimum(0);
-                                    yAxisRigth.setAxisMaximum(gradesCourseMap.values().stream().max(Integer::compare).get());
-                                    yAxisRigth.setLabelCount(gradesCourseMap.values().stream().max(Integer::compare).get());
-                                    YAxis yAxisLeft = courseBC.getAxisLeft();
-                                    yAxisLeft.setAxisMinimum(0);
-                                    yAxisLeft.setAxisMaximum(gradesCourseMap.values().stream().max(Integer::compare).get());
-                                    yAxisLeft.setLabelCount(gradesCourseMap.values().stream().max(Integer::compare).get());
-                                    xaxis.setValueFormatter(new IndexAxisValueFormatter(labelsName));
-                                    xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                                    xaxis.setTextSize(13f);
-                                    xaxis.setDrawGridLines(false);
-                                    xaxis.setDrawAxisLine(false);
-                                    xaxis.setGranularity(1f);
-                                    xaxis.setLabelCount(labelsName.size());
-                                    xaxis.setLabelRotationAngle(270);
-                                    courseBC.animateY(2000);
-                                    courseBC.invalidate();
-
-
-                                } else {
-                                    //courseBC.removeAllViews();
-                                    courseBC.clear();
-                                    //labBC.removeAllViews();
-                                    labBC.clear();
-                                    if (contextModel.compareTo(contextTxt) != 0) {
-                                        context.setError("No disciplines with this context");
-                                        return;
-                                    }
-                                    if (typeModel.compareTo(typeTxt) != 0) {
-                                        type.setError("No disciplines with this type");
-                                        return;
-                                    }
-                                    if (yearModel.compareTo(yearTxt) != 0) {
-                                        year.setError("No disciplines with this year");
-                                        return;
-                                    }
-                                }
-
-
-
-                                // for lab
-                                if (!gradesLabMap.isEmpty()){
-                                    int i = 0;
-                                    ArrayList<BarEntry> barEntriesLab = new ArrayList<>();
-                                    ArrayList<String> labelsNameLab = new ArrayList<>();
-
-                                    for (Map.Entry<Float, Integer> me : gradesLabMap.entrySet()){
-                                        barEntriesLab.add(new BarEntry(i, me.getValue()));
-                                        labelsNameLab.add(me.getKey().toString());
-                                        i++;
-                                    }
-                                    BarDataSet barDataSetLab = new BarDataSet(barEntriesLab, "Amount of grades");
-                                    Description description = new Description();
-                                    description.setText("Grades");
-                                    description.setTextSize(10f);
-                                    labBC.setDescription(description);
-                                    barDataSetLab.setColor(getResources().getColor(R.color.purple_300));
-                                    barDataSetLab.setValueTextSize(13f);
-                                    barDataSetLab.setValueTextColor(getResources().getColor(R.color.black));
-                                    BarData theDataLab = new BarData(barDataSetLab);
-                                    labBC.setData(theDataLab);
-
-
-
-                                    XAxis xaxis = labBC.getXAxis();
-                                    YAxis yAxisRigth = labBC.getAxisRight();
-                                    yAxisRigth.setAxisMinimum(0);
-                                    yAxisRigth.setAxisMaximum(gradesLabMap.values().stream().max(Integer::compare).get());
-                                    yAxisRigth.setLabelCount(gradesLabMap.values().stream().max(Integer::compare).get());
-                                    YAxis yAxisLeft = labBC.getAxisLeft();
-                                    yAxisLeft.setAxisMinimum(0);
-                                    yAxisLeft.setAxisMaximum(gradesLabMap.values().stream().max(Integer::compare).get());
-                                    yAxisLeft.setLabelCount(gradesLabMap.values().stream().max(Integer::compare).get());
-                                    xaxis.setValueFormatter(new IndexAxisValueFormatter(labelsNameLab));
-                                    xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                                    xaxis.setTextSize(13f);
-                                    xaxis.setDrawGridLines(false);
-                                    xaxis.setDrawAxisLine(false);
-                                    xaxis.setGranularity(1f);
-                                    xaxis.setLabelCount(labelsNameLab.size());
-                                    xaxis.setLabelRotationAngle(270);
-                                    labBC.animateY(2000);
-                                    labBC.invalidate();
-
-
-                                }else {
-                                    //courseBC.removeAllViews();
-                                    courseBC.clear();
-                                    //labBC.removeAllViews();
-                                    labBC.clear();
-                                    if (contextModel.compareTo(contextTxt) != 0) {
-                                        context.setError("No disciplines with this context");
-                                        return;
-                                    }
-                                    if (typeModel.compareTo(typeTxt) != 0) {
-                                        type.setError("No disciplines with this type");
-                                        return;
-                                    }
-                                    if (yearModel.compareTo(yearTxt) != 0) {
-                                        year.setError("No disciplines with this year");
-                                        return;
-                                    }
-                                }
-
 
 
 
                         reference.removeEventListener(this);
-                    }}
+                    }
+                        // for course
+                        if (!gradesCourseMap.isEmpty()){
+                            int i = 0;
+                            ArrayList<BarEntry> barEntriesCourse = new ArrayList<>();
+                            ArrayList<String> labelsName = new ArrayList<>();
+
+                            for (Map.Entry<Float, Integer> me : gradesCourseMap.entrySet()){
+                                barEntriesCourse.add(new BarEntry(i, me.getValue()));
+                                labelsName.add(me.getKey().toString());
+                                i++;
+                            }
+                            BarDataSet barDataSetCourse = new BarDataSet(barEntriesCourse, "Amount of grades");
+                            Description description = new Description();
+                            description.setText("Grades");
+                            description.setTextSize(10f);
+                            courseBC.setDescription(description);
+                            barDataSetCourse.setColor(getResources().getColor(R.color.purple_300));
+                            barDataSetCourse.setValueTextSize(13f);
+                            barDataSetCourse.setValueTextColor(getResources().getColor(R.color.black));
+                            BarData theDataCourse = new BarData(barDataSetCourse);
+                            courseBC.setData(theDataCourse);
+
+
+
+                            XAxis xaxis = courseBC.getXAxis();
+                            YAxis yAxisRigth = courseBC.getAxisRight();
+                            yAxisRigth.setAxisMinimum(0);
+                            yAxisRigth.setAxisMaximum(gradesCourseMap.values().stream().max(Integer::compare).get());
+                            yAxisRigth.setLabelCount(gradesCourseMap.values().stream().max(Integer::compare).get());
+                            YAxis yAxisLeft = courseBC.getAxisLeft();
+                            yAxisLeft.setAxisMinimum(0);
+                            yAxisLeft.setAxisMaximum(gradesCourseMap.values().stream().max(Integer::compare).get());
+                            yAxisLeft.setLabelCount(gradesCourseMap.values().stream().max(Integer::compare).get());
+                            xaxis.setValueFormatter(new IndexAxisValueFormatter(labelsName));
+                            xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                            xaxis.setTextSize(13f);
+                            xaxis.setDrawGridLines(false);
+                            xaxis.setDrawAxisLine(false);
+                            xaxis.setGranularity(1f);
+                            xaxis.setLabelCount(labelsName.size());
+                            xaxis.setLabelRotationAngle(270);
+                            courseBC.animateY(2000);
+                            courseBC.invalidate();
+
+
+                        } else {
+                            //courseBC.removeAllViews();
+                            courseBC.clear();
+                            //labBC.removeAllViews();
+                            labBC.clear();
+
+                            //searchBtn.setError("No data found");
+
+                            return;
+
+
+                        }
+
+
+
+                        // for lab
+                        if (!gradesLabMap.isEmpty()){
+                            int i = 0;
+                            ArrayList<BarEntry> barEntriesLab = new ArrayList<>();
+                            ArrayList<String> labelsNameLab = new ArrayList<>();
+
+                            for (Map.Entry<Float, Integer> me : gradesLabMap.entrySet()){
+                                barEntriesLab.add(new BarEntry(i, me.getValue()));
+                                labelsNameLab.add(me.getKey().toString());
+                                i++;
+                            }
+                            BarDataSet barDataSetLab = new BarDataSet(barEntriesLab, "Amount of grades");
+                            Description description = new Description();
+                            description.setText("Grades");
+                            description.setTextSize(10f);
+                            labBC.setDescription(description);
+                            barDataSetLab.setColor(getResources().getColor(R.color.purple_300));
+                            barDataSetLab.setValueTextSize(13f);
+                            barDataSetLab.setValueTextColor(getResources().getColor(R.color.black));
+                            BarData theDataLab = new BarData(barDataSetLab);
+                            labBC.setData(theDataLab);
+
+
+
+                            XAxis xaxis = labBC.getXAxis();
+                            YAxis yAxisRigth = labBC.getAxisRight();
+                            yAxisRigth.setAxisMinimum(0);
+                            yAxisRigth.setAxisMaximum(gradesLabMap.values().stream().max(Integer::compare).get());
+                            yAxisRigth.setLabelCount(gradesLabMap.values().stream().max(Integer::compare).get());
+                            YAxis yAxisLeft = labBC.getAxisLeft();
+                            yAxisLeft.setAxisMinimum(0);
+                            yAxisLeft.setAxisMaximum(gradesLabMap.values().stream().max(Integer::compare).get());
+                            yAxisLeft.setLabelCount(gradesLabMap.values().stream().max(Integer::compare).get());
+                            xaxis.setValueFormatter(new IndexAxisValueFormatter(labelsNameLab));
+                            xaxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                            xaxis.setTextSize(13f);
+                            xaxis.setDrawGridLines(false);
+                            xaxis.setDrawAxisLine(false);
+                            xaxis.setGranularity(1f);
+                            xaxis.setLabelCount(labelsNameLab.size());
+                            xaxis.setLabelRotationAngle(270);
+                            labBC.animateY(2000);
+                            labBC.invalidate();
+
+
+                        }else {
+                            //courseBC.removeAllViews();
+                            courseBC.clear();
+                            //labBC.removeAllViews();
+                            labBC.clear();
+                            //searchBtn.setError("No data found");
+                            return;
+                        }
+                    }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
                     }
                 });
+
+
             }
         });
+
+
+
+
+
 
 
 
@@ -443,7 +430,7 @@ public class ProgressActivity extends AppCompatActivity {
 
                     }
                 });
-                holder.setDescription(dmodel.getDescription());
+                holder.setDescription(dmodel.getContext());
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override

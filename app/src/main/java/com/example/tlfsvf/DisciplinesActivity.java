@@ -1116,9 +1116,9 @@ public class DisciplinesActivity extends AppCompatActivity {
         FirebaseRecyclerAdapter<DisciplineModel, MyViewHolder> adapter = new FirebaseRecyclerAdapter<DisciplineModel, MyViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position, @NonNull DisciplineModel dmodel) {
-                holder.setDate(dmodel.getDate());
+                holder.setDate(dmodel.getEndDate());
                 holder.setTask(dmodel.getName());
-                holder.setStatus(dmodel.getDescription());
+                holder.setStatus(dmodel.getContext());
 
 
 
