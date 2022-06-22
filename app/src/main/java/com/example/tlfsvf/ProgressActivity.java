@@ -171,14 +171,16 @@ public class ProgressActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Map<Float, Integer> gradesCourseMap = new HashMap<>();
                         Map<Float, Integer> gradesLabMap = new HashMap<>();
-                        List<Float> gradesCourse = new ArrayList<>();
-                        List<Float> gradesLab = new ArrayList<>();
+                        gradesLabMap.clear();
+                        gradesCourseMap.clear();
+
 
                         for(DataSnapshot ss: snapshot.getChildren()) {
                             DisciplineModel dmodel = ss.getValue(DisciplineModel.class);
                             CourseModel cmodel = dmodel.getCmodel();
                             LabModel lmodel = dmodel.getLabModel();
-
+                            List<Float> gradesCourse = new ArrayList<>();
+                            List<Float> gradesLab = new ArrayList<>();
 
 
                             if((dmodel.getContext().toLowerCase(Locale.ROOT).compareTo(contextTxt) == 0) && (dmodel.getType().toLowerCase(Locale.ROOT).compareTo(typeTxt) == 0) && (dmodel.getYear().toLowerCase(Locale.ROOT).compareTo(yearTxt) == 0)){
@@ -213,7 +215,7 @@ public class ProgressActivity extends AppCompatActivity {
 
 
 
-                        reference.removeEventListener(this);
+
                     }
                         // for course
                         if (!gradesCourseMap.isEmpty()){
@@ -267,6 +269,7 @@ public class ProgressActivity extends AppCompatActivity {
                             labBC.clear();
 
                             //searchBtn.setError("No data found");
+                            reference.removeEventListener(this);
 
                             return;
 
@@ -326,8 +329,11 @@ public class ProgressActivity extends AppCompatActivity {
                             //labBC.removeAllViews();
                             labBC.clear();
                             //searchBtn.setError("No data found");
+                            reference.removeEventListener(this);
                             return;
+
                         }
+                        reference.removeEventListener(this);
                     }
 
                     @Override
