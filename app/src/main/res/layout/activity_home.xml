@@ -29,6 +29,18 @@
         android:layout_gravity="center"
         android:src="@drawable/ic_baseline_trending_up_24"
         />
+
+    <TextView
+        android:id="@+id/emailNotVerified"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your email is not verified! VERIFY."
+        android:textColor="@color/red"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:visibility="gone"
+
+        />
     <Button
         android:id="@+id/homeTaskButton"
         android:layout_width="match_parent"

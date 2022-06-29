@@ -76,6 +76,22 @@
         android:layout_marginLeft="10dp"
         android:textColor="@color/white"
         android:background="@color/purple_500"/>
+
+    <TextView
+        android:id="@+id/loginPageForgot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Forgot the password?"
+        android:textColor="@color/white"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:textSize="18sp"
+        />
+
     <TextView
         android:id="@+id/loginPageRegister"
         android:layout_width="match_parent"
